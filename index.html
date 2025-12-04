@@ -20,12 +20,15 @@
     ------------------------------ */
     .logo {
       margin-top: 80px;
-      font-size: 36px;
+      font-size: 28px;
       font-weight: 600;
       white-space: nowrap;
       overflow: hidden;
       border-right: .15em solid #58a6ff;
       width: 0;
+       margin-left: auto;
+  margin-right: auto;
+  display: inline-block;
       margin-bottom: 20px;
 
       animation:
@@ -36,7 +39,7 @@
     /* タイプライター */
     @keyframes typing {
       from { width: 0 }
-      to { width: 410px; } /* 文字数に合わせて幅調整 */
+      to { width: 100%; } /* 文字数に合わせて幅調整 */
     }
 
     /* カーソル点滅 */
