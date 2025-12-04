@@ -1,0 +1,302 @@
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  font-family: "Hiragino Kaku Gothic ProN", "Noto Sans JP", sans-serif;
+  background: #f4f4f6;
+  color: #222;
+  padding: 12px;
+  padding-bottom: 120px;
+}
+
+.top-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.top-bar h1 {
+  font-size: 18px;
+  margin: 0;
+}
+
+.top-controls {
+  margin-left: auto;
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  font-size: 14px;
+}
+
+.layout {
+  display: grid;
+  grid-template-columns: minmax(0, 2.2fr) minmax(0, 1.6fr);
+  gap: 12px;
+}
+
+.card {
+  background: #fff;
+  border-radius: 8px;
+  padding: 10px 12px;
+  box-shadow: 0 1px 2px rgba(0,0,0,.06);
+}
+
+.card h2 {
+  margin: 0 0 8px 0;
+  font-size: 16px;
+}
+
+.card h3 {
+  margin: 12px 0 6px 0;
+  font-size: 14px;
+}
+
+.muted {
+  color: #666;
+  font-size: 13px;
+}
+
+#slotArea {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-height: 70vh;
+  overflow: auto;
+}
+
+.slot-label {
+  font-weight: 600;
+}
+
+select {
+  width: 100%;
+  padding: 4px 6px;
+  font-size: 13px;
+}
+
+.note {
+  font-size: 11px;
+  margin-top: 8px;
+  color: #555;
+}
+
+.stat-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 3px 0;
+  border-bottom: 1px dashed #eee;
+  font-size: 13px;
+}
+
+.detail-block {
+  font-size: 13px;
+  margin-bottom: 8px;
+  padding: 6px;
+  border-radius: 6px;
+  background: #fafafa;
+}
+
+.detail-block h4 {
+  margin: 0 0 4px 0;
+  font-size: 13px;
+}
+
+.effect-table-wrap {
+  margin-top: 6px;
+  overflow-x: auto;
+}
+
+.effect-table {
+  border-collapse: collapse;
+  width: 100%;
+  min-width: 500px;
+  font-size: 12px;
+}
+
+.effect-table th,
+.effect-table td {
+  border: 1px solid #ddd;
+  padding: 4px 6px;
+  vertical-align: top;
+}
+
+.effect-table th {
+  background: #f5f5f5;
+}
+
+.uncommon-col { background: #e7ffe7; }
+.rare-col { background: #e6efff; }
+.legend-col { background: #fff4c2; }
+
+.set-split {
+  border: none;
+  border-top: 1px dashed #ccc;
+  margin: 4px 0;
+}
+
+#freeMemo {
+  width: 100%;
+  padding: 6px;
+  font-size: 13px;
+}
+
+.rarity-badge {
+  display: inline-block;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 10px;
+  font-weight: 600;
+  border: 1px solid rgba(0,0,0,.1);
+}
+
+.rarity-UNC { background: #e7ffe7; }
+.rarity-RARE { background: #e6efff; }
+.rarity-LEG { background: #fff4c2; }
+
+@media (max-width: 900px) {
+  .layout {
+    grid-template-columns: 1fr;
+  }
+  #slotArea {
+    max-height: none;
+  }
+  .top-controls {
+    margin-left: 0;
+    flex-wrap: wrap;
+  }
+}
+/* =========================================================
+   ▼ 2段構成：タリスマン行 ＋ ストーン行（最新版）
+   ========================================================= */
+  /* ==== 上段：3カラム固定幅 ==== */
+.slot-top {
+  display: grid;
+  grid-template-columns: 70px 1fr 70px; /* ラベル / タリスマン / レアリティ */
+  gap: 8px;
+  align-items: center;
+}
+
+/* select の横幅を制限（スマホで伸びないように） */
+.slot-top select {
+  width: 100%;
+  max-width: 140px;      /* ← ポイント：これでタリスマンが暴れない */
+  min-width: 110px;
+}
+
+/* ==== 下段：ストーン3個も横並びで固定 ==== */
+.slot-bottom {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+}
+
+.slot-bottom select {
+  width: 100%;
+  max-width: 130px;
+}
+
+/* ==== スマホ最適化：幅に応じて微調整 ==== */
+@media (max-width: 430px) {
+  .slot-top {
+    grid-template-columns: 60px 1fr 60px;
+  }
+
+  .slot-top select {
+    max-width: 120px;
+    min-width: 100px;
+  }
+
+  .slot-bottom select {
+    max-width: 110px;
+  }
+}
+.slot-top {
+  display: grid;
+  grid-template-columns: 80px 1fr 70px; /* ラベル80 / タリスマン / LEG */
+  gap: 10px;
+  align-items: center;
+}
+
+/* ▼ 下段はラベルと同じ幅の「空列」を作る */
+.slot-bottom {
+  display: grid;
+  grid-template-columns: 80px 1fr 1fr 1fr; /* 左80pxは空白カラム */
+  gap: 10px;
+}
+
+/* ↓ ストーン select は2〜4列目だけでOK */
+.slot-bottom select {
+  width: 100%;
+}
+@media (max-width: 430px) {
+  .slot-top {
+    grid-template-columns: 60px 1fr 60px;
+  }
+  .slot-bottom {
+    grid-template-columns: 60px 1fr 1fr 1fr;
+  }
+}
+/* 上段：ラベル 固定 / タリスマン 固定 / LEG 固定 */
+.slot-top {
+  display: grid;
+  grid-template-columns: 60px 130px 70px;  /* ← ぜんぶ固定！ */
+  gap: 6px;
+  align-items: center;
+}
+
+/* 下段：左に空白60px + ストーン3つ */
+.slot-bottom {
+  display: grid;
+  grid-template-columns: 60px 1fr 1fr 1fr;
+  gap: 6px;
+}
+
+/* ストーン3つの select が暴れないように幅固定 */
+.slot-bottom select {
+  width: 100%;
+  min-width: 0;
+}
+
+/* タリスマン select も暴れない */
+.slot-top select {
+  width: 100%;
+  min-width: 0;
+}
+
+/* スマホ幅がもっと狭い時は縮める */
+@media (max-width: 380px) {
+  .slot-top {
+    grid-template-columns: 55px 2fr 60px;
+  }
+  .slot-bottom {
+    grid-template-columns: 55px 1fr 1fr 1fr;
+  }
+}
+/* 上段 */
+.slot-top {
+  display: grid;
+  grid-template-columns: 60px 2fr 70px;
+  gap: 8px;
+  align-items: center;
+}
+
+/* 下段：空カラム + 3ストーン */
+.slot-bottom {
+  display: grid;
+  grid-template-columns: 60px 1fr 1fr 1fr;
+  gap: 8px;
+}
+
+/* 空白カラム */
+.slot-bottom-spacer {
+  width: 100%;
+}
+
+/* select が暴れないように */
+.slot-bottom select,
+.slot-top select {
+  width: 100%;
+  min-width: 0;
+}
