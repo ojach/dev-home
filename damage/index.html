@@ -1,1 +1,47 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <link rel="apple-touch-icon" href="apple-touch-icon.PNG">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ダメージ計算＆防御測定</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
 
+<div class="container">
+
+  <h2>防御測定（プレアプデ版）</h2>
+
+  <div class="card">
+    <label>攻撃力</label>
+    <input type="number" id="atk" placeholder="例：3668">
+
+    <label>実ダメージ</label>
+    <input type="number" id="realDmg" placeholder="例：1157">
+
+    <button id="calcBase">計算する</button>
+
+    <div id="baseResult" class="result hidden"></div>
+  </div>
+
+
+  <h2>バフ／デバフ シミュレーション</h2>
+
+  <div class="card">
+    <label>攻撃バフ (%)</label>
+    <input type="number" id="atkBuff" placeholder="例：9">
+
+    <label>防御デバフ (%)</label>
+    <input type="number" id="defDebuff" placeholder="例：20">
+
+    <button id="calcBuff">計算してみる</button>
+
+    <div id="buffResult" class="result hidden"></div>
+  </div>
+
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
