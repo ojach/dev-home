@@ -1,1 +1,67 @@
+body {
+  background: #111;
+  color: #eee;
+  font-family: sans-serif;
+  padding: 20px;
+  padding-bottom: 120px;
+  
+}
 
+.container {
+  max-width: 450px;
+  margin: 0 auto;
+}
+
+h2 {
+  margin-top: 30px;
+  border-left: 5px solid #4fc3f7;
+  padding-left: 10px;
+}
+
+.card {
+  background: #222;
+  padding: 15px;
+  border-radius: 10px;
+  margin-top: 15px;
+}
+
+label {
+  display: block;
+  margin-top: 10px;
+  font-size: 0.9rem;
+}
+
+input {
+  width: 100%;
+  padding: 8px;
+  margin-top: 5px;
+  background: #333;
+  border: none;
+  border-radius: 6px;
+  color: #fff;
+  font-size: 1rem;
+}
+
+button {
+  width: 100%;
+  padding: 12px;
+  margin-top: 15px;
+  background: #4fc3f7;
+  color: #000;
+  border: none;
+  border-radius: 6px;
+  font-size: 1rem;
+  font-weight: bold;
+}
+
+.result {
+  background: #1b1b1b;
+  padding: 10px;
+  margin-top: 15px;
+  border-left: 4px solid #4fc3f7;
+  border-radius: 6px;
+}
+
+.hidden {
+  display: none;
+}
