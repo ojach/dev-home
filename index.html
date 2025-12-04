@@ -5,20 +5,17 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>OJACH DEV LAB</title>
 
-  <h1 class="logo">&lt; OJACH_DEV_LAB /&gt;</h1>
   <style>
     body {
       margin: 0;
       padding: 0;
       font-family: "Fira Code", "Consolas", monospace;
-      background: #0d1117; /* GitHub風 ダーク */
+      background: #0d1117;
       color: #c9d1d9;
       text-align: center;
     }
 
-    /* ------------------------------
-       ロゴ（タイプライター + 脈動グロー）
-    ------------------------------ */
+    /* ロゴ（タイプライター + 光アニメ） */
     .logo {
       margin-top: 80px;
       font-size: 28px;
@@ -27,38 +24,35 @@
       overflow: hidden;
       border-right: .15em solid #58a6ff;
       width: 0;
-       margin-left: auto;
-  margin-right: auto;
-  display: inline-block;
+      margin-left: auto;
+      margin-right: auto;
+      display: inline-block;
 
       animation:
-        typing 2.8s steps(30, end) forwards,
+        typing 2.8s steps(25, end) forwards,
         cursorBlink .7s step-end infinite;
     }
 
-    /* タイプライター */
     @keyframes typing {
       from { width: 0 }
-      to { width: 18ch; } /* 文字数に合わせて幅調整 */
+      to { width: 18ch; }
     }
 
-    /* カーソル点滅 */
     @keyframes cursorBlink {
       50% { border-color: transparent; }
     }
 
-    /* タイプ完了後の光るエフェクト */
+    /* タイプ後の光るアニメ */
     .glow {
-      animation: glowPulse 2s ease-in-out 3.1s infinite;
+      animation: glowPulse 2s ease-in-out infinite;
     }
 
     @keyframes glowPulse {
       0% { text-shadow: 0 0 4px #58a6ff; }
-      50% { text-shadow: 0 0 14px #58a6ff; }
+      50% { text-shadow: 0 0 15px #58a6ff; }
       100% { text-shadow: 0 0 4px #58a6ff; }
     }
 
-    /* セクションタイトル */
     .section-title {
       margin-top: 60px;
       font-size: 18px;
@@ -68,7 +62,6 @@
       text-transform: uppercase;
     }
 
-    /* リンクリスト */
     .link-list {
       margin-top: 20px;
       padding: 0;
@@ -100,31 +93,25 @@
   </style>
 </head>
 
-
 <body>
 
-  <!-- コード風 * タイプライター * グロウ -->
+  <!-- 正しい位置：body 内 -->
   <h1 class="logo glow">&lt; OJACH_DEV_LAB /&gt;</h1>
 
-
-  <!-- Quinfall Tools -->
   <div class="section-title">QUINFALL TOOLS</div>
 
   <ul class="link-list">
-    <li><a href="/damage/" target="_blank">ダメージ・防御力測定ツール</a></li>
+    <li><a href="/damage/" target="_blank">ダメージ・防御測定ツール</a></li>
     <li><a href="/talistone/" target="_blank">装備強化シミュレーター</a></li>
     <li><a href="/equip_calc/" target="_blank">Equipment Enhancer</a></li>
   </ul>
 
-
-  <!-- Coming Soon -->
   <div class="section-title">COMING SOON...</div>
 
   <ul class="link-list">
     <li>Piareza Tool</li>
     <li>Additional Tools</li>
   </ul>
-
 
   <footer>&copy; 2025 OJACH DEV LAB</footer>
 
