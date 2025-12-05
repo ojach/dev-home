@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>OJapp</title>
+<style>
+body{
+  margin:0;
+  font-family: "Rounded Mplus 1c", sans-serif;
+  background:#ffffff;
+  color:#222;
+}
+
+/* 🔵ロゴ（青◯ + ピンク小◯）*/
+.logo{
+  display:flex;
+  align-items:center;
+  font-size:22px;
+  font-weight:bold;
+  margin-left:15px;
+}
+.logo-icon{
+  width:32px;height:32px;
+  background:radial-gradient(circle at 30% 30%, #66d0ff, #2bb2ff);
+  border-radius:50%;
+  position:relative;
+  margin-right:8px;
+}
+.logo-icon::after{
+  content:"";
+  position:absolute;
+  width:12px;height:12px;
+  background:radial-gradient(circle at 30% 30%, #ff9ed4, #ff4da9);
+  border-radius:50%;
+  top:9px;left:10px;
+}
+
+/* ヘッダー */
+.header{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:15px;
+  border-bottom:1px solid #eee;
+}
+
+/* ぷっくりボタン */
+.btn{
+  background:linear-gradient(#ffdd5e,#ffbe27);
+  padding:18px 40px;
+  border-radius:40px;
+  font-size:20px;
+  font-weight:bold;
+  display:inline-block;
+  margin:35px auto;
+  box-shadow:0 4px 0 #e3a200;
+  transition:.15s;
+}
+.btn:hover{
+  transform:scale(1.05);
+  box-shadow:0 6px 0 #d18f00;
+  cursor:pointer;
+}
+
+/* ステップカード */
+.section{
+  width:90%;
+  max-width:500px;
+  background:white;
+  margin:20px auto;
+  padding:20px;
+  border-radius:15px;
+  box-shadow:0 0 9px rgba(0,0,0,0.05);
+}
+.section-title{
+  font-size:18px;
+  margin-bottom:10px;
+  font-weight:bold;
+}
+
+/* 入力UI */
+input{
+  width:100%;
+  padding:12px;
+  font-size:16px;
+  border-radius:10px;
+  border:1px solid #ddd;
+  outline:none;
+  margin-bottom:10px;
+}
+input:focus{
+  border-color:#6fcaff;
+}
+
+/* OCHAGボタン（まだ機能なし）*/
+.switch{
+  font-size:22px;
+  padding-right:10px;
+  cursor:pointer;
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="logo"><div class="logo-icon"></div>OJapp</div>
+  <div class="switch">😆</div>
+</div>
+
+<h2 style="text-align:center;margin-top:35px;font-size:22px;">
+  ホームを変える。自分を変える。
+</h2>
+
+<div style="text-align:center;">
+  <div class="btn">Create App 🎉</div>
+</div>
+
+<div class="section">
+  <div class="section-title">Step1. アイコン画像</div>
+  <input type="file">
+</div>
+
+<div class="section">
+  <div class="section-title">Step2. アプリ名</div>
+  <input type="text" placeholder="OJACH PORTAL">
+</div>
+
+<div class="section">
+  <div class="section-title">Step3. URL</div>
+  <input type="text" placeholder="https://example.com">
+</div>
+
+<div class="section" style="text-align:center;">
+  <div class="btn" style="background:#e0e0e0;box-shadow:none;">
+    📦 Generate ZIP（仮）
+  </div>
+  <small style="color:#777;">※JS接続前のUIだけ</small>
+</div>
+
+</body>
+</html>
