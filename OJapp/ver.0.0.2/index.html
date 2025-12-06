@@ -4,29 +4,107 @@
 <meta charset="UTF-8">
 <title>OJapp Builder</title>
 <style>
-/* ------- 既存デザインそのまま ------- */
-body{ margin:0;font-family:"Helvetica","Arial","YuGothic",sans-serif;background:#ffffff;color:#222;}
-.header{display:flex;justify-content:space-between;align-items:center;padding:15px;border-bottom:1px solid #eee;}
-.logo{display:flex;align-items:center;font-size:22px;font-weight:bold;gap:6px;}
-.logo-icon{width:34px;height:34px;background:radial-gradient(circle at 30% 30%, #6dd4ff, #2bb7ff);border-radius:50%;position:relative;}
-.logo-icon::after{content:"";position:absolute;width:13px;height:13px;background:radial-gradient(circle at 30% 30%, #ffb0d8, #ff4fa9);border-radius:50%;top:9px;left:10px;}
-.switch{font-size:24px;cursor:pointer;}
-h2{text-align:center;margin-top:30px;font-weight:600;}
-.btn{display:inline-block;margin:25px auto;padding:18px 38px;background:linear-gradient(#ffd85a,#ffb726);border-radius:40px;font-weight:bold;font-size:20px;text-align:center;box-shadow:0 6px 0 #d19400;transition:0.2s;position:relative;}
-.btn::after{content:"";position:absolute;top:6px;left:50%;transform:translateX(-50%);width:70%;height:30%;border-radius:30px;background:rgba(255,255,255,0.55);filter:blur(2px);}
+body{
+  margin:0;
+  font-family: "Helvetica","Arial","YuGothic",sans-serif;
+  background:#ffffff;
+  color:#222;
+}
+.header{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:15px;
+  border-bottom:1px solid #eee;
+}
+.logo{
+  display:flex;
+  align-items:center;
+  font-size:22px;
+  font-weight:bold;
+  gap:6px;
+}
+.logo-icon{
+  width:34px;height:34px;
+  background:radial-gradient(circle at 30% 30%, #6dd4ff, #2bb7ff);
+  border-radius:50%;
+  position:relative;
+}
+.logo-icon::after{
+  content:"";
+  position:absolute;
+  width:13px;height:13px;
+  background:radial-gradient(circle at 30% 30%, #ffb0d8, #ff4fa9);
+  border-radius:50%;
+  top:9px;left:10px;
+}
+
+.switch{
+  font-size:24px;
+  cursor:pointer;
+}
+h2{
+  text-align:center;
+  margin-top:30px;
+  font-weight:600;
+}
+.btn{
+  display:inline-block;
+  margin:25px auto;
+  padding:18px 38px;
+  background:linear-gradient(#ffd85a,#ffb726);
+  border-radius:40px;
+  font-weight:bold;
+  font-size:20px;
+  text-align:center;
+  box-shadow:0 6px 0 #d19400;
+  transition:0.2s;
+  position:relative;
+  cursor:pointer;
+}
+.btn::after{
+  content:"";
+  position:absolute;
+  top:6px;left:50%;
+  transform:translateX(-50%);
+  width:70%;
+  height:30%;
+  border-radius:30px;
+  background:rgba(255,255,255,0.55);
+  filter:blur(2px);
+}
 .btn:hover{transform:scale(1.06);}
 .btn:active{transform:scale(0.97);box-shadow:0 3px 0 #a87500;}
-@keyframes pulse{0%{transform:scale(1);}50%{transform:scale(1.04);}100%{transform:scale(1);}}
+
+@keyframes pulse{50%{transform:scale(1.04);}}
 .btn.pulse{animation:pulse 2.4s infinite ease-in-out;}
 .arrow{text-align:center;font-size:26px;animation:float 1.6s infinite ease-in-out;}
-@keyframes float{0%{transform:translateY(0);}50%{transform:translateY(8px);}100%{transform:translateY(0);}}
-.section{width:90%;max-width:500px;background:white;margin:18px auto;padding:20px;border-radius:18px;box-shadow:0 0 12px rgba(0,0,0,0.05);}
+@keyframes float{50%{transform:translateY(8px);}}
+
+.section{
+  width:90%;max-width:500px;background:white;margin:18px auto;padding:20px;
+  border-radius:18px;box-shadow:0 0 12px rgba(0,0,0,0.05);
+}
 .section-title{font-size:18px;margin-bottom:10px;font-weight:bold;}
-input[type=file],input[type=text]{width:100%;padding:13px;border-radius:12px;border:1px solid #ddd;font-size:16px;outline:none;}
+
+input[type=file],input[type=text]{
+  width:100%;padding:13px;border-radius:12px;border:1px solid #ddd;
+  font-size:16px;outline:none;
+}
 input:focus{border-color:#66c8ff;}
-.icon-box{width:160px;height:160px;background:#f5f5f5;border-radius:22px;margin:12px auto;display:flex;justify-content:center;align-items:center;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,0.06);}
+
+.icon-box{
+  width:160px;height:160px;background:#f5f5f5;border-radius:22px;margin:12px auto;
+  display:flex;justify-content:center;align-items:center;overflow:hidden;
+  box-shadow:0 2px 8px rgba(0,0,0,0.06);
+}
 .icon-box img{width:100%;height:100%;object-fit:cover;border-radius:22px;}
-#assistantBox{position:fixed;bottom:20px;right:20px;background:white;border-radius:20px;border:2px solid #2bb7ff;padding:12px 18px;box-shadow:0 0 12px rgba(0,0,0,0.1);font-size:15px;display:none;}
+
+#assistantBox{
+  position:fixed;bottom:20px;right:20px;background:white;border-radius:20px;
+  border:2px solid #2bb7ff;padding:12px 18px;box-shadow:0 0 12px rgba(0,0,0,0.1);
+  font-size:15px;display:none;
+}
 </style>
 </head>
 <body>
@@ -43,25 +121,29 @@ input:focus{border-color:#66c8ff;}
  <div class="arrow">▼</div>
 </div>
 
+<!-- Step1 -->
 <div class="section">
  <div class="section-title">Step1：アイコン画像</div>
  <input type="file" id="iconInput">
- <div class="icon-box"><img id="preview" /></div>
+ <div class="icon-box"><img id="preview" src="" /></div>
 </div>
 
+<!-- Step2 -->
 <div class="section">
  <div class="section-title">Step2：アプリ名</div>
- <input type="text" id="appName" placeholder="OJACH PORTAL">
+ <input id="appName" type="text" placeholder="OJACH PORTAL">
 </div>
 
+<!-- Step3 -->
 <div class="section">
  <div class="section-title">Step3：URL</div>
- <input type="text" id="targetURL" placeholder="https://example.com">
+ <input id="targetURL" type="text" placeholder="https://example.com">
 </div>
 
 <div id="assistantBox">おちゃじ参上😎✨</div>
 
 <script>
+// アシスタントPOP
 function toggleA(){
  let box=document.getElementById("assistantBox");
  box.style.display=(box.style.display=="none")?"block":"none";
@@ -73,64 +155,52 @@ document.getElementById("iconInput").addEventListener("change",e=>{
  if(file) document.getElementById("preview").src=URL.createObjectURL(file);
 });
 
-/*====================
-   🔥 App生成メイン
-====================*/
+// 🔥 ページ生成本体
 function generateApp(){
- const iconFile = document.getElementById("iconInput").files[0];
- const name     = document.getElementById("appName").value || "MyApp";
- const url      = document.getElementById("targetURL").value || "";
+ const file=document.getElementById("iconInput").files[0];
+ const appName=document.getElementById("appName").value.trim();
+ const targetURL=document.getElementById("targetURL").value.trim();
 
- if(!iconFile) return alert("アイコン画像を選択してください！");
- if(!url)      return alert("URLを入力してください！");
+ if(!file||!appName||!targetURL) return alert("全部入力してね👌");
 
- // ▼ アイコンをBase64化 → HTMLに埋め込む
- const reader = new FileReader();
- reader.onload = function(e){
-
- let iconBase64 = e.target.result;
-
- // ▼ 生成されるページ
- let html = `
-<!DOCTYPE html><html><head>
-<meta charset="UTF-8">
-<title>${name}</title>
-<link rel="apple-touch-icon" href="${iconBase64}">
+ const reader=new FileReader();
+ reader.onload=e=>{
+  const base64=e.target.result;
+  const html=`<!DOCTYPE html><html><head>
+<title>${appName}</title>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<link rel="apple-touch-icon" href="${base64}">
 <style>
-body{margin:0;display:flex;justify-content:center;align-items:center;height:100vh;background:#e6f6ff;font-family:-apple-system;}
-#logo{background:white;padding:22px 30px;border-radius:22px;font-size:30px;font-weight:bold;color:#ff69b4;box-shadow:0 4px 10px rgba(0,0,0,.25);animation:pulse 1.2s infinite;}
-@keyframes pulse{0%{transform:scale(1);}50%{transform:scale(1.07);}100%{transform:scale(1);}}
-.msg{position:absolute;bottom:25px;width:100%;text-align:center;color:#555;}
+body{margin:0;display:flex;justify-content:center;align-items:center;height:100vh;font-family:sans-serif;text-align:center;}
 </style>
 </head><body>
-
-<div id="logo">${name}</div>
-<div class="msg">初回は30秒後に自動遷移します<br>ホーム追加推奨🔥</div>
+<h2>${appName}</h2>
+<img src="${base64}" width="120" style="border-radius:20px;"><br><br>
+<b>ホームに追加推奨🔥</b><br>自動で移動します<br><br>
+<div id="count">初回は30秒 / 以降3秒</div>
 
 <script>
-let first = !localStorage.getItem("${name}_installed");
-let sec = first ? 30 : 3;
-localStorage.setItem("${name}_installed","yes");
-
+let first=!localStorage.getItem("${appName}_installed");
+let sec=first?30:3;
 let timer=setInterval(()=>{
+ document.getElementById('count').innerHTML="移動まで "+sec+" 秒";
  sec--;
- if(sec<=0){
+ if(sec<0){
   clearInterval(timer);
-  location.href="${url}";
+  localStorage.setItem("${appName}_installed",true);
+  location.href="${targetURL}";
  }
 },1000);
-<\/script>
+</script>
 </body></html>`;
 
- // ▼ プレビューを開く
- const blob = new Blob([html],{type:"text/html"});
- const blobURL = URL.createObjectURL(blob);
- window.open(blobURL,"_blank");
-
- alert("生成ページが開きました！ホームに追加してみて🔥");
- }
- reader.readAsDataURL(iconFile);
+  const blob=new Blob([html],{type:"text/html"});
+  window.open(URL.createObjectURL(blob),"_blank");
+  alert("生成ページが開いたよ！ホーム追加してみて🔥");
+ };
+ reader.readAsDataURL(file);
 }
 </script>
+
 </body>
 </html>
