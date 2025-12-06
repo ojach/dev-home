@@ -5,8 +5,13 @@ body{
 }
 .header{display:flex;justify-content:space-between;align-items:center;padding:15px;border-bottom:1px solid #eee;}
 .logo{display:flex;align-items:center;font-size:22px;font-weight:bold;gap:6px;}
-.logo-icon{width:34px;height:34px;background:radial-gradient(circle at 30% 30%,#6dd4ff,#2bb7ff);border-radius:50%;position:relative;}
-.logo-icon::after{content:"";position:absolute;width:13px;height:13px;background:radial-gradient(circle at 30% 30%,#ffb0d8,#ff4fa9);border-radius:50%;top:9px;left:10px;}
+.logo-img {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  object-fit: cover;
+  display: block;
+}
 .switch{font-size:24px;cursor:pointer;}
 
 h2{text-align:center;margin-top:30px;font-weight:600;}
