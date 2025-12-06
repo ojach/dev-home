@@ -15,31 +15,86 @@ document.getElementById("createBtn").addEventListener("click",()=>{
  let name=document.getElementById("appName").value.trim();
  let url=document.getElementById("appURL").value.trim();
 
- if(!file||!name||!url){ alert("全部入力してな〜🔥"); return;}
+ if(!file||!name||!url){ alert("全部入力してな🔥"); return;}
 
  let reader=new FileReader();
  reader.onload=()=>{
- let iconData=reader.result;
 
- let html = `
+ let base64 = reader.result;
+
+ //=============================
+ // ▼ index.html 生成
+ //=============================
+ let indexHTML = `
 <!DOCTYPE html>
-<html><head>
-<title>${name}</title>
-<link rel="apple-touch-icon" href="${iconData}">
-<link rel="manifest" href="manifest.json">
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="apple-touch-icon" href="./icon.png">
+<link rel="manifest" href="./manifest.json">
+<title>${name}</title>
+<style>
+body{
+ margin:0;display:flex;justify-content:center;align-items:center;
+ height:100vh;background:#e6f6ff;font-size:28px;font-weight:bold;
+ font-family:-apple-system,BlinkMacSystemFont,"Segoe UI";
+}
+</style>
 </head>
-<body style="background:#e6f6ff;display:flex;justify-content:center;align-items:center;height:100vh;">
-<div id="logo" style="background:white;padding:20px 28px;border-radius:22px;font-size:30px;font-weight:bold;color:#ff69b4;box-shadow:0 4px 10px rgba(0,0,0,.25);animation:pulse 1.2s infinite;">${name}</div>
+<body>
+${name}
 <script>
-setTimeout(()=>location.href='${url}',5000);
+let first = !localStorage.getItem("${name}_installed");
+if(first){
+  localStorage.setItem("${name}_installed",1);
+  let sec = 30;
+  document.body.innerHTML="${name}<br><small>(${url})</small><br>あと <span id='t'></span> 秒で移動<br>ホーム追加してね🔥";
+  let timer=setInterval(()=>{
+    sec--; document.getElementById("t").textContent=sec;
+    if(sec<=0){clearInterval(timer);location.href="${url}";}
+  },1000);
+}else{
+ setTimeout(()=>location.href="${url}",3000);
+}
 </script>
-</body></html>`;
+</body>
+</html>`;
 
- const blob=new Blob([html],{type:"text/html"});
- window.open(URL.createObjectURL(blob),"_blank");
- alert("生成ページが開いたよ！ホーム追加や！🔥");
+
+ //=============================
+ // ▼ manifest.json 生成
+ //=============================
+ let manifestJSON = `{
+  "name": "${name}",
+  "short_name": "${name}",
+  "start_url": "./",
+  "display": "standalone",
+  "icons":[
+    {"src":"./icon.png","sizes":"192x192","type":"image/png"}
+  ]
+ }`;
+
+
+ //=============================
+ // ▼ 出力HTMLに反映
+ //=============================
+ document.body.insertAdjacentHTML("beforeend", `
+ <div style='padding:20px;background:#fff;margin:20px;border-radius:14px;'>
+  <h3>📄 index.html</h3>
+  <pre style="white-space:pre-wrap;background:#eee;padding:10px;border-radius:10px;">${indexHTML.replace(/</g,"&lt;")}</pre>
+
+  <h3>📄 manifest.json</h3>
+  <pre style="white-space:pre-wrap;background:#eee;padding:10px;border-radius:10px;">${manifestJSON.replace(/</g,"&lt;")}</pre>
+
+  <h3>🖼 icon.png</h3>
+  <p>↓これを右タップして保存</p>
+  <img src="${base64}" style="width:140px;border-radius:22px;">
+ </div>
+ `);
+
+ alert("👇 ページ下にファイル生成したよ！🔥 コピペして設置！");
+
  };
-
  reader.readAsDataURL(file);
 });
