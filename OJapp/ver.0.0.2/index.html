@@ -6,157 +6,78 @@
 <title>OJapp Builder</title>
 
 <style>
-body{
-  margin:0;
-  font-family: "Helvetica","Arial","YuGothic",sans-serif;
-  background:#ffffff;
-  color:#222;
-}
-
-.header{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  padding:15px;
-  border-bottom:1px solid #eee;
-}
-
-/* --- ロゴ --- */
-.logo{
-  display:flex;
-  align-items:center;
-  font-size:22px;
-  font-weight:bold;
-  gap:6px;
-}
-.logo-icon{
-  width:34px;height:34px;
-  background:radial-gradient(circle at 30% 30%, #6dd4ff, #2bb7ff);
-  border-radius:50%;
-  position:relative;
-}
-.logo-icon::after{
-  content:"";
-  position:absolute;
-  width:13px;height:13px;
-  background:radial-gradient(circle at 30% 30%, #ffb0d8, #ff4fa9);
-  border-radius:50%;
-  top:9px;left:10px;
-}
-
-/* ボタン */
-.btn{
-  display:inline-block;
-  margin:25px auto;
-  padding:18px 38px;
-  background:linear-gradient(#ffd85a,#ffb726);
-  border-radius:40px;
-  font-weight:bold;
-  font-size:20px;
-  text-align:center;
-  box-shadow:0 6px 0 #d19400;
-  transition:0.2s;
-  cursor:pointer;
-}
-.btn:hover{transform:scale(1.06);}
-
-/* カード */
-.section{
-  width:90%;
-  max-width:500px;
-  background:white;
-  margin:18px auto;
-  padding:20px;
-  border-radius:18px;
-  box-shadow:0 0 12px rgba(0,0,0,0.05);
-}
-.section-title{font-size:18px;font-weight:bold;margin-bottom:10px;}
-
-input{width:100%;padding:13px;border-radius:12px;border:1px solid #ddd;margin-top:5px;}
-
-/* アイコン枠 */
-.icon-box{
-  width:160px;height:160px;background:#f5f5f5;margin:12px auto;
-  border-radius:22px;display:flex;justify-content:center;align-items:center;overflow:hidden;
-}
-.icon-box img{width:100%;height:100%;object-fit:cover;border-radius:22px;}
+body{margin:0;font-family:-apple-system, BlinkMacSystemFont; background:#fff;}
+.header{display:flex;align-items:center;padding:12px;font-size:20px;}
+.logo-icon{width:26px;height:26px;border-radius:50%;background:#6dd4ff;
+ position:relative;margin-right:8px;}
+.logo-icon::after{content:"";position:absolute;width:10px;height:10px;border-radius:50%;
+ background:#ff59b2;top:7px;left:8px;}
+.btn{display:block;margin:20px auto;padding:15px 30px;border-radius:40px;
+ background:linear-gradient(#ffd85a,#ffb726);font-weight:bold;text-align:center;}
+.section{width:90%;max-width:450px;margin:15px auto;padding:15px;background:#fff;
+ border-radius:15px;box-shadow:0 2px 10px #0002;}
+.icon-box{width:150px;height:150px;margin:auto;background:#eee;border-radius:20px;
+ display:flex;justify-content:center;align-items:center;overflow:hidden;}
+.icon-box img{width:100%;height:100%;object-fit:cover;}
 </style>
 </head>
 
 <body>
+
 <div class="header">
- <div class="logo"><div class="logo-icon"></div>OJapp</div>
+  <div class="logo-icon"></div>OJapp
 </div>
 
-<h2 style="text-align:center;margin-top:30px;">ホームを変える。自分を変える。</h2>
+<h2 style="text-align:center;margin-top:25px;">ホームを変える。自分を変える。</h2>
 
-<div style="text-align:center;">
- <div class="btn" onclick="generate()">Create App 🎉</div>
+<div class="btn" onclick="generate()">Create App 🎉</div>
+
+<div class="section">
+  <b>Step1：アイコン</b><br>
+  <input type="file" id="iconInput">
+  <div class="icon-box"><img id="preview"></div>
 </div>
 
 <div class="section">
- <div class="section-title">Step1：アイコン画像</div>
- <input type="file" id="iconInput">
- <div class="icon-box"><img id="preview"></div>
+  <b>Step2：アプリ名</b>
+  <input type="text" id="appName" placeholder="OJACH PORTAL">
 </div>
 
 <div class="section">
- <div class="section-title">Step2：アプリ名</div>
- <input id="appName" type="text" placeholder="OJACH PORTAL">
+  <b>Step3：URL</b>
+  <input type="text" id="appURL" placeholder="https://example.com">
 </div>
-
-<div class="section">
- <div class="section-title">Step3：URL</div>
- <input id="appURL" type="text" placeholder="https://example.com">
-</div>
-
 
 <script>
-/* 画像プレビュー */
+//アイコンプレビュー
 document.getElementById("iconInput").addEventListener("change",e=>{
-  const file=e.target.files[0]; if(!file)return;
-  document.getElementById("preview").src=URL.createObjectURL(file);
+ const f=e.target.files[0]; if(f) document.getElementById("preview").src=URL.createObjectURL(f);
 });
 
-
-/* 🔥 生成機能 */
+//🔥生成
 function generate(){
-  const file=document.getElementById("iconInput").files[0];
-  const name=document.getElementById("appName").value||"My App";
-  const url=document.getElementById("appURL").value;
-  if(!url){alert("URL入力して🔥");return;}
+ const name=document.getElementById("appName").value||"OJapp";
+ const url=document.getElementById("appURL").value||"https://google.com";
+ const icon=document.getElementById("preview").src;
 
-  const reader=new FileReader();
-  reader.onload=function(e){
-    const icon=e.target.result;
-
-    const html = `<!DOCTYPE html>
-<html lang="ja"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>${name}</title>
+const html=`
+<!DOCTYPE html><html><head>
+<meta name="apple-mobile-web-app-capable" content="yes">
 <link rel="apple-touch-icon" href="${icon}">
-<style>
-body{margin:0;display:flex;flex-direction:column;justify-content:center;align-items:center;height:100vh;background:#e6f6ff;font-family:-apple-system;}
-#logo{background:white;padding:22px 30px;border-radius:22px;font-size:30px;font-weight:bold;color:#ff69b4;box-shadow:0 4px 10px rgba(0,0,0,.25);}
-</style></head>
-<body>
-<div id="logo">${name}</div>
-<div id="msg">⏳ 初回30秒 / 2回目以降3秒で移動</div>
+<title>${name}</title>
+<style>body{margin:0;display:flex;justify-content:center;align-items:center;
+height:100vh;font-size:30px;} </style>
+</head>
+<body>${name} 起動中...
 <script>
-let first=!localStorage.getItem("ojapp_${name}");
-let t=first?30:3;
-localStorage.setItem("ojapp_${name}",1);
-let timer=setInterval(()=>{
- t--;document.getElementById("msg").textContent="⏳ "+t+"秒後に移動 → ${url}";
- if(t<=0){clearInterval(timer);location.href="${url}";}
-},1000);
+setTimeout(()=>location.href="${url}",5000);
 <\/script>
-</body></html>`;
+</body></html>
+`;
 
-    const blob=new Blob([html],{type:"text/html"});
-    window.open(URL.createObjectURL(blob),"_blank");
-    alert("生成ページが開いたよ！ホームに追加して使って🔥");
-  };
-  reader.readAsDataURL(file);
+ const blob=new Blob([html],{type:"text/html"});
+ window.open(URL.createObjectURL(blob),"_blank"); // ←必ず新規タブが開く
+ alert("生成ページが開きました！そこをホームに追加してください🔥");
 }
 </script>
 
