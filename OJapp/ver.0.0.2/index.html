@@ -67,48 +67,69 @@ function toggleA(){
  box.style.display=(box.style.display=="none")?"block":"none";
 }
 
+// 画像プレビュー
 document.getElementById("iconInput").addEventListener("change",e=>{
- const f=e.target.files[0];
- if(f) document.getElementById("preview").src=URL.createObjectURL(f);
+ const file=e.target.files[0];
+ if(file) document.getElementById("preview").src=URL.createObjectURL(file);
 });
 
-/* -------- 生成メイン -------- */
+/*====================
+   🔥 App生成メイン
+====================*/
 function generateApp(){
- const icon=document.getElementById("iconInput").files[0];
- const name=document.getElementById("appName").value||"MyApp";
- const url=document.getElementById("targetURL").value||"";
- 
- if(!icon) return alert("アイコンが必要です！");
- if(!url) return alert("URLを入力してください！");
+ const iconFile = document.getElementById("iconInput").files[0];
+ const name     = document.getElementById("appName").value || "MyApp";
+ const url      = document.getElementById("targetURL").value || "";
 
- // ▼ 第一段階：まず遷移用 index をブラウザで生成表示（ZIP化は次工程）
- const blobURL = URL.createObjectURL(new Blob([`
+ if(!iconFile) return alert("アイコン画像を選択してください！");
+ if(!url)      return alert("URLを入力してください！");
+
+ // ▼ アイコンをBase64化 → HTMLに埋め込む
+ const reader = new FileReader();
+ reader.onload = function(e){
+
+ let iconBase64 = e.target.result;
+
+ // ▼ 生成されるページ
+ let html = `
 <!DOCTYPE html><html><head>
 <meta charset="UTF-8">
 <title>${name}</title>
-<link rel="apple-touch-icon" href="./icon.png">
-<link rel="manifest" href="./manifest.json">
+<link rel="apple-touch-icon" href="${iconBase64}">
 <style>
 body{margin:0;display:flex;justify-content:center;align-items:center;height:100vh;background:#e6f6ff;font-family:-apple-system;}
 #logo{background:white;padding:22px 30px;border-radius:22px;font-size:30px;font-weight:bold;color:#ff69b4;box-shadow:0 4px 10px rgba(0,0,0,.25);animation:pulse 1.2s infinite;}
 @keyframes pulse{0%{transform:scale(1);}50%{transform:scale(1.07);}100%{transform:scale(1);}}
-.msg{position:absolute;bottom:20px;width:100%;text-align:center;color:#333;}
+.msg{position:absolute;bottom:25px;width:100%;text-align:center;color:#555;}
 </style>
 </head><body>
+
 <div id="logo">${name}</div>
 <div class="msg">初回は30秒後に自動遷移します<br>ホーム追加推奨🔥</div>
 
 <script>
-let firstRun=!localStorage.getItem("${name}_installed");
-let sec=firstRun?30:3;
-setInterval(()=>{sec--;if(sec<=0) location.href="${url}";},1000);
+let first = !localStorage.getItem("${name}_installed");
+let sec = first ? 30 : 3;
 localStorage.setItem("${name}_installed","yes");
-</script>
-</body></html>
-`],{type:"text/html"}));
 
- window.open(blobURL,"_blank"); // → これが生成したページのプレビュー
- alert("生成ページが開きました！そのページをホーム追加してください🏠");
+let timer=setInterval(()=>{
+ sec--;
+ if(sec<=0){
+  clearInterval(timer);
+  location.href="${url}";
+ }
+},1000);
+<\/script>
+</body></html>`;
+
+ // ▼ プレビューを開く
+ const blob = new Blob([html],{type:"text/html"});
+ const blobURL = URL.createObjectURL(blob);
+ window.open(blobURL,"_blank");
+
+ alert("生成ページが開きました！ホームに追加してみて🔥");
+ }
+ reader.readAsDataURL(iconFile);
 }
 </script>
 </body>
