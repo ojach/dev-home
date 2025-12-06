@@ -31,7 +31,7 @@ document.getElementById("createBtn").addEventListener("click",()=>{
 
 
 /*=============================
-  ▼ 生成される index.html
+  ▼ 生成される index.html（更新版）
 =============================*/
 let indexHTML = `
 <!DOCTYPE html>
@@ -50,6 +50,7 @@ body{
 }
 small{font-size:14px;color:#555;}
 #t{font-size:32px;color:#ff006a;font-weight:bold;}
+#sub{font-size:14px;color:#444;margin-top:8px;opacity:.75;}
 </style>
 </head>
 <body>
@@ -58,6 +59,7 @@ small{font-size:14px;color:#555;}
 let first = !localStorage.getItem("${name}_installed");
 
 if(first){
+  // 初回 — ホーム追加促し＆30秒カウント
   localStorage.setItem("${name}_installed",1);
   let sec = 30;
   document.body.innerHTML =
@@ -76,14 +78,15 @@ if(first){
   },1000);
 
 }else{
-  document.body.innerHTML="${name}<br><small>自動起動中…</small>";
-  setTimeout(()=>location.href="${url}",3000);
+  // 2回目~ — スプラッシュ演出
+  document.body.innerHTML =
+  \`${name}<br><div id="sub">presented by OJapp</div>\`;
+  setTimeout(()=>location.href="${url}",1200); // ←ココ2秒待機に変更
 }
 </script>
 
 </body>
 </html>`;
-
 
 /*=============================
   ▼ manifest.json
