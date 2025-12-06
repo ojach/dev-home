@@ -5,81 +5,44 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>OJapp Builder</title>
 
-<style>
-body{margin:0;font-family:-apple-system, BlinkMacSystemFont; background:#fff;}
-.header{display:flex;align-items:center;padding:12px;font-size:20px;}
-.logo-icon{width:26px;height:26px;border-radius:50%;background:#6dd4ff;
- position:relative;margin-right:8px;}
-.logo-icon::after{content:"";position:absolute;width:10px;height:10px;border-radius:50%;
- background:#ff59b2;top:7px;left:8px;}
-.btn{display:block;margin:20px auto;padding:15px 30px;border-radius:40px;
- background:linear-gradient(#ffd85a,#ffb726);font-weight:bold;text-align:center;}
-.section{width:90%;max-width:450px;margin:15px auto;padding:15px;background:#fff;
- border-radius:15px;box-shadow:0 2px 10px #0002;}
-.icon-box{width:150px;height:150px;margin:auto;background:#eee;border-radius:20px;
- display:flex;justify-content:center;align-items:center;overflow:hidden;}
-.icon-box img{width:100%;height:100%;object-fit:cover;}
-</style>
-</head>
+<link rel="stylesheet" href="style.css">
+<script defer src="app.js"></script>
 
+</head>
 <body>
 
 <div class="header">
-  <div class="logo-icon"></div>OJapp
+ <div class="logo"><div class="logo-icon"></div>OJapp</div>
+ <div class="switch" onclick="toggleA()">😆</div>
 </div>
 
-<h2 style="text-align:center;margin-top:25px;">ホームを変える。自分を変える。</h2>
+<h2>ホームを変える。自分を変える。</h2>
 
-<div class="btn" onclick="generate()">Create App 🎉</div>
+<div style="text-align:center;">
+ <button id="createBtn" class="btn pulse">Create App 🎉</button>
+ <div class="arrow">▼</div>
+</div>
 
+<!-- Step1 -->
 <div class="section">
-  <b>Step1：アイコン</b><br>
-  <input type="file" id="iconInput">
-  <div class="icon-box"><img id="preview"></div>
+ <div class="section-title">Step1：アイコン画像</div>
+ <input type="file" id="iconInput">
+ <div class="icon-box"><img id="preview" src=""></div>
 </div>
 
+<!-- Step2 -->
 <div class="section">
-  <b>Step2：アプリ名</b>
-  <input type="text" id="appName" placeholder="OJACH PORTAL">
+ <div class="section-title">Step2：アプリ名</div>
+ <input type="text" id="appName" placeholder="OJACH PORTAL">
 </div>
 
+<!-- Step3 -->
 <div class="section">
-  <b>Step3：URL</b>
-  <input type="text" id="appURL" placeholder="https://example.com">
+ <div class="section-title">Step3：URL</div>
+ <input type="text" id="appURL" placeholder="https://example.com">
 </div>
 
-<script>
-//アイコンプレビュー
-document.getElementById("iconInput").addEventListener("change",e=>{
- const f=e.target.files[0]; if(f) document.getElementById("preview").src=URL.createObjectURL(f);
-});
-
-//🔥生成
-function generate(){
- const name=document.getElementById("appName").value||"OJapp";
- const url=document.getElementById("appURL").value||"https://google.com";
- const icon=document.getElementById("preview").src;
-
-const html=`
-<!DOCTYPE html><html><head>
-<meta name="apple-mobile-web-app-capable" content="yes">
-<link rel="apple-touch-icon" href="${icon}">
-<title>${name}</title>
-<style>body{margin:0;display:flex;justify-content:center;align-items:center;
-height:100vh;font-size:30px;} </style>
-</head>
-<body>${name} 起動中...
-<script>
-setTimeout(()=>location.href="${url}",5000);
-<\/script>
-</body></html>
-`;
-
- const blob=new Blob([html],{type:"text/html"});
- window.open(URL.createObjectURL(blob),"_blank"); // ←必ず新規タブが開く
- alert("生成ページが開きました！そこをホームに追加してください🔥");
-}
-</script>
+<div id="assistantBox">おちゃじ参上😎✨</div>
 
 </body>
 </html>
