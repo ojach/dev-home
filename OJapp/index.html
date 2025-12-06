@@ -2,172 +2,9 @@
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>OJapp Builder</title>
-<style>
-body{
-  margin:0;
-  font-family: "Helvetica","Arial","YuGothic",sans-serif;
-  background:#ffffff;
-  color:#222;
-}
-
-.header{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  padding:15px;
-  border-bottom:1px solid #eee;
-}
-
-/* --- 🔵ロゴ --- */
-.logo{
-  display:flex;
-  align-items:center;
-  font-size:22px;
-  font-weight:bold;
-  gap:6px;
-}
-.logo-icon{
-  width:34px;height:34px;
-  background:radial-gradient(circle at 30% 30%, #6dd4ff, #2bb7ff);
-  border-radius:50%;
-  position:relative;
-}
-.logo-icon::after{
-  content:"";
-  position:absolute;
-  width:13px;height:13px;
-  background:radial-gradient(circle at 30% 30%, #ffb0d8, #ff4fa9);
-  border-radius:50%;
-  top:9px;left:10px;
-}
-
-/* --- OCHAGスイッチ --- */
-.switch{
-  font-size:24px;
-  cursor:pointer;
-}
-
-/* --- キャッチコピー --- */
-h2{
-  text-align:center;
-  margin-top:30px;
-  font-weight:600;
-}
-
-/* --- ぷっくりグロスボタン --- */
-.btn{
-  display:inline-block;
-  margin:25px auto;
-  padding:18px 38px;
-  background:linear-gradient(#ffd85a,#ffb726);
-  border-radius:40px;
-  font-weight:bold;
-  font-size:20px;
-  text-align:center;
-  box-shadow:0 6px 0 #d19400;
-  transition:0.2s;
-  position:relative;
-}
-.btn::after{
-  content:"";
-  position:absolute;
-  top:6px;left:50%;
-  transform:translateX(-50%);
-  width:70%;
-  height:30%;
-  border-radius:30px;
-  background:rgba(255,255,255,0.55);
-  filter:blur(2px);
-}
-.btn:hover{
-  transform:scale(1.06);
-}
-.btn:active{
-  transform:scale(0.97);
-  box-shadow:0 3px 0 #a87500;
-}
-
-/* ▼ 脈動アニメ */
-@keyframes pulse{
-  0%{transform:scale(1);}
-  50%{transform:scale(1.04);}
-  100%{transform:scale(1);}
-}
-.btn.pulse{
-  animation:pulse 2.4s infinite ease-in-out;
-}
-
-/* ▼ スクロール矢印 */
-.arrow{
-  text-align:center;
-  font-size:26px;
-  animation:float 1.6s infinite ease-in-out;
-}
-@keyframes float{
-  0%{transform:translateY(0);}
-  50%{transform:translateY(8px);}
-  100%{transform:translateY(0);}
-}
-
-/* --- Stepカード --- */
-.section{
-  width:90%;
-  max-width:500px;
-  background:white;
-  margin:18px auto;
-  padding:20px;
-  border-radius:18px;
-  box-shadow:0 0 12px rgba(0,0,0,0.05);
-}
-.section-title{
-  font-size:18px;
-  margin-bottom:10px;
-  font-weight:bold;
-}
-
-/* --- 入力系 --- */
-input[type=file],input[type=text]{
-  width:100%;
-  padding:13px;
-  border-radius:12px;
-  border:1px solid #ddd;
-  font-size:16px;
-  outline:none;
-}
-input:focus{
-  border-color:#66c8ff;
-}
-
-/* --- アイコンプレビュー角丸 --- */
-.icon-box{
-  width:160px;height:160px;
-  background:#f5f5f5;
-  border-radius:22px;
-  margin:12px auto;
-  display:flex;
-  justify-content:center;
-  align-items:center;
-  overflow:hidden;
-  box-shadow:0 2px 8px rgba(0,0,0,0.06);
-}
-.icon-box img{
-  width:100%;height:100%;object-fit:cover;
-  border-radius:22px;
-}
-
-/* --- OCHAGモード吹き出し --- */
-#assistantBox{
-  position:fixed;bottom:20px;right:20px;
-  background:white;
-  border-radius:20px;
-  border:2px solid #2bb7ff;
-  padding:12px 18px;
-  box-shadow:0 0 12px rgba(0,0,0,0.1);
-  font-size:15px;
-  display:none;
-}
-</style>
+<link rel="stylesheet" href="style.css">
 </head>
 <body>
 
@@ -179,7 +16,7 @@ input:focus{
 <h2>ホームを変える。自分を変える。</h2>
 
 <div style="text-align:center;">
- <div class="btn pulse">Create App 🎉</div>
+ <button id="createBtn" class="btn pulse">Create App 🎉</button>
  <div class="arrow">▼</div>
 </div>
 
@@ -187,36 +24,26 @@ input:focus{
 <div class="section">
  <div class="section-title">Step1：アイコン画像</div>
  <input type="file" id="iconInput">
- <div class="icon-box"><img id="preview" src="" /></div>
+ <div class="icon-box"><img id="preview" src=""></div>
 </div>
 
 <!-- Step2 -->
 <div class="section">
  <div class="section-title">Step2：アプリ名</div>
- <input type="text" placeholder="OJACH PORTAL">
+ <input type="text" id="appName" placeholder="OJACH PORTAL">
 </div>
 
 <!-- Step3 -->
 <div class="section">
  <div class="section-title">Step3：URL</div>
- <input type="text" placeholder="https://example.com">
+ <input type="text" id="appURL" placeholder="https://example.com">
 </div>
 
 <div id="assistantBox">おちゃじ参上😎✨</div>
 
-<script>
-function toggleA(){
- let box=document.getElementById("assistantBox");
- box.style.display=(box.style.display=="none")?"block":"none";
-}
+<!-- ▼ 生成表示エリア -->
+<div id="output" style="padding:30px;"></div>
 
-/*画像プレビュー*/
-document.getElementById("iconInput").addEventListener("change",function(e){
- const file=e.target.files[0];
- if(!file)return;
- document.getElementById("preview").src=URL.createObjectURL(file);
-});
-</script>
-
+<script src="app.js"></script>
 </body>
 </html>
