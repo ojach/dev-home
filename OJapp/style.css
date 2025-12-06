@@ -3,18 +3,42 @@ body{
   font-family:"Helvetica","Arial","YuGothic",sans-serif;
   background:#ffffff; color:#222;
 }
-.header{display:flex;justify-content:space-between;align-items:center;padding:15px;border-bottom:1px solid #eee;}
-.logo{display:flex;align-items:center;font-size:22px;font-weight:bold;gap:6px;}
+.main {
+  width: 90%;
+  max-width: 480px;             /* ← 丁度良いスマホ幅 */
+  margin: 0 auto;
+}
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;  /* ← 左寄せ */
+  height: 58px;                 /* 高さ固定 */
+  padding: 0 15px;              /* 上下のズレ防止 */
+  border-bottom: 1px solid #eee;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
 .logo-img {
-  width: 34px;
-  height: 34px;
+  width: 28px;                  /* ← 少し小さくして見やすく */
+  height: 28px;
   border-radius: 50%;
   object-fit: cover;
   display: block;
 }
+
+.logo span {
+  font-size: 18px;              /* ← 小さめでUIなじむ */
+  font-weight: bold;
+  line-height: 1;               /* Safari対策：縦ズレ防止 */
+}
 .switch{font-size:24px;cursor:pointer;}
 
-h2{text-align:center;margin-top:30px;font-weight:600;}
+h2{text-align:center;margin-top:16px;font-weight:600;}
 
 .btn{margin:25px auto;padding:18px 38px;background:linear-gradient(#ffd85a,#ffb726);
 border-radius:40px;font-weight:bold;font-size:20px;text-align:center;
