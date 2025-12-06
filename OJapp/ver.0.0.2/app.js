@@ -1,21 +1,18 @@
-/*=============================
-   OJapp Builder - app.js 完全版
-=============================*/
-
-// 画面右下トグル
 function toggleA(){
  let box=document.getElementById("assistantBox");
  box.style.display = (box.style.display=="none")?"block":"none";
 }
 
-// アイコンプレビュー
+// プレビュー
 document.getElementById("iconInput").addEventListener("change",e=>{
  const file=e.target.files[0];
  if(!file)return;
  document.getElementById("preview").src = URL.createObjectURL(file);
 });
 
-// ▶ 作成ボタン
+// ==============================
+// ▼ Create App
+// ==============================
 document.getElementById("createBtn").addEventListener("click",()=>{
 
  let file=document.getElementById("iconInput").files[0];
@@ -24,104 +21,76 @@ document.getElementById("createBtn").addEventListener("click",()=>{
 
  if(!file||!name||!url){ alert("全部入力してな🔥"); return;}
 
+ let fileName = file.name; // ←これ重要！元名を使用
+
  let reader=new FileReader();
  reader.onload=()=>{
 
- let base64 = reader.result; // 画像をbase64に変換
+ let base64 = reader.result;
 
-
-/*=============================
-  ▼ 生成される index.html（更新版）
-=============================*/
-let indexHTML = `
-<!DOCTYPE html>
-<html lang="ja">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<link rel="apple-touch-icon" href="./icon.png">
+ // ===== index.html =====
+ let indexHTML = `
+<!DOCTYPE html><html lang="ja"><head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="apple-touch-icon" href="./${fileName}">
 <link rel="manifest" href="./manifest.json">
 <title>${name}</title>
 <style>
-body{
- margin:0;display:flex;justify-content:center;align-items:center;flex-direction:column;
- height:100vh;background:#e6f6ff;font-size:28px;font-weight:bold;
- font-family:-apple-system,BlinkMacSystemFont,"Segoe UI";text-align:center;
-}
-small{font-size:14px;color:#555;}
-#t{font-size:32px;color:#ff006a;font-weight:bold;}
+body{margin:0;display:flex;justify-content:center;align-items:center;flex-direction:column;
+height:100vh;background:#e6f6ff;font-size:28px;font-weight:bold;
+font-family:-apple-system,BlinkMacSystemFont,"Segoe UI";text-align:center;}
+small{font-size:14px;color:#555;}#t{font-size:32px;color:#ff006a;}
 #sub{font-size:14px;color:#444;margin-top:8px;opacity:.75;}
-</style>
-</head>
-<body>
-
+</style></head><body>
 <script>
-let first = !localStorage.getItem("${name}_installed");
-
+let first=!localStorage.getItem("${name}_installed");
 if(first){
-  // 初回 — ホーム追加促し＆30秒カウント
-  localStorage.setItem("${name}_installed",1);
-  let sec = 30;
-  document.body.innerHTML =
-  \`${name}<br>
-  <small>(${url})</small><br>
-  あと <span id="t">\${sec}</span> 秒で移動<br>
-  ホーム追加してね🔥\`;
-
-  let timer=setInterval(()=>{
-    sec--;
-    document.getElementById("t").textContent = sec;
-    if(sec<=0){
-      clearInterval(timer);
-      location.href="${url}";
-    }
-  },1000);
-
+ localStorage.setItem("${name}_installed",1);
+ let sec=30;
+ document.body.innerHTML=\`${name}<br><small>(${url})</small><br>
+ あと <span id="t">\${sec}</span> 秒で移動<br>ホーム追加してね🔥\`;
+ let timer=setInterval(()=>{sec--;document.getElementById("t").textContent=sec;
+ if(sec<=0){clearInterval(timer);location.href="${url}";}},1000);
 }else{
-  // 2回目~ — スプラッシュ演出
-  document.body.innerHTML =
-  \`${name}<br><div id="sub">presented by OJapp</div>\`;
-  setTimeout(()=>location.href="${url}",1200); // ←ココ2秒待機に変更
+ document.body.innerHTML=\`${name}<div id="sub">presented by OJapp</div>\`;
+ setTimeout(()=>location.href="${url}",2000);
 }
 </script>
-
-</body>
-</html>`;
-
-/*=============================
-  ▼ manifest.json
-=============================*/
-let manifestJSON = `{
-"name":"${name}",
-"short_name":"${name}",
-"start_url":"./",
-"display":"standalone",
-"icons":[{"src":"./icon.png","sizes":"192x192","type":"image/png"}]
-}`;
+</body></html>`;
 
 
-/*=============================
-  ▼ 画面下に出力
-=============================*/
-document.body.insertAdjacentHTML("beforeend",`
-<div style="padding:20px;background:#fff;margin:25px;border-radius:14px;">
-<h3>📄 index.html</h3>
-<pre style="white-space:pre-wrap;background:#eee;padding:10px;border-radius:10px;">
-${indexHTML.replace(/</g,"&lt;")}
-</pre>
+ // ===== manifest.json =====
+ let manifestJSON = `{
+ "name":"${name}",
+ "short_name":"${name}",
+ "start_url":"./",
+ "display":"standalone",
+ "icons":[{"src":"./${fileName}","sizes":"192x192","type":"image/png"}]
+ }`;
 
-<h3>📄 manifest.json</h3>
-<pre style="white-space:pre-wrap;background:#eee;padding:10px;border-radius:10px;">
-${manifestJSON.replace(/</g,"&lt;")}
-</pre>
+ // ===== 画面に貼り付け =====
+ document.getElementById("output").innerHTML = `
+ <h3>📄 index.html</h3>
+ <pre id="indexBox">${indexHTML.replace(/</g,"&lt;")}</pre>
+ <button onclick="copyText('indexBox')">📋 コピー</button>
 
-<h3>🖼 icon.png</h3>
-<p>↓右タップして保存し <b>icon.png</b> にリネームしてね</p>
-<img src="${base64}" style="width:150px;border-radius:22px;">
-</div>
-`);
+ <h3>📄 manifest.json</h3>
+ <pre id="manifestBox">${manifestJSON.replace(/</g,"&lt;")}</pre>
+ <button onclick="copyText('manifestBox')">📋 コピー</button>
 
-alert("👇 ページ下に生成したよ🔥 3ファイル設置するだけ！");
-};
-reader.readAsDataURL(file);
+ <h3>🖼 ${fileName}</h3>
+ <p>↓右タップで保存</p>
+ <img src="${base64}" style="width:150px;border-radius:22px;">
+ `;
+
+ alert("👇 ページ下に生成されたよ！🔥");
+ reader.readAsDataURL(file);
+}
 });
+
+// ▼ クリップボードコピー機能
+function copyText(id){
+ const text=document.getElementById(id).innerText;
+ navigator.clipboard.writeText(text);
+ alert("コピーしたで✌");
+}
