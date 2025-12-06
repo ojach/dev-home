@@ -9,7 +9,7 @@ body {
 /* ---------- Layout ---------- */
 .main {
   width: 90%;
-  max-width: 480px;
+  max-width: 440px;
   margin: 0 auto;
   padding-top: 16px;
 }
@@ -42,7 +42,7 @@ body {
 }
 
 .logo-text {
-  font-size: 18px;
+  font-size: 22px;
   font-weight: bold;
   line-height: 1;
 }
