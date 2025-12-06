@@ -1,134 +1,115 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>OJapp Generator</title>
-
+<meta charset="UTF-8">
+<title>OJapp Builder</title>
 <style>
-body{
-  font-family: 'Helvetica', sans-serif;
-  background:#ffffff;
-  padding:30px;
-  text-align:center;
-  color:#444;
-}
-
-h1{
-  font-size:28px;
-  font-weight:800;
-  margin-bottom:5px;
-  background:linear-gradient(45deg,#45aaff,#ff6bd8);
-  -webkit-background-clip:text;
-  color:transparent;
-}
-
-.sub{
-  font-size:14px;
-  margin-bottom:30px;
-  color:#666;
-}
-
-/* 入力欄 */
-input{
-  width:80%;
-  height:42px;
-  font-size:15px;
-  border-radius:10px;
-  border:2px solid #e7e7e7;
-  padding:0 12px;
-  margin-bottom:20px;
-}
-
-/* ぷっくりボタン */
-button{
-  width:70%;
-  height:55px;
-  font-size:20px;
-  font-weight:700;
-  border:none;
-  border-radius:14px;
-  background:linear-gradient(145deg,#61c2ff,#ff74dd);
-  color:white;
-  box-shadow:0 5px 0 #d94fba;
-  transition:.15s;
-}
-button:active{
-  transform:translateY(5px);
-  box-shadow:0 0 0 #d94fba;
-}
-
-/* 結果枠 */
-#result{
-  display:none;
-  margin-top:30px;
-  font-size:16px;
-  font-weight:600;
-}
+/* ------- 既存デザインそのまま ------- */
+body{ margin:0;font-family:"Helvetica","Arial","YuGothic",sans-serif;background:#ffffff;color:#222;}
+.header{display:flex;justify-content:space-between;align-items:center;padding:15px;border-bottom:1px solid #eee;}
+.logo{display:flex;align-items:center;font-size:22px;font-weight:bold;gap:6px;}
+.logo-icon{width:34px;height:34px;background:radial-gradient(circle at 30% 30%, #6dd4ff, #2bb7ff);border-radius:50%;position:relative;}
+.logo-icon::after{content:"";position:absolute;width:13px;height:13px;background:radial-gradient(circle at 30% 30%, #ffb0d8, #ff4fa9);border-radius:50%;top:9px;left:10px;}
+.switch{font-size:24px;cursor:pointer;}
+h2{text-align:center;margin-top:30px;font-weight:600;}
+.btn{display:inline-block;margin:25px auto;padding:18px 38px;background:linear-gradient(#ffd85a,#ffb726);border-radius:40px;font-weight:bold;font-size:20px;text-align:center;box-shadow:0 6px 0 #d19400;transition:0.2s;position:relative;}
+.btn::after{content:"";position:absolute;top:6px;left:50%;transform:translateX(-50%);width:70%;height:30%;border-radius:30px;background:rgba(255,255,255,0.55);filter:blur(2px);}
+.btn:hover{transform:scale(1.06);}
+.btn:active{transform:scale(0.97);box-shadow:0 3px 0 #a87500;}
+@keyframes pulse{0%{transform:scale(1);}50%{transform:scale(1.04);}100%{transform:scale(1);}}
+.btn.pulse{animation:pulse 2.4s infinite ease-in-out;}
+.arrow{text-align:center;font-size:26px;animation:float 1.6s infinite ease-in-out;}
+@keyframes float{0%{transform:translateY(0);}50%{transform:translateY(8px);}100%{transform:translateY(0);}}
+.section{width:90%;max-width:500px;background:white;margin:18px auto;padding:20px;border-radius:18px;box-shadow:0 0 12px rgba(0,0,0,0.05);}
+.section-title{font-size:18px;margin-bottom:10px;font-weight:bold;}
+input[type=file],input[type=text]{width:100%;padding:13px;border-radius:12px;border:1px solid #ddd;font-size:16px;outline:none;}
+input:focus{border-color:#66c8ff;}
+.icon-box{width:160px;height:160px;background:#f5f5f5;border-radius:22px;margin:12px auto;display:flex;justify-content:center;align-items:center;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,0.06);}
+.icon-box img{width:100%;height:100%;object-fit:cover;border-radius:22px;}
+#assistantBox{position:fixed;bottom:20px;right:20px;background:white;border-radius:20px;border:2px solid #2bb7ff;padding:12px 18px;box-shadow:0 0 12px rgba(0,0,0,0.1);font-size:15px;display:none;}
 </style>
 </head>
-
 <body>
 
-<h1>OJapp</h1>
-<div class="sub">ホームを変える。自分を変える。</div>
+<div class="header">
+ <div class="logo"><div class="logo-icon"></div>OJapp</div>
+ <div class="switch" onclick="toggleA()">😆</div>
+</div>
 
-<input id="urlInput" placeholder="サイトURLを入力" />
+<h2>ホームを変える。自分を変える。</h2>
 
-<button onclick="generateFiles()">✨ アプリを生成 ✨</button>
+<div style="text-align:center;">
+ <div class="btn pulse" onclick="generateApp()">Create App 🎉</div>
+ <div class="arrow">▼</div>
+</div>
 
-<div id="result"></div>
+<div class="section">
+ <div class="section-title">Step1：アイコン画像</div>
+ <input type="file" id="iconInput">
+ <div class="icon-box"><img id="preview" /></div>
+</div>
+
+<div class="section">
+ <div class="section-title">Step2：アプリ名</div>
+ <input type="text" id="appName" placeholder="OJACH PORTAL">
+</div>
+
+<div class="section">
+ <div class="section-title">Step3：URL</div>
+ <input type="text" id="targetURL" placeholder="https://example.com">
+</div>
+
+<div id="assistantBox">おちゃじ参上😎✨</div>
 
 <script>
-function generateFiles(){
-  let url = document.getElementById("urlInput").value.trim();
-
-  if(!url){ alert("URLを入力してね！"); return; }
-  if(!url.startsWith("http")) url = "https://" + url;
-
-  const htmlContent = `
-<!DOCTYPE html>
-<html>
-<head>
-<meta charset="UTF-8">
-<link rel="apple-touch-icon" href="icon.png">
-<link rel="manifest" href="manifest.json">
-<title>My App</title>
-</head>
-<body>
-<script>location.href="${url}";</script>
-</body>
-</html>
-`;
-
-  const manifest = `
-{
-  "name": "MyApp",
-  "short_name": "App",
-  "start_url": "${url}",
-  "display": "standalone",
-  "icons":[{"src":"icon.png","sizes":"192x192","type":"image/png"}]
+function toggleA(){
+ let box=document.getElementById("assistantBox");
+ box.style.display=(box.style.display=="none")?"block":"none";
 }
-`;
 
-  const zip = new JSZip();
-  zip.file("index.html", htmlContent);
-  zip.file("manifest.json", manifest);
+document.getElementById("iconInput").addEventListener("change",e=>{
+ const f=e.target.files[0];
+ if(f) document.getElementById("preview").src=URL.createObjectURL(f);
+});
 
-  fetch("OJapp_icon_192.png") // ← 後で好きな画像に置換できる
-    .then(r => r.blob())
-    .then(b => zip.file("icon.png", b))
-    .then(() => zip.generateAsync({type:"blob"}))
-    .then(content => saveAs(content,"OJapp_app.zip"));
+/* -------- 生成メイン -------- */
+function generateApp(){
+ const icon=document.getElementById("iconInput").files[0];
+ const name=document.getElementById("appName").value||"MyApp";
+ const url=document.getElementById("targetURL").value||"";
+ 
+ if(!icon) return alert("アイコンが必要です！");
+ if(!url) return alert("URLを入力してください！");
 
-  document.getElementById("result").innerHTML = "ZIP生成しました🎉";
-  result.style.display="block";
+ // ▼ 第一段階：まず遷移用 index をブラウザで生成表示（ZIP化は次工程）
+ const blobURL = URL.createObjectURL(new Blob([`
+<!DOCTYPE html><html><head>
+<meta charset="UTF-8">
+<title>${name}</title>
+<link rel="apple-touch-icon" href="./icon.png">
+<link rel="manifest" href="./manifest.json">
+<style>
+body{margin:0;display:flex;justify-content:center;align-items:center;height:100vh;background:#e6f6ff;font-family:-apple-system;}
+#logo{background:white;padding:22px 30px;border-radius:22px;font-size:30px;font-weight:bold;color:#ff69b4;box-shadow:0 4px 10px rgba(0,0,0,.25);animation:pulse 1.2s infinite;}
+@keyframes pulse{0%{transform:scale(1);}50%{transform:scale(1.07);}100%{transform:scale(1);}}
+.msg{position:absolute;bottom:20px;width:100%;text-align:center;color:#333;}
+</style>
+</head><body>
+<div id="logo">${name}</div>
+<div class="msg">初回は30秒後に自動遷移します<br>ホーム追加推奨🔥</div>
+
+<script>
+let firstRun=!localStorage.getItem("${name}_installed");
+let sec=firstRun?30:3;
+setInterval(()=>{sec--;if(sec<=0) location.href="${url}";},1000);
+localStorage.setItem("${name}_installed","yes");
+</script>
+</body></html>
+`],{type:"text/html"}));
+
+ window.open(blobURL,"_blank"); // → これが生成したページのプレビュー
+ alert("生成ページが開きました！そのページをホーム追加してください🏠");
 }
 </script>
-
-<!-- ZIP生成に必要なライブラリ -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.7.1/jszip.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
-
 </body>
 </html>
