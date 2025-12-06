@@ -2,7 +2,9 @@
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>OJapp Builder</title>
+
 <style>
 body{
   margin:0;
@@ -10,6 +12,7 @@ body{
   background:#ffffff;
   color:#222;
 }
+
 .header{
   display:flex;
   justify-content:space-between;
@@ -17,6 +20,8 @@ body{
   padding:15px;
   border-bottom:1px solid #eee;
 }
+
+/* --- 🔵ロゴ --- */
 .logo{
   display:flex;
   align-items:center;
@@ -39,15 +44,20 @@ body{
   top:9px;left:10px;
 }
 
+/* --- OCHAGスイッチ --- */
 .switch{
   font-size:24px;
   cursor:pointer;
 }
+
+/* --- キャッチコピー --- */
 h2{
   text-align:center;
   margin-top:30px;
   font-weight:600;
 }
+
+/* --- ぷっくりグロスボタン --- */
 .btn{
   display:inline-block;
   margin:25px auto;
@@ -60,7 +70,6 @@ h2{
   box-shadow:0 6px 0 #d19400;
   transition:0.2s;
   position:relative;
-  cursor:pointer;
 }
 .btn::after{
   content:"";
@@ -73,37 +82,73 @@ h2{
   background:rgba(255,255,255,0.55);
   filter:blur(2px);
 }
-.btn:hover{transform:scale(1.06);}
-.btn:active{transform:scale(0.97);box-shadow:0 3px 0 #a87500;}
+.btn:hover{ transform:scale(1.06); }
+.btn:active{ transform:scale(.97); box-shadow:0 3px 0 #a87500; }
 
-@keyframes pulse{50%{transform:scale(1.04);}}
-.btn.pulse{animation:pulse 2.4s infinite ease-in-out;}
-.arrow{text-align:center;font-size:26px;animation:float 1.6s infinite ease-in-out;}
-@keyframes float{50%{transform:translateY(8px);}}
+.btn.pulse{ animation:pulse 2.4s infinite ease-in-out; }
+@keyframes pulse{
+  0%{transform:scale(1);}
+  50%{transform:scale(1.04);}
+  100%{transform:scale(1);}
+}
+
+.arrow{
+  text-align:center;
+  font-size:26px;
+  animation:float 1.6s infinite ease-in-out;
+}
+@keyframes float{
+  0%{transform:translateY(0);}
+  50%{transform:translateY(8px);}
+  100%{transform:translateY(0);}
+}
 
 .section{
-  width:90%;max-width:500px;background:white;margin:18px auto;padding:20px;
-  border-radius:18px;box-shadow:0 0 12px rgba(0,0,0,0.05);
+  width:90%;
+  max-width:500px;
+  background:white;
+  margin:18px auto;
+  padding:20px;
+  border-radius:18px;
+  box-shadow:0 0 12px rgba(0,0,0,0.05);
 }
-.section-title{font-size:18px;margin-bottom:10px;font-weight:bold;}
+.section-title{ font-size:18px; margin-bottom:10px; font-weight:bold; }
 
 input[type=file],input[type=text]{
-  width:100%;padding:13px;border-radius:12px;border:1px solid #ddd;
-  font-size:16px;outline:none;
+  width:100%;
+  padding:13px;
+  border-radius:12px;
+  border:1px solid #ddd;
+  font-size:16px;
+  outline:none;
 }
-input:focus{border-color:#66c8ff;}
+input:focus{ border-color:#66c8ff; }
 
 .icon-box{
-  width:160px;height:160px;background:#f5f5f5;border-radius:22px;margin:12px auto;
-  display:flex;justify-content:center;align-items:center;overflow:hidden;
+  width:160px;height:160px;
+  background:#f5f5f5;
+  border-radius:22px;
+  margin:12px auto;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  overflow:hidden;
   box-shadow:0 2px 8px rgba(0,0,0,0.06);
 }
-.icon-box img{width:100%;height:100%;object-fit:cover;border-radius:22px;}
+.icon-box img{
+  width:100%;height:100%;object-fit:cover;
+  border-radius:22px;
+}
 
 #assistantBox{
-  position:fixed;bottom:20px;right:20px;background:white;border-radius:20px;
-  border:2px solid #2bb7ff;padding:12px 18px;box-shadow:0 0 12px rgba(0,0,0,0.1);
-  font-size:15px;display:none;
+  position:fixed;bottom:20px;right:20px;
+  background:white;
+  border-radius:20px;
+  border:2px solid #2bb7ff;
+  padding:12px 18px;
+  box-shadow:0 0 12px rgba(0,0,0,0.1);
+  font-size:15px;
+  display:none;
 }
 </style>
 </head>
@@ -117,90 +162,124 @@ input:focus{border-color:#66c8ff;}
 <h2>ホームを変える。自分を変える。</h2>
 
 <div style="text-align:center;">
- <div class="btn pulse" onclick="generateApp()">Create App 🎉</div>
+ <button class="btn pulse" onclick="generate()">Create App 🎉</button>
  <div class="arrow">▼</div>
 </div>
 
-<!-- Step1 -->
 <div class="section">
  <div class="section-title">Step1：アイコン画像</div>
  <input type="file" id="iconInput">
  <div class="icon-box"><img id="preview" src="" /></div>
 </div>
 
-<!-- Step2 -->
 <div class="section">
  <div class="section-title">Step2：アプリ名</div>
- <input id="appName" type="text" placeholder="OJACH PORTAL">
+ <input type="text" id="appName" placeholder="OJACH PORTAL">
 </div>
 
-<!-- Step3 -->
 <div class="section">
  <div class="section-title">Step3：URL</div>
- <input id="targetURL" type="text" placeholder="https://example.com">
+ <input type="text" id="appURL" placeholder="https://example.com">
 </div>
 
 <div id="assistantBox">おちゃじ参上😎✨</div>
-
 <script>
-// アシスタントPOP
 function toggleA(){
  let box=document.getElementById("assistantBox");
  box.style.display=(box.style.display=="none")?"block":"none";
 }
-
-// 画像プレビュー
 document.getElementById("iconInput").addEventListener("change",e=>{
- const file=e.target.files[0];
- if(file) document.getElementById("preview").src=URL.createObjectURL(file);
+ let f=e.target.files[0]; if(!f)return;
+ document.getElementById("preview").src=URL.createObjectURL(f);
 });
+  /* ================================
+   📌 ページ生成機能（ここから）
+================================ */
+function generate(){
+  const file = document.getElementById("iconInput").files[0];
+  const name = document.getElementById("appName").value || "My App";
+  const url  = document.getElementById("appURL").value;
 
-// 🔥 ページ生成本体
-function generateApp(){
- const file=document.getElementById("iconInput").files[0];
- const appName=document.getElementById("appName").value.trim();
- const targetURL=document.getElementById("targetURL").value.trim();
+  if(!url){
+     alert("URLを入力してね😎");
+     return;
+  }
 
- if(!file||!appName||!targetURL) return alert("全部入力してね👌");
+  // アイコンの読み込み
+  const reader = new FileReader();
+  reader.onload = function(e){
+    const iconBase64 = e.target.result;
 
- const reader=new FileReader();
- reader.onload=e=>{
-  const base64=e.target.result;
-  const html=`<!DOCTYPE html><html><head>
-<title>${appName}</title>
-<meta name="apple-mobile-web-app-capable" content="yes">
-<link rel="apple-touch-icon" href="${base64}">
+    // 🔥 生成されるminiアプリのhtml
+    const html = `
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>${name}</title>
+
+<link rel="apple-touch-icon" href="${iconBase64}">
+<link rel="manifest" href="manifest.json">
+
 <style>
-body{margin:0;display:flex;justify-content:center;align-items:center;height:100vh;font-family:sans-serif;text-align:center;}
+body{
+  margin:0; display:flex; justify-content:center; align-items:center;
+  height:100vh; background:#e6f6ff;
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  flex-direction:column;
+}
+
+#logo{
+  background:white; padding:22px 30px; border-radius:22px;
+  font-size:30px; font-weight:bold; color:#ff69b4;
+  box-shadow:0 4px 10px rgba(0,0,0,.25);
+  animation:pulse 1.2s infinite;
+  margin-bottom:20px;
+}
+@keyframes pulse{
+  0%{transform:scale(1);}
+  50%{transform:scale(1.07);}
+  100%{transform:scale(1);}
+}
+
+#msg{margin-top:10px;opacity:.8;}
 </style>
-</head><body>
-<h2>${appName}</h2>
-<img src="${base64}" width="120" style="border-radius:20px;"><br><br>
-<b>ホームに追加推奨🔥</b><br>自動で移動します<br><br>
-<div id="count">初回は30秒 / 以降3秒</div>
+</head>
+<body>
+
+<div id="logo">${name}</div>
+<div id="msg">⏳ 初回だけ30秒後に自動でページへ移動します</div>
+<div>ホーム画面に追加するとアイコンアプリ化できるよ📱</div>
 
 <script>
-let first=!localStorage.getItem("${appName}_installed");
-let sec=first?30:3;
+let first = !localStorage.getItem("ojapp_first_${name}");
+let time = first ? 30 : 3; // 初回のみ長く
+
+document.getElementById("msg").innerHTML = "⏳ " + time + "秒後に移動 → ${url}";
+
+localStorage.setItem("ojapp_first_${name}",1);
+
 let timer=setInterval(()=>{
- document.getElementById('count').innerHTML="移動まで "+sec+" 秒";
- sec--;
- if(sec<0){
-  clearInterval(timer);
-  localStorage.setItem("${appName}_installed",true);
-  location.href="${targetURL}";
- }
+  time--;
+  document.getElementById("msg").innerHTML = "⏳ " + time + "秒後に移動 → ${url}";
+  if(time<=0){
+    clearInterval(timer);
+    location.href="${url}";
+  }
 },1000);
 </script>
-</body></html>`;
+</body>
+</html>`;
 
-  const blob=new Blob([html],{type:"text/html"});
-  window.open(URL.createObjectURL(blob),"_blank");
-  alert("生成ページが開いたよ！ホーム追加してみて🔥");
- };
- reader.readAsDataURL(file);
+    // 生成して開く
+    const blob=new Blob([html],{type:"text/html"});
+    window.open(URL.createObjectURL(blob),"_blank");
+    alert("生成ページが開いたよ！ホームに追加してみて🔥");
+  };
+
+  reader.readAsDataURL(file);
 }
 </script>
-
 </body>
 </html>
