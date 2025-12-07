@@ -1,27 +1,30 @@
 /* ---------- Base ---------- */
-body {
+html, body {
   margin: 0;
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden;        /* ← スマホで横切れ防止 */
   font-family: "Helvetica","Arial","YuGothic",sans-serif;
   background: #ffffff;
   color: #222;
+  box-sizing: border-box;
+}
+
+*, *:before, *:after {
+  box-sizing: inherit;       /* ← 全要素を border-box に統一 */
 }
 
 /* ---------- Layout ---------- */
 .main {
-  width: 60%;
-  max-width: 500%;
-  margin: 0 auto;
+  width: 60%;                /* ← 中身のレーン幅 */
+  max-width: 500px;          /* ← PCで広がりすぎない */
+  margin: 0 auto;            /* ← 中央寄せ */
   padding-top: 16px;
-}
-
-.center {
-  text-align: center;
 }
 
 /* ---------- Header ---------- */
 .header {
-  width: 90%;               /* 画面いっぱい */
-  max-width: 90%;
+  width: 100%;               /* ← 画面いっぱい！ */
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -47,7 +50,8 @@ body {
   font-size: 22px;
   font-weight: bold;
   line-height: 1;
-  top: 1px;
+  position: relative;
+  top: 1px;                  /* ← 微調整で縦揃え */
 }
 
 .switch {
@@ -116,10 +120,9 @@ h2 {
   100% { transform: translateY(0); }
 }
 
-/* ---------- Section Cards ---------- */
+/* ---------- Sections ---------- */
 .section {
-  width: 60%;
-  max-width: 500px;
+  width: 100%;                 /* ← main の幅に揃える */
   background: white;
   margin: 18px auto;
   padding: 20px;
@@ -133,9 +136,10 @@ h2 {
   font-weight: bold;
 }
 
+/* ---------- Inputs ---------- */
 input[type=file],
 input[type=text] {
-  width: 60%;
+  width: 100%;                /* ← main 幅にピッタリ */
   padding: 13px;
   border-radius: 12px;
   border: 1px solid #ddd;
@@ -146,7 +150,7 @@ input:focus {
   border-color: #66c8ff;
 }
 
-/* Icon preview */
+/* ---------- Icon Preview ---------- */
 .icon-box {
   width: 160px;
   height: 160px;
@@ -161,20 +165,20 @@ input:focus {
 }
 
 .icon-box img {
-  width: 60%;
+  width: 100%;
   height: 100%;
   object-fit: cover;
   border-radius: 22px;
 }
 
-/* Guide Link */
+/* ---------- Guide Link ---------- */
 .guide-link {
   color: #2bb7ff;
   font-weight: bold;
   text-decoration: none;
 }
 
-/* Assistant box */
+/* ---------- Assistant Box ---------- */
 #assistantBox {
   position: fixed;
   bottom: 20px;
