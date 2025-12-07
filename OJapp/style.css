@@ -8,7 +8,7 @@ body {
 
 /* ---------- Layout ---------- */
 .main {
-  width: 75%;
+  width: 60%;
   max-width: 500%;
   margin: 0 auto;
   padding-top: 16px;
@@ -20,8 +20,8 @@ body {
 
 /* ---------- Header ---------- */
 .header {
-  width: 100%;               /* 画面いっぱい */
-  max-width: 100%;
+  width: 90%;               /* 画面いっぱい */
+  max-width: 90%;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -118,7 +118,7 @@ h2 {
 
 /* ---------- Section Cards ---------- */
 .section {
-  width: 80%;
+  width: 60%;
   max-width: 500px;
   background: white;
   margin: 18px auto;
@@ -135,7 +135,7 @@ h2 {
 
 input[type=file],
 input[type=text] {
-  width: 100%;
+  width: 60%;
   padding: 13px;
   border-radius: 12px;
   border: 1px solid #ddd;
@@ -161,7 +161,7 @@ input:focus {
 }
 
 .icon-box img {
-  width: 100%;
+  width: 60%;
   height: 100%;
   object-fit: cover;
   border-radius: 22px;
