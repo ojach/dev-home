@@ -1,42 +1,90 @@
-/* ---------- Base ---------- */
+/* =========================================
+   Theme Variables（色だけを集中管理）
+========================================= */
+:root {
+  --bg: #ffffff;
+  --text: #222;
+  --header-border: #eee;
+
+  --section-bg: #ffffff;
+  --section-shadow: rgba(0, 0, 0, .05);
+
+  --input-bg: #ffffff;
+  --input-border: #ddd;
+
+  --icon-bg: #f5f5f5;
+
+  --assistant-bg: #ffffff;
+  --assistant-border: #2bb7ff;
+}
+
+/* ===== Dark Mode ===== */
+.dark {
+  --bg: #111;
+  --text: #eaeaea;
+  --header-border: #444;
+
+  --section-bg: #1a1a1a;
+  --section-shadow: rgba(0, 0, 0, .4);
+
+  --input-bg: #222;
+  --input-border: #555;
+
+  --icon-bg: #2a2a2a;
+
+  --assistant-bg: #111;
+  --assistant-border: #67c8ff;
+}
+
+
+/* =========================================
+   Base
+========================================= */
 html, body {
   margin: 0;
   width: 100%;
   max-width: 100%;
-  overflow-x: hidden;        /* ← スマホで横切れ防止 */
+  overflow-x: hidden;
   font-family: "Helvetica","Arial","YuGothic",sans-serif;
-  background: #ffffff;
-  color: #222;
+  background: var(--bg);
+  color: var(--text);
   box-sizing: border-box;
 }
 
 *, *:before, *:after {
-  box-sizing: inherit;       /* ← 全要素を border-box に統一 */
+  box-sizing: inherit;
 }
 
 .center {
-  width: 100%;      /* main と同じ幅にする */
-  max-width: 500px; /* main と揃える */
-  margin: 0 auto;   /* 中央寄せ */
+  width: 100%;
+  max-width: 500px;
+  margin: 0 auto;
   text-align: center;
 }
-/* ---------- Layout ---------- */
+
+
+/* =========================================
+   Layout
+========================================= */
 .main {
-  width: 80%;                /* ← 中身のレーン幅 */
-  max-width: 500px;          /* ← PCで広がりすぎない */
-  margin: 0 auto;            /* ← 中央寄せ */
+  width: 80%;
+  max-width: 500px;
+  margin: 0 auto;
   padding-top: 16px;
 }
 
-/* ---------- Header ---------- */
+
+/* =========================================
+   Header
+========================================= */
 .header {
-  width: 100%;               /* ← 画面いっぱい！ */
+  width: 100%;
   display: flex;
   justify-content: space-between;
   align-items: center;
   height: 58px;
   padding: 0 16px;
-  border-bottom: 1px solid #eee;
+  border-bottom: 1px solid var(--header-border);
 }
 
 .logo-box {
@@ -57,7 +105,7 @@ html, body {
   font-weight: bold;
   line-height: 1;
   position: relative;
-  top: 1px;                  /* ← 微調整で縦揃え */
+  top: 1px;
 }
 
 .switch {
@@ -65,7 +113,10 @@ html, body {
   cursor: pointer;
 }
 
-/* ---------- Title ---------- */
+
+/* =========================================
+   Title
+========================================= */
 h2 {
   text-align: center;
   margin-top: 20px;
@@ -74,11 +125,14 @@ h2 {
   white-space: nowrap;
 }
 
-/* ---------- Button ---------- */
+
+/* =========================================
+   Buttons
+========================================= */
 .btn {
   margin: 25px auto;
   padding: 18px 38px;
-  background: linear-gradient(#ffd85a,#ffb726);
+  background: linear-gradient(#ffd85a, #ffb726);
   border-radius: 40px;
   font-weight: bold;
   font-size: 20px;
@@ -115,7 +169,10 @@ h2 {
 }
 .btn.pulse { animation: pulse 2.4s infinite ease-in-out; }
 
-/* ---------- Arrow ---------- */
+
+/* =========================================
+   Arrow
+========================================= */
 .arrow {
   font-size: 26px;
   animation: float 1.6s infinite ease-in-out;
@@ -127,14 +184,17 @@ h2 {
   100% { transform: translateY(0); }
 }
 
-/* ---------- Sections ---------- */
+
+/* =========================================
+   Sections
+========================================= */
 .section {
-  width: auto;                 /*main の幅に揃える */
-  background: white;
+  width: auto;
+  background: var(--section-bg);
   margin: 18px auto;
   padding: 20px;
   border-radius: 18px;
-  box-shadow: 0 0 12px rgba(0,0,0,.05);
+  box-shadow: 0 0 12px var(--section-shadow);
 }
 
 .section-title {
@@ -143,15 +203,19 @@ h2 {
   font-weight: bold;
 }
 
-/* ---------- Inputs ---------- */
+
+/* =========================================
+   Inputs
+========================================= */
 input[type=file],
 input[type=text] {
-  width: 100%;                /* ← main 幅にピッタリ */
+  width: 100%;
   max-width: 100%;
-  overflow: hidden;
   padding: 13px;
   border-radius: 12px;
-  border: 1px solid #ddd;
+  background: var(--input-bg);
+  border: 1px solid var(--input-border);
+  color: var(--text);
   font-size: 16px;
 }
 
@@ -159,11 +223,14 @@ input:focus {
   border-color: #66c8ff;
 }
 
-/* ---------- Icon Preview ---------- */
+
+/* =========================================
+   Icon Preview
+========================================= */
 .icon-box {
   width: 160px;
   height: 160px;
-  background: #f5f5f5;
+  background: var(--icon-bg);
   border-radius: 22px;
   margin: 12px auto;
   display: flex;
@@ -171,7 +238,6 @@ input:focus {
   align-items: center;
   overflow: hidden;
   box-shadow: 0 2px 8px rgba(0,0,0,.06);
-  display: block;
 }
 
 .icon-box img {
@@ -181,21 +247,27 @@ input:focus {
   border-radius: 22px;
 }
 
-/* ---------- Guide Link ---------- */
+
+/* =========================================
+   Guide Link
+========================================= */
 .guide-link {
   color: #2bb7ff;
   font-weight: bold;
   text-decoration: none;
 }
 
-/* ---------- Assistant Box ---------- */
+
+/* =========================================
+   Assistant Box
+========================================= */
 #assistantBox {
   position: fixed;
   bottom: 20px;
   right: 20px;
-  background: white;
+  background: var(--assistant-bg);
   border-radius: 20px;
-  border: 2px solid #2bb7ff;
+  border: 2px solid var(--assistant-border);
   padding: 12px 18px;
   box-shadow: 0 0 12px rgba(0,0,0,.1);
   font-size: 15px;
