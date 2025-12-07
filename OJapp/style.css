@@ -20,6 +20,8 @@ body {
 
 /* ---------- Header ---------- */
 .header {
+  width: 100%;               /* 画面いっぱい */
+  max-width: 550px;
   display: flex;
   justify-content: space-between;
   align-items: center;
