@@ -16,7 +16,7 @@ html, body {
 
 /* ---------- Layout ---------- */
 .main {
-  width: 60%;                /* ← 中身のレーン幅 */
+  width: 80%;                /* ← 中身のレーン幅 */
   max-width: 500px;          /* ← PCで広がりすぎない */
   margin: 0 auto;            /* ← 中央寄せ */
   padding-top: 16px;
