@@ -28,6 +28,7 @@
 <body>
 
 <div id="header"></div>
+<script src="/OJapp/darkmode.js"></script>
 <script>
 fetch("/OJapp/header.html")
   .then(r => r.text())
