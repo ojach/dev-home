@@ -1,11 +1,41 @@
-function toggleTheme() {
-  document.documentElement.classList.toggle("dark");
+// ===============================
+//  ダークモードの読み込み時初期化
+// ===============================
+(function() {
+  const saved = localStorage.getItem("ojapp_dark");
 
-  // ついでに絵文字も変える
-  const sw = document.querySelector(".switch");
+  if (saved === "1") {
+    document.documentElement.classList.add("dark");
+  }
+
+  // ヘッダー挿入後にアイコン更新（少し遅延）
+  setTimeout(updateThemeIcon, 10);
+})();
+
+
+// ===============================
+//  ダークモード切り替え
+// ===============================
+function toggleTheme() {
+  const html = document.documentElement;
+  const isDark = html.classList.toggle("dark");
+
+  localStorage.setItem("ojapp_dark", isDark ? "1" : "0");
+
+  updateThemeIcon();
+}
+
+
+// ===============================
+//  ヘッダーのアイコンを更新する
+// ===============================
+function updateThemeIcon() {
+  const button = document.querySelector(".switch");
+  if (!button) return;
+
   if (document.documentElement.classList.contains("dark")) {
-    sw.textContent = "🌙";
+    button.textContent = "🌙";
   } else {
-    sw.textContent = "🤩";
+    button.textContent = "🤩";
   }
 }
