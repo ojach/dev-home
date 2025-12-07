@@ -84,7 +84,7 @@ if(first){
  `;
 
  alert("👇 ページ下に生成されたよ！🔥");
- 
+ 
 }
  reader.readAsDataURL(file);
 });
