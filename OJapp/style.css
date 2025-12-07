@@ -122,7 +122,7 @@ h2 {
 
 /* ---------- Sections ---------- */
 .section {
-  width: 100%;                 /* ← main の幅に揃える */
+  width: auto;                 /*main の幅に揃える */
   background: white;
   margin: 18px auto;
   padding: 20px;
