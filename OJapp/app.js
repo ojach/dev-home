@@ -3,6 +3,18 @@ function toggleA(){
  box.style.display = (box.style.display=="none")?"block":"none";
 }
 
+async function loadHeader() {
+  const cached = localStorage.getItem("header_html");
+  if (cached) {
+    document.getElementById("header").innerHTML = cached;
+  }
+  const res = await fetch("/OJapp/header.html");
+  const html = await res.text();
+  document.getElementById("header").innerHTML = html;
+  localStorage.setItem("header_html", html);
+}
+loadHeader();
+
 // プレビュー
 document.getElementById("iconInput").addEventListener("change",e=>{
  const file=e.target.files[0];
