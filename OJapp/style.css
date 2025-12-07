@@ -9,7 +9,7 @@ body {
 /* ---------- Layout ---------- */
 .main {
   width: 90%;
-  max-width: 430px;
+  max-width: 90%;
   margin: 0 auto;
   padding-top: 16px;
 }
@@ -21,7 +21,7 @@ body {
 /* ---------- Header ---------- */
 .header {
   width: 100%;               /* 画面いっぱい */
-  max-width: 550px;
+  max-width: 100%;
   display: flex;
   justify-content: space-between;
   align-items: center;
