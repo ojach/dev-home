@@ -140,6 +140,8 @@ h2 {
 input[type=file],
 input[type=text] {
   width: 100%;                /* ← main 幅にピッタリ */
+  max-width: 100%;
+  overflow: hidden;
   padding: 13px;
   border-radius: 12px;
   border: 1px solid #ddd;
@@ -162,6 +164,7 @@ input:focus {
   align-items: center;
   overflow: hidden;
   box-shadow: 0 2px 8px rgba(0,0,0,.06);
+  display: block;
 }
 
 .icon-box img {
