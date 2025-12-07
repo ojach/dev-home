@@ -21,13 +21,12 @@
 <body>
 
 <!-- ▼ HEADER -->
-<div class="header">
-  <div class="logo-box">
-    <img src="icon/ojapp-logo.png?v=4" class="logo-img" alt="OJapp">
-    <span class="logo-text">OJapp</span>
-  </div>
-  <div class="switch" onclick="toggleTheme()">🤩</div>
-</div>
+<div id="header"></div>
+<script>
+  fetch("/OJapp/header.html")
+    .then(r => r.text())
+    .then(h => document.getElementById("header").innerHTML = h);
+</script>
 
 <!-- ▼ MAIN -->
 <div class="main">
