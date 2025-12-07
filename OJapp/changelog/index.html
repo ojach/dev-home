@@ -1,1 +1,96 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <!-- ここに head-template.html をコピペ -->
+  <!-- ▼ OJapp 共通 HEAD（コピペ用） -->
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+<title>OJapp changeLOG</title>
+
+<!-- ファビコン -->
+<link rel="icon" type="image/png" sizes="16x16" href="/OJapp/icons/favicon-16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/OJapp/icons/favicon-32.png">
+<link rel="icon" type="image/png" sizes="48x48" href="/OJapp/icons/favicon-48.png">
+
+<!-- iPhone ホームアイコン -->
+<link rel="apple-touch-icon" sizes="180x180" href="/OJapp/icons/icon-180.png">
+
+<!-- PWA（必要なら有効化） -->
+<!-- <link rel="manifest" href="/OJapp/manifest.json"> -->
+
+<meta name="theme-color" content="#2bb7ff">
+
+<!-- 共通CSS -->
+<link rel="stylesheet" href="/OJapp/style.css">
+<!-- ダークモード呼ぶ -->
+<script src="/OJapp/darkmode.js"></script>
+</head>
+
+<body>
+
+<div id="header"></div>
+<script>
+fetch("/OJapp/header.html")
+  .then(r => r.text())
+  .then(h => document.getElementById("header").innerHTML = h);
+</script>
+
+<div class="main">
+  <!-- ページ固有の内容を書く -->
+  <h1 style="margin-bottom: 12px;">更新履歴（Changelog）</h1>
+<p style="margin-bottom: 24px; color:#555;">
+  OJapp のアップデート内容をまとめています。
+</p>
+
+<!-- ======================= -->
+<!-- v0.4 -->
+<!-- ======================= -->
+<h2 style="margin-top: 28px;">🔷 v0.4 — 2025/02/10</h2>
+<ul>
+  <li>全ページで共通ヘッダー・フッターを導入</li>
+  <li>ダークモードに正式対応</li>
+  <li>安全性ガイドラインページを追加</li>
+  <li>使い方ガイドページを追加</li>
+  <li>ページ構造を head-template 化して作業効率が大幅向上</li>
+</ul>
+
+<!-- ======================= -->
+<!-- v0.3 -->
+<!-- ======================= -->
+<h2 style="margin-top: 28px;">🔷 v0.3 — 2025/02/09</h2>
+<ul>
+  <li>UI を全体的にアップデート（ボタン配置・カード幅調整）</li>
+  <li>ホーム画面追加を前提とした 30 秒カウントダウン機能追加</li>
+  <li>アイコンプレビュー機能を改善</li>
+</ul>
+
+<!-- ======================= -->
+<!-- v0.2 -->
+<!-- ======================= -->
+<h2 style="margin-top: 28px;">🔷 v0.2 — 2025/02/08</h2>
+<ul>
+  <li>アプリ生成機能の初期実装</li>
+  <li>manifest.json の自動生成機能を追加</li>
+</ul>
+
+<!-- ======================= -->
+<!-- v0.1 -->
+<!-- ======================= -->
+<h2 style="margin-top: 28px;">🔷 v0.1 — 2025/02/07</h2>
+<ul>
+  <li>OJapp 開発開始</li>
+  <li>最初のビルダー UI を実装</li>
+  <li>GitHub Pages にて一般公開開始</li>
+</ul>
+</div>
+
+<div id="footer"></div>
+<script>
+fetch("/OJapp/footer.html")
+  .then(r => r.text())
+  .then(h => document.getElementById("footer").innerHTML = h);
+</script>
+
+</body>
+</html>
