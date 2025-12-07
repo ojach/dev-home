@@ -1,1 +1,113 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <!-- ここに head-template.html をコピペ -->
+  <!-- ▼ OJapp 共通 HEAD（コピペ用） -->
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+<title>OJapp FAQ</title>
+
+<!-- ファビコン -->
+<link rel="icon" type="image/png" sizes="16x16" href="/OJapp/icons/favicon-16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/OJapp/icons/favicon-32.png">
+<link rel="icon" type="image/png" sizes="48x48" href="/OJapp/icons/favicon-48.png">
+
+<!-- iPhone ホームアイコン -->
+<link rel="apple-touch-icon" sizes="180x180" href="/OJapp/icons/icon-180.png">
+
+<!-- PWA（必要なら有効化） -->
+<!-- <link rel="manifest" href="/OJapp/manifest.json"> -->
+
+<meta name="theme-color" content="#2bb7ff">
+
+<!-- 共通CSS -->
+<link rel="stylesheet" href="/OJapp/style.css">
+<!-- ダークモード呼ぶ -->
+<script src="/OJapp/darkmode.js"></script>
+</head>
+
+<body>
+
+<div id="header"></div>
+<script>
+fetch("/OJapp/header.html")
+  .then(r => r.text())
+  .then(h => document.getElementById("header").innerHTML = h);
+</script>
+
+<div class="main">
+  <!-- ページ固有の内容を書く -->
+  <h1 style="margin-bottom: 12px;">FAQ（よくある質問）</h1>
+<p style="margin-bottom: 24px; color:#555;">
+  OJappを利用する上でよくある質問と回答をまとめました。
+</p>
+
+<!-- ======================= -->
+<!-- ホーム追加・表示関連 -->
+<!-- ======================= -->
+<h2 style="margin-top: 28px;">📱 ホーム追加・表示について</h2>
+
+<p><b>Q.</b> 「ホーム画面に追加」が表示されません</p>
+<p><b>A.</b> iPhone では <b>Safari のみ</b> ホーム追加に対応しています。<br>
+Chrome や LINE ブラウザでは表示されません。</p>
+
+<p><b>Q.</b> ホームに追加したのにアイコンが反映されません</p>
+<p><b>A.</b> iOS のキャッシュが強いため、反映に時間がかかることがあります。<br>
+確実に反映したい場合は、ホームから一度削除して再度追加してください。</p>
+
+<p><b>Q.</b> 初回アクセスの 30 秒カウントダウンは何？</p>
+<p><b>A.</b> ホーム追加を案内するための仕組みです。<br>
+1度追加すると、次回以降はカウントダウンなしで開きます。</p>
+
+
+<!-- ======================= -->
+<!-- アイコン・画像関連 -->
+<!-- ======================= -->
+<h2 style="margin-top: 28px;">🖼 アイコン・画像について</h2>
+
+<p><b>Q.</b> どんな画像をアップすればいいですか？</p>
+<p><b>A.</b> 推奨は <b>512×512px の PNG</b> です。<br>
+それ以外でも自動調整されます。</p>
+
+<p><b>Q.</b> 写真フォルダから画像を選べますか？</p>
+<p><b>A.</b> はい、スマホから直接選択できます。</p>
+
+
+<!-- ======================= -->
+<!-- GitHub Pages 関連 -->
+<!-- ======================= -->
+<h2 style="margin-top: 28px;">🌐 GitHub Pages について</h2>
+
+<p><b>Q.</b> 公開URLはどこで確認できますか？</p>
+<p><b>A.</b> GitHub の <b>Settings → Pages</b> に表示されます。<br>
+一般的には以下の形式です：<br>
+<code>https://{ユーザー名}.github.io/{リポジトリ名}/</code></p>
+
+<p><b>Q.</b> ページを消したい場合は？</p>
+<p><b>A.</b> GitHub 上で該当フォルダを削除すれば即反映されます。</p>
+
+
+<!-- ======================= -->
+<!-- その他よくある質問 -->
+<!-- ======================= -->
+<h2 style="margin-top: 28px;">❓ その他</h2>
+
+<p><b>Q.</b> このURLは安全ですか？</p>
+<p><b>A.</b> GitHub Pages は公式のホスティングサービスで安全です。<br>
+OJapp はユーザーデータを収集しません。</p>
+
+<p><b>Q.</b> manifest.json を編集しても大丈夫ですか？</p>
+<p><b>A.</b> 表示名の変更などは問題ありませんが、<br>
+<b>icons.src</b> や <b>start_url</b> を変更すると動作しなくなる場合があります。</p>
+</div>
+
+<div id="footer"></div>
+<script>
+fetch("/OJapp/footer.html")
+  .then(r => r.text())
+  .then(h => document.getElementById("footer").innerHTML = h);
+</script>
+
+</body>
+</html>
