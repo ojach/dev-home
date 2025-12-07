@@ -1,1 +1,97 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <!-- ここに head-template.html をコピペ -->
+  <!-- ▼ OJapp 共通 HEAD（コピペ用） -->
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+<title>OJapp</title>
+
+<!-- ファビコン -->
+<link rel="icon" type="image/png" sizes="16x16" href="/OJapp/icons/favicon-16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/OJapp/icons/favicon-32.png">
+<link rel="icon" type="image/png" sizes="48x48" href="/OJapp/icons/favicon-48.png">
+
+<!-- iPhone ホームアイコン -->
+<link rel="apple-touch-icon" sizes="180x180" href="/OJapp/icons/icon-180.png">
+
+<!-- PWA（必要なら有効化） -->
+<!-- <link rel="manifest" href="/OJapp/manifest.json"> -->
+
+<meta name="theme-color" content="#2bb7ff">
+
+<!-- 共通CSS -->
+<link rel="stylesheet" href="/OJapp/style.css">
+<!-- ダークモード呼ぶ -->
+<script src="/OJapp/darkmode.js"></script>
+</head>
+
+<body>
+
+<div id="header"></div>
+<script>
+fetch("/OJapp/header.html")
+  .then(r => r.text())
+  .then(h => document.getElementById("header").innerHTML = h);
+</script>
+
+<div class="main">
+  <!-- ページ固有の内容を書く -->
+  <h1 style="margin-bottom: 12px;">OJapp 公式Discord</h1>
+<p style="margin-bottom: 24px; color:#555;">
+  OJapp の最新情報、アップデート速報、サポート対応などを行う公式コミュニティです。
+  <br>ユーザー同士の交流やフィードバック投稿も歓迎しています。
+</p>
+
+<!-- セクション：できること -->
+<h2 style="margin-top: 32px;">🔷 Discordでできること</h2>
+<ul>
+  <li>最新アップデート情報のチェック</li>
+  <li>不具合報告・改善要望の受付</li>
+  <li>新機能の先行案内（βテスト）</li>
+  <li>コミュニティメンバーとの交流</li>
+  <li>ホーム画面カスタムの共有</li>
+</ul>
+
+<!-- セクション：参加方法 -->
+<h2 style="margin-top: 32px;">🔷 招待リンク</h2>
+<p style="color:#555;">以下のリンクから参加できます。</p>
+
+<div style="text-align:center; margin:20px 0;">
+  <a href="https://discord.gg/XXXXXX" 
+     style="
+       background:#5865F2;
+       color:white;
+       padding:14px 28px;
+       border-radius:10px;
+       display:inline-block;
+       font-size:18px;
+       font-weight:bold;
+       text-decoration:none;">
+    🚀 Discord に参加する
+  </a>
+</div>
+
+<!-- セクション：注意事項 -->
+<h2 style="margin-top: 32px;">🔷 注意事項</h2>
+<ul>
+  <li>招待リンクが無効化されていた場合は管理者にご連絡ください。</li>
+  <li>荒らし行為や迷惑行為は禁止です。</li>
+  <li>OJapp の利用規約や安全ガイドラインもご確認ください。</li>
+</ul>
+
+<p style="margin-top: 32px; color:#999; font-size:14px; text-align:center;">
+  © 2025 OJapp — Community & Support
+</p>
+</div>
+
+<div id="footer"></div>
+<script>
+fetch("/OJapp/footer.html")
+  .then(r => r.text())
+  .then(h => document.getElementById("footer").innerHTML = h);
+</script>
+
+</body>
+</html>
