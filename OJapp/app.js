@@ -1,3 +1,21 @@
+// ★ GitHub OAuth Client ID（GitHubが発行したやつ）
+const GITHUB_CLIENT_ID = "Ov23liIEkTxlETFdaNE5";
+
+const loginBtn = document.getElementById("loginGithub");
+if(loginBtn){
+  loginBtn.addEventListener("click",()=>{
+    const redirect_uri = encodeURIComponent("https://ojach.com/callback"); 
+    const scope = "read:user"; // まずはユーザ情報のみ
+
+    const url =
+      `https://github.com/login/oauth/authorize` +
+      `?client_id=${GITHUB_CLIENT_ID}` +
+      `&redirect_uri=${redirect_uri}` +
+      `&scope=${scope}`;
+
+    location.href = url; // 👈 GitHubへ飛ぶ！
+  });
+}
 function toggleA(){
  let box=document.getElementById("assistantBox");
  box.style.display = (box.style.display=="none")?"block":"none";
