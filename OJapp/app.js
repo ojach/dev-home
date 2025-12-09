@@ -1,6 +1,7 @@
 // ★ GitHub OAuth Client ID（GitHubが発行したやつ）
 const GITHUB_CLIENT_ID = "Ov23liIEkTxlETFdaNE5";
-
+// OJapp main script
+console.log("OJapp script loaded");
 const loginBtn = document.getElementById("loginGithub");
 if(loginBtn){
   loginBtn.addEventListener("click",()=>{
