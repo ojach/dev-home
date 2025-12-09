@@ -33,13 +33,21 @@ async function loadHeader() {
 }
 loadHeader();
 
-// プレビュー
-document.getElementById("iconInput").addEventListener("change",e=>{
- const file=e.target.files[0];
- if(!file)return;
- document.getElementById("preview").src = URL.createObjectURL(file);
-});
 
+// アイコン画像プレビュー
+const iconInput = document.getElementById("iconInput");
+const preview = document.getElementById("preview");
+
+iconInput.addEventListener("change", () => {
+  const file = iconInput.files[0];
+  if (!file) return;
+
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    preview.src = e.target.result; // ← innerHTMLじゃなくsrc
+  };
+  reader.readAsDataURL(file);
+});
 // ==============================
 // ▼ Create App
 // ==============================
