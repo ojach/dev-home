@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <!-- ここに head-template.html をコピペ -->
+  <!-- ▼ OJapp 共通 HEAD（コピペ用） -->
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>OJapp</title>
+
+<!-- ファビコン -->
+<link rel="icon" type="image/png" sizes="16x16" href="/OJapp/icons/favicon-16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/OJapp/icons/favicon-32.png">
+<link rel="icon" type="image/png" sizes="48x48" href="/OJapp/icons/favicon-48.png">
+
+<!-- iPhone ホームアイコン -->
+<link rel="apple-touch-icon" sizes="180x180" href="/OJapp/icons/icon-180.png">
+
+<!-- PWA（必要なら有効化） -->
+<!-- <link rel="manifest" href="/OJapp/manifest.json"> -->
+
+<meta name="theme-color" content="#2bb7ff">
+
+<!-- 共通CSS -->
+<link rel="stylesheet" href="/OJapp/style.css">
+<!-- ダークモード呼ぶ -->
+<script src="/OJapp/darkmode.js"></script>
+</head>
+
+<body>
+
+<div id="header"></div>
+<script>
+fetch("/OJapp/header.html")
+  .then(r => r.text())
+  .then(h => document.getElementById("header").innerHTML = h);
+</script>
+
+<div class="main">
+  <!-- ページ固有の内容を書く -->
+
+  <!-- OJapp アイコン -->
+  <div class="support-icon">
+    <img src="/assets/ojapp_icon.png" alt="OJapp icon">
+  </div>
+
+  <!-- タイトル -->
+  <h1 class="support-title">開発支援協力のお願い</h1>
+
+  <!-- 説明文 -->
+  <section class="support-description">
+    <p>
+      OJapp は、おじゃちが個人で開発・運営している
+      「ホーム画面に自由に置ける Web アプリ生成ツール」です。
+    </p>
+    <p>
+      広告なし・ログインなしで使える形を維持しつつ、
+      より便利なサービスを目指して日々アップデートを続けています。
+    </p>
+    <p>
+      もし OJapp が少しでも役に立ったり、
+      「応援したい」「開発を手伝いたい」と感じていただけたら、
+      任意の形でご支援いただけるととても励みになります。
+    </p>
+  </section>
+
+  <!-- 支援使い道 -->
+  <section class="support-usage">
+    <h2>いただいた支援の使い道</h2>
+    <ul>
+      <li>新機能の開発・改善</li>
+      <li>サーバー・ドメイン維持費</li>
+      <li>UI / UX のブラッシュアップ</li>
+      <li>より安全なサービス運用のための研究</li>
+    </ul>
+  </section>
+
+  <!-- 支援方法 -->
+  <section class="support-methods">
+    <h2>支援方法</h2>
+
+    <!-- OFUSE -->
+    <div class="support-item">
+      <h3>OFUSE（メッセージ付きの応援はこちら）</h3>
+      <a href="https://ofuse.me/◯◯◯" target="_blank">
+        <img src="/assets/ofuse_banner.png" alt="OFUSEで応援する" class="ofuse-banner">
+      </a>
+    </div>
+
+    <!-- PayPay -->
+    <div class="support-item">
+      <h3>PayPay（気軽な応援はこちら）</h3>
+      <p>
+        <a href="https://pay.pay.ne.jp/◯◯◯" target="_blank">
+          PayPay での支援リンクはこちら
+        </a>
+      </p>
+    </div>
+  </section>
+
+  <!-- 締めの言葉 -->
+  <section class="support-thanks">
+    <p>
+      OJapp が、あなたの生活を少しでも便利にできていたら嬉しいです。<br>
+      これからも、より良い形で届けられるようがんばります。  
+      いつも応援ありがとうございます。
+    </p>
+  </section>
+  
+</div>
+
+<div id="footer"></div>
+<script>
+fetch("/OJapp/footer.html")
+  .then(r => r.text())
+  .then(h => document.getElementById("footer").innerHTML = h);
+</script>
+
+</body>
+</html>
