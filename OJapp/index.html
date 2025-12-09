@@ -82,38 +82,29 @@ fetch("/OJapp/footer.html").then(r=>r.text()).then(h=>footer.innerHTML=h)
 
 <!-- ▼ DB保存処理 JS (POST) ▼ -->
 <script>
-createBtn.onclick = async () => {
-   const user_ID = document.getElementById("appName").value;
-  const name = document.getElementById("appName").value;
-  const url  = document.getElementById("appURL").value;
 
-  // アイコン画像（base64）
-  const icon = document.getElementById("preview").src || "";
-
-  const send = {
-    user_ID,
-    name,
-    url,
-    icon
-  };
-
-  const res = await fetch("https://ojapp-auth.trc-wasps.workers.dev/api/create", {
-    method:"POST",
-    headers:{ "Content-Type":"application/json"},
-    body: JSON.stringify(send)
-  });
-
-  const result = await res.json();
-
-  if(result.ok){
-    alert("保存成功🎉\nURL発行：\n" + result.access);
-    console.log(result);
-  } else {
-    alert("保存失敗💥");
-    console.log(result);
-  }
+// ---- 保存送信データ ----
+const send = {
+  user_id: "guest",      // ← 今は常にguestで登録
+  name: name,
+  app_url: url,
+  icon_url: iconName
 };
 
+const res = await fetch("https://ojapp-auth.trc-wasps.workers.dev/api/create",{
+  method:"POST",
+  headers:{ "Content-Type":"application/json"},
+  body: JSON.stringify(send)
+});
+
+const result = await res.json();
+
+if(result.status==="ok"){
+  alert("保存成功🎉\nURL発行："+ result.access_url);
+} else {
+  console.error(result);
+  alert("保存失敗💥");
+}
 
 // アイコンプレビュー
 // アイコン画像プレビュー
