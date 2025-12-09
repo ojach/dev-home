@@ -107,7 +107,7 @@ if(first){
  }`;
 
  // ===== 画面に貼り付け =====
- document.getElementById("output").innerHTML = `
+// document.getElementById("output").innerHTML = `
  <h3>📄 index.html</h3>
  <pre id="indexBox">${indexHTML.replace(/</g,"&lt;")}</pre>
  <button onclick="copyText('indexBox')">📋 コピー</button>
