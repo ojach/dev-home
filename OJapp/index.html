@@ -82,35 +82,36 @@ fetch("/OJapp/footer.html").then(r=>r.text()).then(h=>footer.innerHTML=h)
 
 <!-- ▼ DB保存処理 JS (POST) ▼ -->
 <script>
-async function createApp(){
-  const name = appName.value.trim();
-  const url  = appURL.value.trim();
-  const iconFile = iconInput.files[0];
-  const iconName = iconFile ? iconFile.name : "";
+createBtn.onclick = async () => {
+  const name = document.getElementById("appName").value;
+  const url  = document.getElementById("appURL").value;
 
-  if(!name || !url){ alert("アプリ名とURLは入力してな🔥"); return; }
+  // アイコン画像（base64）
+  const icon = document.getElementById("preview").src || "";
 
-  // 🔥 GitHubログイン後はuser_idに置き換える予定
-  const user_id = localStorage.getItem("github_user") ?? "guest";
+  const send = {
+    name,
+    url,
+    icon
+  };
 
-  const send = { user_id, name, app_url:url, icon_url:iconName };
-
-  const res = await fetch("https://ojapp-auth.trc-wasps.workers.dev/api/create",{
+  const res = await fetch("https://ojapp-auth.trc-wasps.workers.dev/api/create", {
     method:"POST",
     headers:{ "Content-Type":"application/json"},
-    body:JSON.stringify(send)
+    body: JSON.stringify(send)
   });
 
   const result = await res.json();
 
-  if(result.status==="ok"){
-    alert("保存成功🎉\nURL発行："+ result.access_url);
-    // ← manifest生成後はここで飛ばせる
-    // location.href=result.access_url;
+  if(result.ok){
+    alert("保存成功🎉\nURL発行：\n" + result.access);
+    console.log(result);
   } else {
     alert("保存失敗💥");
+    console.log(result);
   }
-}
+};
+
 
 // アイコンプレビュー
 iconInput.addEventListener("change",e=>{
