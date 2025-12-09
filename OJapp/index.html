@@ -1,4 +1,4 @@
-<!-- ver.0.4 DB連携版 -->
+<!-- ver.0.4 DB連携安定版 -->
 <!DOCTYPE html>
 <html lang="ja">
 <head>
@@ -10,10 +10,9 @@
 <link rel="icon" type="image/png" sizes="16x16" href="icon/favicon-16.png">
 <link rel="icon" type="image/png" sizes="32x32" href="icon/favicon-32.png">
 <link rel="icon" type="image/png" sizes="64x64" href="icon/favicon-64.png">
-<link rel="apple-touch-icon" sizes="180x180" href="icon/icon-180.png">
-<link rel="manifest" href="./manifest.json">
-<meta name="theme-color" content="#2bb7ff">
+<link rel="apple-touch-icon" sizes="180px" href="icon/icon-180.png">
 
+<meta name="theme-color" content="#2bb7ff">
 <link rel="stylesheet" href="style.css">
 <script src="/OJapp/darkmode.js"></script>
 </head>
@@ -40,7 +39,7 @@ fetch("/OJapp/header.html").then(r=>r.text()).then(h=>header.innerHTML=h)
 <h2>ホームを変える 自分を変える</h2>
 
 <div class="center" style="margin-bottom:10px;">
-  <button id="createBtn" onclick="createApp()" class="btn pulse">Create App 🎉</button>
+  <button id="createBtn" class="btn pulse">Create App 🎉</button>
   <div class="arrow">▼</div>
 </div>
 
@@ -78,50 +77,11 @@ fetch("/OJapp/header.html").then(r=>r.text()).then(h=>header.innerHTML=h)
 <script>
 fetch("/OJapp/footer.html").then(r=>r.text()).then(h=>footer.innerHTML=h)
 </script>
-</div><!-- main -->
 
-<!-- ▼ DB保存処理 JS (POST) ▼ -->
-<script>
+</div><!-- /main -->
 
-// ---- 保存送信データ ----
-const send = {
-  user_id: "guest",      // ← 今は常にguestで登録
-  name: name,
-  app_url: url,
-  icon_url: iconName
-};
+<!-- ◆ app.jsに機能を集約、indexは読み込みのみ！ -->
+<script type="module" src="app.js"></script>
 
-const res = await fetch("https://ojapp-auth.trc-wasps.workers.dev/api/create",{
-  method:"POST",
-  headers:{ "Content-Type":"application/json"},
-  body: JSON.stringify(send)
-});
-
-const result = await res.json();
-
-if(result.status==="ok"){
-  alert("保存成功🎉\nURL発行："+ result.access_url);
-} else {
-  console.error(result);
-  alert("保存失敗💥");
-}
-
-// アイコンプレビュー
-// アイコン画像プレビュー
-const iconInput = document.getElementById("iconInput");
-const preview = document.getElementById("preview");
-
-iconInput.addEventListener("change", () => {
-  const file = iconInput.files[0];
-  if (!file) return;
-
-  const reader = new FileReader();
-  reader.onload = (e) => {
-    preview.src = e.target.result; // ← innerHTMLじゃなくsrc
-  };
-  reader.readAsDataURL(file);
-});
-</script>
-<script src="app.js"></script>
 </body>
 </html>
