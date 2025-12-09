@@ -1,4 +1,4 @@
-<!-- ver.0.3 -->
+<!-- ver.0.4 DB連携版 -->
 <!DOCTYPE html>
 <html lang="ja">
 <head>
@@ -9,13 +9,13 @@
 <!-- Favicons -->
 <link rel="icon" type="image/png" sizes="16x16" href="icon/favicon-16.png">
 <link rel="icon" type="image/png" sizes="32x32" href="icon/favicon-32.png">
-<link rel="icon" type="image/png" sizes="48x48" href="icon/favicon-48.png">
+<link rel="icon" type="image/png" sizes="64x64" href="icon/favicon-64.png">
 <link rel="apple-touch-icon" sizes="180x180" href="icon/icon-180.png">
 <link rel="manifest" href="./manifest.json">
 <meta name="theme-color" content="#2bb7ff">
 
 <link rel="stylesheet" href="style.css">
-  <script src="/OJapp/darkmode.js"></script>
+<script src="/OJapp/darkmode.js"></script>
 </head>
 
 <body>
@@ -23,81 +23,101 @@
 <!-- ▼ HEADER -->
 <div id="header"></div>
 <script>
-  fetch("/OJapp/header.html")
-    .then(r => r.text())
-    .then(h => document.getElementById("header").innerHTML = h);
+fetch("/OJapp/header.html").then(r=>r.text()).then(h=>header.innerHTML=h)
 </script>
-<div style="text-align:center; margin-top:10px;">
-  <button id="loginGithub" style="
-    background:#24292f;
-    color:#fff;
-    padding:8px 14px;
-    border:none;
-    border-radius:6px;
-    font-size:14px;
-    cursor:pointer;
-  ">
-    🔐 Sign in with GitHub
-  </button>
+
+<div style="text-align:center;margin-top:10px;">
+<button id="loginGithub" style="
+  background:#24292f;color:#fff;padding:8px 14px;border:none;
+  border-radius:6px;font-size:14px;cursor:pointer;">
+  🔐 Sign in with GitHub
+</button>
 </div>
-<!-- ▼ MAIN -->
+
+<!-- ================= MAIN ================= -->
 <div class="main">
 
-  <h2>ホームを変える 自分を変える</h2>
+<h2>ホームを変える 自分を変える</h2>
 
-  <div class="center">
-    <button id="createBtn" class="btn pulse">Create App 🎉</button>
-    <div class="arrow">▼</div>
-  </div>
-
-  <!-- Step1 -->
-  <div class="section">
-    <div class="section-title">Step1：アイコン画像</div>
-    <input type="file" id="iconInput">
-    <div class="icon-box"><img id="preview"></div>
-  </div>
-
-  <!-- Step2 -->
-  <div class="section">
-    <div class="section-title">Step2：アプリ名</div>
-    <input type="text" id="appName" placeholder="OJACH PORTAL">
-  </div>
-
-  <!-- Step3 -->
-  <div class="section">
-    <div class="section-title">Step3：URL</div>
-    <input type="text" id="appURL" placeholder="https://example.com">
-  </div>
-
-  <div id="assistantBox">おちゃじ参上😎✨</div>
-<!-- ↓リンク集↓ -->
-  <div class="center" style="margin-top:20px;">
-    <a href="/OJapp/safety/" class="guide-link">安全性ガイドラインを見る</a>
-  </div>
-<div class="center" style="margin-top:12px;">
-  <a href="/OJapp/guide/" class="guide-link">使い方ガイドを見る</a>
+<div class="center" style="margin-bottom:10px;">
+  <button id="createBtn" onclick="createApp()" class="btn pulse">Create App 🎉</button>
+  <div class="arrow">▼</div>
 </div>
-<div class="center" style="margin-top:12px;">
-  <a href="/OJapp/faq/" class="guide-link">よくある質問</a>
+
+<!-- Step1 -->
+<div class="section">
+  <div class="section-title">Step1：アイコン画像</div>
+  <input type="file" id="iconInput">
+  <div class="icon-box"><img id="preview"></div>
 </div>
-  <div class="center" style="margin-top:12px;">
-  <a href="/OJapp/changelog/" class="guide-link">OJapp更新履歴</a>
-  </div>
-  <div class="center" style="margin-top:12px;">
-  <a href="https://discord.gg/KZjN5uSBHu" class="guide-link">OJapp公式Discord</a>
-  </div>
-  <div class="center" style="margin-top:12px;">
-  <a href="/OJapp/support" class="guide-link">開発支援ご協力のお願い</a>
-  </div>
-  
+
+<!-- Step2 -->
+<div class="section">
+  <div class="section-title">Step2：アプリ名</div>
+  <input type="text" id="appName" placeholder="OJACH PORTAL">
+</div>
+
+<!-- Step3 -->
+<div class="section">
+  <div class="section-title">Step3：URL</div>
+  <input type="text" id="appURL" placeholder="https://example.com">
+</div>
+
+<div id="assistantBox">おちゃじ参上😎✨</div>
+
+<!-- ▼ LINK AREA ▼ -->
+<div class="center" style="margin-top:20px;"><a href="/OJapp/safety/" class="guide-link">安全性ガイドライン</a></div>
+<div class="center" style="margin-top:12px;"><a href="/OJapp/guide/" class="guide-link">使い方ガイド</a></div>
+<div class="center" style="margin-top:12px;"><a href="/OJapp/faq/" class="guide-link">よくある質問</a></div>
+<div class="center" style="margin-top:12px;"><a href="/OJapp/changelog/" class="guide-link">更新履歴</a></div>
+<div class="center" style="margin-top:12px;"><a href="https://discord.gg/KZjN5uSBHu" class="guide-link">公式Discord</a></div>
+<div class="center" style="margin-top:12px;"><a href="/OJapp/support" class="guide-link">開発支援</a></div>
+
+<!-- FOOTER -->
 <div id="footer"></div>
 <script>
-fetch("/OJapp/footer.html")
-  .then(r => r.text())
-  .then(h => document.getElementById("footer").innerHTML = h);
+fetch("/OJapp/footer.html").then(r=>r.text()).then(h=>footer.innerHTML=h)
 </script>
-</div><!-- /main -->
+</div><!-- main -->
 
-<script src="app.js"></script>
+<!-- ▼ DB保存処理 JS (POST) ▼ -->
+<script>
+async function createApp(){
+  const name = appName.value.trim();
+  const url  = appURL.value.trim();
+  const iconFile = iconInput.files[0];
+  const iconName = iconFile ? iconFile.name : "";
+
+  if(!name || !url){ alert("アプリ名とURLは入力してな🔥"); return; }
+
+  // 🔥 GitHubログイン後はuser_idに置き換える予定
+  const user_id = localStorage.getItem("github_user") ?? "guest";
+
+  const send = { user_id, name, app_url:url, icon_url:iconName };
+
+  const res = await fetch("https://ojapp-auth.trc-wasps.workers.dev/api/create",{
+    method:"POST",
+    headers:{ "Content-Type":"application/json"},
+    body:JSON.stringify(send)
+  });
+
+  const result = await res.json();
+
+  if(result.status==="ok"){
+    alert("保存成功🎉\nURL発行："+ result.access_url);
+    // ← manifest生成後はここで飛ばせる
+    // location.href=result.access_url;
+  } else {
+    alert("保存失敗💥");
+  }
+}
+
+// アイコンプレビュー
+iconInput.addEventListener("change",e=>{
+  const f=e.target.files[0];
+  if(f) preview.src=URL.createObjectURL(f);
+});
+</script>
+
 </body>
 </html>
