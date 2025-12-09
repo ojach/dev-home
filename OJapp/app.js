@@ -51,20 +51,38 @@ iconInput.addEventListener("change", () => {
 // ==============================
 // ▼ Create App
 // ==============================
-document.getElementById("createBtn").addEventListener("click",()=>{
+// --- Create App ---
+async function createApp(){
+  const name = document.getElementById("appName").value;
+  const url  = document.getElementById("appURL").value;
 
- let file=document.getElementById("iconInput").files[0];
- let name=document.getElementById("appName").value.trim();
- let url=document.getElementById("appURL").value.trim();
+  const icon = document.getElementById("preview").src || "";
+  const iconName = icon.startsWith("data:") ? Date.now()+".png" : "";
 
- if(!file||!name||!url){ alert("全部入力してな🔥"); return;}
+  const send = {
+    user_id:"guest",
+    name:name,
+    app_url:url,
+    icon_url:iconName
+  };
 
- let fileName = file.name; // ←これ重要！元名を使用
+  const res = await fetch("https://ojapp-auth.trc-wasps.workers.dev/api/create",{
+    method:"POST",
+    headers:{ "Content-Type":"application/json" },
+    body:JSON.stringify(send)
+  });
 
- let reader=new FileReader();
- reader.onload=()=>{
+  const result = await res.json();
+  if(result.status==="ok"){
+    alert("保存成功🎉 URL: "+result.access_url);
+  } else {
+    console.error(result);
+    alert("保存失敗💥");
+  }
+}
 
- let base64 = reader.result;
+// ボタン紐付け ※ createApp定義の後に置く！
+document.getElementById("createBtn").onclick = createApp;
 
  // ===== index.html =====
  let indexHTML = `
