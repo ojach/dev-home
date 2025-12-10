@@ -1,9 +1,7 @@
 // OJapp Builder 用 app.js
 
 // API のエンドポイント（Cloudflare Worker）
-const API_ENDPOINT = "https://ojapp-auth.trc-wasps.workers.dev/api/create"; 
-// もしルートで /api/create を ojach.com に割り当ててたら
-// "https://ojach.com/api/create" に変えてOK
+const API_ENDPOINT = "https://ojapp-auth.trc-wasps.workers.dev/api/create";
 
 function toggleA(){
   let box=document.getElementById("assistantBox");
@@ -28,18 +26,22 @@ document.getElementById("createBtn").addEventListener("click", async () => {
     return;
   }
 
+  // ★ URLスキーム対応 : http/https 以外も許可
+  const isScheme = /^[a-zA-Z0-9+\-.]+:\/\//.test(url);
+
   // 画像を base64 に変換
   const reader = new FileReader();
   reader.onload = async () => {
     const base64 = reader.result; // data:image/png;base64,...
 
     try {
+
       const res = await fetch(API_ENDPOINT, {
         method: "POST",
         headers: { "Content-Type":"application/json" },
         body: JSON.stringify({
           name: name,
-          app_url: url,
+          app_url: url,           // ← ここにそのままスキームが入ってOK
           icon_base64: base64
         })
       });
@@ -47,9 +49,22 @@ document.getElementById("createBtn").addEventListener("click", async () => {
       const result = await res.json();
 
       if (result.status === "ok") {
-        const accessUrl = result.access_url;
-        alert("OJapp 発行完了🎉\n\n" + accessUrl + "\n\nこのURLを開いて『ホーム画面に追加』してね！");
+
+        // ★ 表示する案内をスキーム対応に変更
+        let guide = "このURLを開いて『ホーム画面に追加』してね！";
+
+        if (isScheme) {
+          guide = "これはアプリURLです。\nホーム追加して開くと自動起動するで！🔥";
+        }
+
+        alert(
+          "OJapp 発行完了🎉\n\n" +
+          result.access_url + "\n\n" +
+          guide
+        );
+
         console.log("issued:", result);
+
       } else {
         console.error(result);
         alert("保存失敗💥 ちょっと時間おいて試してみて");
@@ -59,10 +74,11 @@ document.getElementById("createBtn").addEventListener("click", async () => {
       alert("通信エラー💥 ネット環境を確認してな");
     }
   };
+
   reader.readAsDataURL(file);
 });
 
-// クリップボードコピー機能（必要ならそのまま残す）
+// クリップボードコピー機能
 function copyText(id){
   const text=document.getElementById(id).innerText;
   navigator.clipboard.writeText(text);
