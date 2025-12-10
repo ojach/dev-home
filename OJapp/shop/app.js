@@ -1,109 +1,113 @@
-let items = [];
-let currentSort = "new";
-let currentCategory = "全て";
+console.log("JS読み込み開始");
 
-async function loadAndRender() {
-  items = await loadCSV();
+const CSV_URL =
+  "https://docs.google.com/spreadsheets/d/e/2PACX-1vRckMXYTdFw-2sSEmeqVTCXymb3F_NwrNdztP01BrZfH1n2WCORVwZuop7IxfG_KHGYqqlCuc3sBUee/pub?gid=1229129034&single=true&output=csv";
 
-  // カテゴリータブ生成
-  renderCategoryTabs(getUniqueCategories(items));
+const HEADER_MAP = {
+  "タイムスタンプ": "timestamp",
+  "BOOTH商品URL": "boothUrl",
+  "サムネ画像URL": "thumbnail",
+  "タイトル": "title",
+  "作者名": "author",
+  "カテゴリー": "category",
+  "スコア": "score",
+  "visible": "visible"
+};
 
-  // 初回は新着 & 全て
-  applyFilters();
+let items = [];       // 全商品
+let viewItems = [];   // 表示用商品（カテゴリー＋ソート済み）
+
+// ============================================
+// CSV読み込み
+// ============================================
+async function loadCSV() {
+  const res = await fetch(CSV_URL);
+  const text = await res.text();
+
+  const rows = text.split("\n").map(r => r.split(","));
+  const rawHeaders = rows.shift().map(h => h.replace(/"/g, "").trim());
+  const headers = rawHeaders.map(h => HEADER_MAP[h] || h);
+
+  return rows
+    .map(cols => {
+      const obj = {};
+      cols.forEach((val, i) => (obj[headers[i]] = val.replace(/"/g, "").trim()));
+      return obj;
+    })
+    .filter(item => item.boothUrl && item.visible !== "FALSE");
 }
 
-/* ------------------------
-   並び替えタブ
------------------------- */
-function sortItems(type) {
+// ============================================
+// カテゴリー一覧生成
+// ============================================
+function renderCategoryTabs() {
+  const categories = ["全て"];
+
+  // CSV内のカテゴリを重複なしで抽出
+  items.forEach(i => {
+    if (i.category && !categories.includes(i.category)) {
+      categories.push(i.category);
+    }
+  });
+
+  const catArea = document.querySelector(".category-tabs");
+  catArea.innerHTML = "";
+
+  categories.forEach(cat => {
+    const div = document.createElement("div");
+    div.className = "category-tab";
+    div.dataset.category = cat;
+    div.textContent = cat;
+    if (cat === "全て") div.classList.add("active");
+    catArea.appendChild(div);
+  });
+}
+
+// ============================================
+// カテゴリーフィルタリング
+// ============================================
+function filterByCategory(category) {
+  if (category === "全て") {
+    viewItems = [...items];
+  } else {
+    viewItems = items.filter(i => i.category === category);
+  }
+  sortAndRender(currentSort); // ソート維持
+}
+
+// ============================================
+// ソート処理
+// ============================================
+let currentSort = "new";
+
+function sortAndRender(type) {
   currentSort = type;
 
   if (type === "new") {
-    items.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+    viewItems.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
   }
   if (type === "score") {
-    items.sort((a, b) => Number(b.score) - Number(a.score));
+    viewItems.sort((a, b) => Number(b.score) - Number(a.score));
   }
   if (type === "author") {
-    items.sort((a, b) => a.author.localeCompare(b.author));
+    viewItems.sort((a, b) => a.author.localeCompare(b.author));
   }
 
-  document.querySelectorAll(".shop-tab").forEach(tab => {
-    tab.classList.toggle("active", tab.dataset.sort === type);
+  document.querySelectorAll(".shop-tab").forEach(t => {
+    t.classList.toggle("active", t.dataset.sort === type);
   });
+
+  renderShop();
 }
 
-/* ------------------------
-   カテゴリータブ生成
------------------------- */
-function renderCategoryTabs(categories) {
-  const wrap = document.querySelector(".category-tabs");
-  wrap.innerHTML = "";
-
-  categories.forEach(cat => {
-    const tab = document.createElement("div");
-    tab.className = "category-tab" + (cat === "全て" ? " active" : "");
-    tab.dataset.category = cat;
-    tab.textContent = cat;
-    wrap.appendChild(tab);
-  });
-}
-
-/* ------------------------
-   カテゴリー適用
------------------------- */
-function filterByCategory(list) {
-  if (currentCategory === "全て") return list;
-  return list.filter(item => item.category === currentCategory);
-}
-
-/* ------------------------
-   ソート＋カテゴリー同時適用
------------------------- */
-function applyFilters() {
-  // ソート
-  sortItems(currentSort);
-
-  // カテゴリー絞り込み
-  const filtered = filterByCategory(items);
-
-  // 再描画
-  renderShop(filtered);
-}
-
-/* ------------------------
-   タブクリック処理
------------------------- */
-document.addEventListener("click", e => {
-  // ソート
-  if (e.target.classList.contains("shop-tab")) {
-    const type = e.target.dataset.sort;
-    sortItems(type);
-    applyFilters();
-    return;
-  }
-
-  // カテゴリー
-  if (e.target.classList.contains("category-tab")) {
-    const cat = e.target.dataset.category;
-    currentCategory = cat;
-
-    document.querySelectorAll(".category-tab").forEach(tab => {
-      tab.classList.toggle("active", tab.dataset.category === cat);
-    });
-
-    applyFilters();
-  }
-});
-
-/* ------------------------
-   商品描画
------------------------- */
-function renderShop(list) {
+// ============================================
+// 商品描画
+// ============================================
+function renderShop() {
   const grid = document.querySelector(".shop-grid");
   grid.innerHTML = "";
 
-  list.forEach(item => {
+  viewItems.forEach(item => {
     const thumb = item.thumbnail || "/OJapp/shop/noimage.png";
 
     const card = document.createElement("div");
@@ -120,21 +124,35 @@ function renderShop(list) {
   });
 }
 
-document.addEventListener("DOMContentLoaded", loadAndRender);
+// ============================================
+// タブクリックイベント（ソート & カテゴリー）
+// ============================================
+document.addEventListener("click", e => {
+  if (e.target.classList.contains("shop-tab")) {
+    sortAndRender(e.target.dataset.sort);
+  }
 
-/* ------------------------
-   カテゴリー一覧を抽出
------------------------- */
-function getUniqueCategories(list) {
-  const categories = list
-    .map(i => i.category || "")   // カテゴリー列
-    .filter(c => c.trim() !== ""); // 空を除外
+  if (e.target.classList.contains("category-tab")) {
+    document.querySelectorAll(".category-tab")
+      .forEach(c => c.classList.remove("active"));
 
-  const unique = Array.from(new Set(categories));
-  unique.unshift("全て"); // 先頭に「全て」を追加
+    e.target.classList.add("active");
+    filterByCategory(e.target.dataset.category);
+  }
+});
 
-  return unique;
+// ============================================
+// 初期表示
+// ============================================
+async function start() {
+  items = await loadCSV();
+  viewItems = [...items];
+  renderCategoryTabs();
+  sortAndRender("new");
 }
+
+document.addEventListener("DOMContentLoaded", start);
+
 
 // ダークモード（現状維持）
 function toggleTheme() {
