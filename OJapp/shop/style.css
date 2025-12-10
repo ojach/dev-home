@@ -360,3 +360,61 @@
 .dark .author-icon {
   border: 3px solid #222;
 }
+/* ===== 商品グリッド ===== */
+.shop-grid {
+  margin-top: 20px;
+  display: grid;
+  gap: 24px;
+  justify-content: center;
+}
+
+/* PC：3列 */
+@media (min-width: 900px) {
+  .shop-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+/* タブレット：2列 */
+@media (min-width: 600px) and (max-width: 899px) {
+  .shop-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+/* ★ スマホ：3列にする（特別ルール） */
+@media (max-width: 599px) {
+  .shop-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+  }
+
+  .shop-card {
+    padding: 10px;
+    border-radius: 12px;
+  }
+
+  .shop-card img {
+    border-radius: 10px;
+  }
+
+  .item-title {
+    font-size: 12px;
+  }
+
+  .item-author {
+    font-size: 10px;
+  }
+
+  .buy-btn {
+    padding: 6px 0;
+    font-size: 12px;
+  }
+
+  .author-icon {
+    width: 24px;
+    height: 24px;
+    right: 6px;
+    bottom: 6px;
+  }
+}
