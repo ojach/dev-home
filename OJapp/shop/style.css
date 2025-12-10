@@ -160,3 +160,36 @@
   background: #0f9cf5;
   color: #fff;
 }
+/* カテゴリータブ */
+.shop-page .category-tabs {
+  display: flex;
+  gap: 12px;
+  padding: 10px 0 24px;
+  flex-wrap: wrap;
+}
+
+.shop-page .category-tab {
+  padding: 6px 16px;
+  border-radius: 999px;
+  background: var(--section-bg);
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+  cursor: pointer;
+  font-size: 14px;
+  transition: .15s;
+  user-select: none;
+}
+
+.shop-page .category-tab.active {
+  background: #0f9cf5;
+  color: #fff;
+  box-shadow: 0 3px 10px rgba(15,156,245,0.4);
+}
+
+.dark .shop-page .category-tab {
+  background: #222;
+}
+
+.dark .shop-page .category-tab.active {
+  background: #0f9cf5;
+  color: #fff;
+}
