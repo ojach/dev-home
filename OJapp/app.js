@@ -1,6 +1,6 @@
 // OJapp Builder 用 app.js
 
-// API のエンドポイント（Cloudflare Worker）
+// API のエンドポイント
 const API_ENDPOINT = "https://ojapp-auth.trc-wasps.workers.dev/api/create";
 
 function toggleA(){
@@ -15,7 +15,53 @@ document.getElementById("iconInput").addEventListener("change", e => {
   document.getElementById("preview").src = URL.createObjectURL(file);
 });
 
-// Create App ボタン
+// =========================
+// ▼ URLコピーボックス生成
+// =========================
+function showCopyBox(url) {
+  // 既に存在する場合は消す
+  const old = document.getElementById("copyBoxWrap");
+  if (old) old.remove();
+
+  const wrap = document.createElement("div");
+  wrap.id = "copyBoxWrap";
+  wrap.style = `
+    margin:20px auto;
+    width:90%;
+    max-width:500px;
+    padding:18px;
+    background:#fff;
+    border-radius:14px;
+    box-shadow:0 6px 16px rgba(0,0,0,.1);
+    text-align:center;
+    font-family:-apple-system,BlinkMacSystemFont;
+  `;
+
+  wrap.innerHTML = `
+    <div style="font-size:14px;color:#444;margin-bottom:6px;">発行された OJapp URL</div>
+    <div id="copyTarget"
+         style="word-break:break-all;background:#f4f4f4;padding:8px;border-radius:8px;font-size:14px;">
+      ${url}
+    </div>
+    <button id="copyBtn"
+      style="
+        margin-top:12px;padding:8px 16px;border-radius:8px;border:none;
+        background:#2bb7ff;color:#fff;font-weight:bold;cursor:pointer;">
+      📋 コピー
+    </button>
+  `;
+
+  document.querySelector(".main").appendChild(wrap);
+
+  document.getElementById("copyBtn").onclick = ()=>{
+    navigator.clipboard.writeText(url);
+    alert("コピーしたで✌");
+  };
+}
+
+// =========================
+// ▼ Create App ボタン
+// =========================
 document.getElementById("createBtn").addEventListener("click", async () => {
   const file = document.getElementById("iconInput").files[0];
   const name = document.getElementById("appName").value.trim();
@@ -26,22 +72,21 @@ document.getElementById("createBtn").addEventListener("click", async () => {
     return;
   }
 
-  // ★ URLスキーム対応 : http/https 以外も許可
+  // ★ URLスキーム判定（http/https以外 OK）
   const isScheme = /^[a-zA-Z0-9+\-.]+:\/\//.test(url);
 
-  // 画像を base64 に変換
+  // アイコン → base64
   const reader = new FileReader();
   reader.onload = async () => {
-    const base64 = reader.result; // data:image/png;base64,...
+    const base64 = reader.result;
 
     try {
-
       const res = await fetch(API_ENDPOINT, {
         method: "POST",
         headers: { "Content-Type":"application/json" },
         body: JSON.stringify({
           name: name,
-          app_url: url,           // ← ここにそのままスキームが入ってOK
+          app_url: url,
           icon_base64: base64
         })
       });
@@ -49,50 +94,36 @@ document.getElementById("createBtn").addEventListener("click", async () => {
       const result = await res.json();
 
       if (result.status === "ok") {
+        const accessUrl = result.access_url;
 
-        // ★ 表示する案内をスキーム対応に変更
         let guide = "このURLを開いて『ホーム画面に追加』してね！";
 
+        // URLスキームの場合は案内を変更
         if (isScheme) {
-          guide = "これはアプリURLです。\nホーム追加して開くと自動起動するで！🔥";
+          guide = "アプリURLです！\nホーム追加したアイコンを起動するとアプリが直接ひらくで！🔥";
         }
 
-        alert(
-          "OJapp 発行完了🎉\n\n" +
-          result.access_url + "\n\n" +
-          guide
-        );
+        alert("OJapp 発行完了🎉\n\n" + guide);
+
+        // ▼ 画面にコピーボックスを生成
+        showCopyBox(accessUrl);
 
         console.log("issued:", result);
-
       } else {
-        console.error(result);
-        alert("保存失敗💥 ちょっと時間おいて試してみて");
+        alert("保存失敗💥 時間あけてもう一度！");
       }
     } catch (e) {
       console.error(e);
-      alert("通信エラー💥 ネット環境を確認してな");
+      alert("通信エラー💥");
     }
   };
 
   reader.readAsDataURL(file);
 });
 
-// クリップボードコピー機能
-function copyText(id){
-  const text=document.getElementById(id).innerText;
-  navigator.clipboard.writeText(text);
-  alert("コピーしたで✌");
-}
-
-// ダークモード
+// ダークモード（現状維持）
 function toggleTheme() {
   document.documentElement.classList.toggle("dark");
-
   const sw = document.querySelector(".switch");
-  if (document.documentElement.classList.contains("dark")) {
-    sw.textContent = "🌙";
-  } else {
-    sw.textContent = "😆";
-  }
+  sw.textContent = document.documentElement.classList.contains("dark") ? "🌙" : "😆";
 }
