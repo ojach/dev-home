@@ -78,8 +78,10 @@ async function renderShop() {
   items
     .filter((item) => item.visible !== "FALSE")
     .forEach((item) => {
-      grid.appendChild(createItemCard(item));
+      const card = createItemCard(item);
+      grid.appendChild(card);
     });
 }
+
 
 document.addEventListener("DOMContentLoaded", renderShop);
