@@ -153,6 +153,14 @@ async function start() {
 
 document.addEventListener("DOMContentLoaded", start);
 
+function animateCards() {
+  const cards = document.querySelectorAll(".item-card");
+  cards.forEach((card, i) => {
+    setTimeout(() => {
+      card.classList.add("show");
+    }, i * 60); // ← 少しずつズラして出す（60ms刻み）
+  });
+}
 
 // ダークモード（現状維持）
 function toggleTheme() {
