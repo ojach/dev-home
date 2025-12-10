@@ -229,7 +229,35 @@ async function start() {
 }
 
 document.addEventListener("DOMContentLoaded", start);
+function renderRecommend() {
+  // 1個しかないときは非表示
+  if (items.length <= 1) return;
 
+  const box = document.getElementById("recommend-box");
+  if (!box) return;
+
+  const randomItem = items[Math.floor(Math.random() * items.length)];
+
+  const thumb = randomItem.thumbnail || "/OJapp/shop/noimage.png";
+
+  box.innerHTML = `
+    <img src="${thumb}" class="recommend-thumb">
+    <div class="recommend-title">${randomItem.title}</div>
+
+    <div class="recommend-author">
+      by <a href="/OJapp/shop/author/?name=${encodeURIComponent(randomItem.author)}"
+            class="author-link">${randomItem.author}</a>
+    </div>
+
+    <a href="${randomItem.boothUrl}" target="_blank" class="recommend-btn">
+      購入はこちら
+    </a>
+  `;
+
+  // モーダルにも対応したいなら addEventListener 付けれる
+  box.querySelector(".recommend-thumb")
+     .addEventListener("click", () => openModal(randomItem));
+}
 // ダークモード（現状維持）
 function toggleTheme() {
   document.documentElement.classList.toggle("dark");
