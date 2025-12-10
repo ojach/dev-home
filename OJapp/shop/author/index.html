@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>作者ページ | OJapp</title>
+
+  <link rel="stylesheet" href="/OJapp/style.css" />
+  <link rel="stylesheet" href="/OJapp/shop/style.css" />
+
+  <script src="/OJapp/darkmode.js"></script>
+</head>
+
+<body>
+
+<div id="header"></div>
+<script>
+fetch("/OJapp/header.html")
+  .then(r => r.text())
+  .then(h => document.getElementById("header").innerHTML = h);
+</script>
+
+<div class="main shop-page">
+
+  <h1 class="shop-title" id="author-title">作者ページ</h1>
+  <p class="shop-desc" id="author-desc"></p>
+
+  <div class="shop-grid"></div>
+
+</div>
+
+<div id="footer"></div>
+<script>
+fetch("/OJapp/footer.html")
+  .then(r => r.text())
+  .then(h => document.getElementById("footer").innerHTML = h);
+</script>
+
+<script src="app.js"></script>
+</body>
+</html>
