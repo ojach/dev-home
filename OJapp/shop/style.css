@@ -120,3 +120,43 @@
 .dark .shop-page .item-card {
   background: var(--section-bg);
 }
+/* =========================================
+   タブ式ソートUI
+========================================= */
+
+.shop-page .shop-tabs {
+  display: flex;
+  gap: 16px;
+  margin: 10px 0 24px;
+}
+
+.shop-page .shop-tab {
+  padding: 8px 18px;
+  border-radius: 999px;
+  background: var(--section-bg);
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+  cursor: pointer;
+  font-weight: 600;
+  transition: 0.15s;
+  user-select: none;
+}
+
+.shop-page .shop-tab:hover {
+  transform: translateY(-2px);
+}
+
+.shop-page .shop-tab.active {
+  background: #0f9cf5;
+  color: #fff;
+  box-shadow: 0 3px 10px rgba(15,156,245,0.4);
+}
+
+/* ダークモード */
+.dark .shop-page .shop-tab {
+  background: #222;
+}
+
+.dark .shop-page .shop-tab.active {
+  background: #0f9cf5;
+  color: #fff;
+}
