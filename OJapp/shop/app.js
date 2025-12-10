@@ -172,18 +172,23 @@ function renderShop() {
     card.className = "item-card";
 
     // HTML
-    card.innerHTML = `
-      <img src="${thumb}" class="item-thumb">
+   card.innerHTML = `
+  <div class="item-thumb-box">
+    <img src="${thumb}" class="item-thumb">
+    <img src="${item.authorIcon || '/OJapp/shop/default-author.png'}"
+         class="author-icon"
+         onclick="location.href='/OJapp/shop/author/?name=${encodeURIComponent(item.author)}'">
+  </div>
 
-      <div class="item-title">${item.title}</div>
+  <div class="item-title">${item.title}</div>
 
-      <div class="item-author">
-        by <a href="/OJapp/shop/author/?name=${encodeURIComponent(item.author)}"
-             class="author-link">${item.author}</a>
-      </div>
+  <div class="item-author">
+    by <a href="/OJapp/shop/author/?name=${encodeURIComponent(item.author)}"
+          class="author-link">${item.author}</a>
+  </div>
 
-      <a href="${item.boothUrl}" target="_blank" class="item-buy-btn">購入はこちら</a>
-    `;
+  <a href="${item.boothUrl}" target="_blank" class="item-buy-btn">購入はこちら</a>
+`;
 
     // モーダルを開く（購入ボタン以外）
     card.addEventListener("click", () => openModal(item));
