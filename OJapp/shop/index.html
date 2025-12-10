@@ -23,46 +23,7 @@
   <!-- 共通CSS -->
   <link rel="stylesheet" href="/OJapp/style.css">
 
-  <!-- ダークモード -->
-  <script src="/OJapp/darkmode.js"></script>
-</head>
-
-<body>
-
-<!-- ▼ ヘッダー -->
-<div id="header"></div>
-<script>
-fetch("/OJapp/header.html")
-  .then(r => r.text())
-  .then(h => document.getElementById("header").innerHTML = h);
-</script>
-
-<!-- ▼ メインページ -->
-<div class="main">
-  <section class="shop">
-
-    <h1 class="shop-title">OJapp アイコンショップ</h1>
-    <p class="shop-desc">
-      デザイナーの皆さんとつくる、OJapp公式アイコンギャラリーです。<br>
-      Googleフォームから登録された商品が自動で表示されます。
-    </p>
-
-    <h2 class="shop-section-title">All Items</h2>
-
-    <!-- ▼ ショップグリッド（JS がここに商品を挿入） -->
-    <div class="shop-grid"></div>
-
-  </section>
-</div>
-
-<!-- ▼ フッター -->
-<div id="footer"></div>
-<script>
-fetch("/OJapp/footer.html")
-  .then(r => r.text())
-  .then(h => document.getElementById("footer").innerHTML = h);
-</script>
-
+  
 <!-- ▼ ショップ機能JS -->
 <script src="/OJapp/shop/app.js"></script>
 
