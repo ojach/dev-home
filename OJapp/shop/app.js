@@ -122,6 +122,8 @@ function renderShop() {
 
     grid.appendChild(card);
   });
+  animateCards();
+
 }
 
 // ============================================
