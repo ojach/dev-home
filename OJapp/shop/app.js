@@ -122,7 +122,19 @@ function renderShop() {
 
     grid.appendChild(card);
   });
-  animateCards();
+  animateCards(card.innerHTML = `
+  <img src="${thumb}" class="item-thumb">
+
+  <div class="item-title">${item.title}</div>
+
+  <div class="item-author">
+    by <a href="/OJapp/shop/author/?name=${encodeURIComponent(item.author)}"
+          class="author-link">${item.author}</a>
+  </div>
+
+  <a href="${item.boothUrl}" target="_blank" class="item-buy-btn">購入はこちら</a>
+`;
+);
 
 }
 
