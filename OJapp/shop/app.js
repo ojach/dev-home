@@ -53,6 +53,11 @@ async function renderShop() {
     grid.appendChild(card);
   });
 }
-
+// ダークモード（現状維持）
+function toggleTheme() {
+  document.documentElement.classList.toggle("dark");
+  const sw = document.querySelector(".switch");
+  sw.textContent = document.documentElement.classList.contains("dark") ? "🌙" : "😆";
+}
 document.addEventListener("DOMContentLoaded", renderShop);
 ", renderShop);
