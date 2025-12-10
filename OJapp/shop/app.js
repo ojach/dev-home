@@ -19,19 +19,31 @@ const HEADER_MAP = {
 async function loadCSV() {
   console.log("CSV取得中:", CSV_URL);
 
-  const res = await fetch(CSV_URL);
-  const text = await res.text();
+  const res = await fetch(CSV_URL).catch(e => console.error("Fetchエラー:", e));
+  if (!res) return [];
 
-  console.log("CSV内容:", text.substring(0, 200));
+  const text = await res.text().catch(e => console.error("Text取得エラー:", e));
+
+  console.log("CSV内容（先頭200文字）:", text?.substring(0, 200));
+
+  if (!text) {
+    console.error("CSVが空か取得できてない");
+    return [];
+  }
 
   const rows = text.split("\n").map(r => r.split(","));
   console.log("行数:", rows.length);
 
-  const rawHeaders = rows.shift().map(h => h.replace(/"/g, "").trim());
+  const rawHeaders = rows.shift()?.map(h => h.replace(/"/g, "").trim());
   console.log("実際のヘッダ:", rawHeaders);
 
+  if (!rawHeaders) {
+    console.error("ヘッダ行が取得できていません");
+    return [];
+  }
+
   const headers = rawHeaders.map(h => HEADER_MAP[h] || h);
-  console.log("マッピング後:", headers);
+  console.log("マッピング後ヘッダ:", headers);
 
   const items = rows
     .map(cols => {
@@ -43,7 +55,7 @@ async function loadCSV() {
     })
     .filter(item => item.boothUrl);
 
-  console.log("解析結果 items:", items);
+  console.log("解析された items:", items);
   return items;
 }
 
