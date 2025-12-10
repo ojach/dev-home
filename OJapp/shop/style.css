@@ -38,293 +38,85 @@
 
 
 /* =========================================
-   Base
+   SHOP PAGE（全て shop-page の中だけ）
 ========================================= */
-html, body {
-  margin: 0;
-  width: 100%;
-  max-width: 100%;
-  overflow-x: hidden;
-  font-family: "Helvetica","Arial","YuGothic",sans-serif;
-  background: var(--bg);
-  color: var(--text);
-  box-sizing: border-box;
-}
 
-*, *:before, *:after {
-  box-sizing: inherit;
-}
-
-.center {
-  width: 100%;
-  max-width: 500px;
-  margin: 0 auto;
-  text-align: center;
-}
-
-
-/* =========================================
-   Layout
-========================================= */
-.main {
-  width: 100%;
-  max-width: 100%;
-  margin: 0 auto;
-  padding-top: 16px;
-  padding-left: 16px;
-  padding-right: 16px;
-}
-
-/* =========================================
-   Title
-========================================= */
-h2 {
-  text-align: center;
-  margin-top: 24px;
-  font-weight: 600;
-  font-size: 20px;
-  display: block;
-  white-space: pre-line;
-}
-
-
-/* =========================================
-   Buttons
-========================================= */
-.btn {
-  margin: 25px auto;
-  padding: 18px 38px;
-  background: linear-gradient(#ffd85a, #ffb726);
-  border-radius: 40px;
-  font-weight: bold;
-  font-size: 20px;
-  box-shadow: 0 6px 0 #d19400;
-  transition: .2s;
-  position: relative;
-  cursor: pointer;
-  display: inline-block;
-}
-
-.btn::after {
-  content: "";
-  position: absolute;
-  top: 6px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 70%;
-  height: 30%;
-  border-radius: 30px;
-  background: rgba(255,255,255,.55);
-  filter: blur(2px);
-}
-
-.btn:hover { transform: scale(1.06); }
-.btn:active {
-  transform: scale(.97);
-  box-shadow: 0 3px 0 #a87500;
-}
-
-@keyframes pulse {
-  0% { transform: scale(1); }
-  50% { transform: scale(1.04); }
-  100% { transform: scale(1); }
-}
-.btn.pulse { animation: pulse 2.4s infinite ease-in-out; }
-
-
-/* =========================================
-   Arrow
-========================================= */
-.arrow {
-  font-size: 26px;
-  animation: float 1.6s infinite ease-in-out;
-}
-
-@keyframes float {
-  0% { transform: translateY(0); }
-  50% { transform: translateY(8px); }
-  100% { transform: translateY(0); }
-}
-
-
-/* =========================================
-   Sections
-========================================= */
-.section {
-  width: auto;
-  background: var(--section-bg);
-  margin: 18px auto;
-  padding: 20px;
-  border-radius: 18px;
-  box-shadow: 0 0 12px var(--section-shadow);
-}
-
-.section-title {
-  font-size: 18px;
-  margin-bottom: 10px;
-  font-weight: bold;
-}
-
-
-/* =========================================
-   Inputs
-========================================= */
-input[type=file],
-input[type=text] {
-  width: 100%;
-  max-width: 100%;
-  padding: 13px;
-  border-radius: 12px;
-  background: var(--input-bg);
-  border: 1px solid var(--input-border);
-  color: var(--text);
-  font-size: 16px;
-}
-
-input:focus {
-  border-color: #66c8ff;
-}
-
-
-/* =========================================
-   Icon Preview
-========================================= */
-.icon-box {
-  width: 160px;
-  height: 160px;
-  background: var(--icon-bg);
-  border-radius: 22px;
-  margin: 12px auto;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  overflow: hidden;
-  box-shadow: 0 2px 8px rgba(0,0,0,.06);
-}
-
-.icon-box img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  border-radius: 22px;
-}
-
-
-/* =========================================
-   Guide Link
-========================================= */
-.guide-link {
-  color: #2bb7ff;
-  font-weight: bold;
-  text-decoration: none;
-}
-
-
-/* =========================================
-   Assistant Box
-========================================= */
-#assistantBox {
-  position: fixed;
-  bottom: 20px;
-  right: 20px;
-  background: var(--assistant-bg);
-  border-radius: 20px;
-  border: 2px solid var(--assistant-border);
-  padding: 12px 18px;
-  box-shadow: 0 0 12px rgba(0,0,0,.1);
-  font-size: 15px;
-  display: none;
-}
-
-/* ===============================
-   OJapp Icon Shop Styles
-=============================== */
-
-/* ショップ全体（main とは別でここを中央寄せする） */
-.shop {
+.shop-page {
   max-width: 1200px;
-  width: 100%;
   margin: 0 auto;
-  padding-bottom: 60px;
+  padding: 24px 16px 60px;
 }
 
-/* セクションタイトル（既存の h2 とは別） */
-.shop-title,
-.shop-section-title {
-  font-weight: 700;
+/* タイトル */
+.shop-page .shop-title {
+  font-size: 26px;
+  font-weight: bold;
   margin-bottom: 12px;
-  color: var(--text);
 }
 
-/* 説明文の調整 */
-.shop-desc {
-  margin-bottom: 28px;
+.shop-page .shop-desc {
   font-size: 15px;
   line-height: 1.6;
+  margin-bottom: 28px;
   color: var(--text);
 }
 
-/* グリッドレイアウト（レスポンシブ） */
-.shop-grid {
+/* グリッド */
+.shop-page .shop-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
   gap: 24px;
-  width: 100%;
 }
 
-/* カードデザイン */
-.item-card {
+/* カード */
+.shop-page .item-card {
   background: var(--section-bg);
   border-radius: 16px;
   padding: 14px;
   box-shadow: 0 4px 14px var(--section-shadow);
-  display: flex;
-  flex-direction: column;
-  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  transition: .15s;
 }
 
-/* hover演出 */
-.item-card:hover {
+/* ホバー演出 */
+.shop-page .item-card:hover {
   transform: translateY(-4px);
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12);
+  box-shadow: 0 6px 20px rgba(0,0,0,0.12);
 }
 
-/* サムネイル */
-.item-thumb {
+/* サムネ */
+.shop-page .item-thumb {
   width: 100%;
   aspect-ratio: 1 / 1;
   object-fit: cover;
   border-radius: 12px;
-  background: #eee;
 }
 
-/* タイトル */
-.item-title {
-  font-size: 1rem;
+/* 商品名 */
+.shop-page .item-title {
   font-weight: 600;
-  margin: 10px 0 4px;
+  margin: 12px 0 6px;
 }
 
 /* 作者名 */
-.item-author {
-  font-size: 0.85rem;
+.shop-page .item-author {
+  font-size: 13px;
   color: #777;
-  margin-bottom: 12px;
+  margin-bottom: 14px;
 }
 
 /* 購入ボタン */
-.item-buy-btn {
-  margin-top: auto;
+.shop-page .item-buy-btn {
   background: #0f9cf5;
-  color: white;
+  color: #fff;
   padding: 10px 0;
-  text-align: center;
   border-radius: 999px;
-  font-size: 0.9rem;
+  text-align: center;
   text-decoration: none;
-  transition: opacity 0.2s;
+  display: block;
+  font-weight: bold;
 }
 
-.item-buy-btn:hover {
-  opacity: 0.85;
+/* ダークモード */
+.dark .shop-page .item-card {
+  background: var(--section-bg);
 }
