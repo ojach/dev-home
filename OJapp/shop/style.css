@@ -193,3 +193,17 @@
   background: #0f9cf5;
   color: #fff;
 }
+/* =========================================
+   ふわっとアニメ
+========================================= */
+
+.shop-page .item-card {
+  opacity: 0;
+  transform: translateY(12px);
+  transition: opacity .35s ease, transform .35s ease;
+}
+
+.shop-page .item-card.show {
+  opacity: 1;
+  transform: translateY(0);
+}
