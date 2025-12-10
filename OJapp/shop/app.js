@@ -247,18 +247,22 @@ function renderRecommend() {
   const thumb = randomItem.thumbnail || "/OJapp/shop/noimage.png";
 
   box.innerHTML = `
+  <div class="item-thumb-box">
     <img src="${thumb}" class="recommend-thumb">
-    <div class="recommend-title">${randomItem.title}</div>
+    <img src="${randomItem.authorIcon || '/OJapp/shop/default-author.png'}"
+         class="author-icon"
+         onclick="location.href='/OJapp/shop/author/?name=${encodeURIComponent(randomItem.author)}'">
+  </div>
 
-    <div class="recommend-author">
-      by <a href="/OJapp/shop/author/?name=${encodeURIComponent(randomItem.author)}"
-            class="author-link">${randomItem.author}</a>
-    </div>
+  <div class="recommend-title">${randomItem.title}</div>
 
-    <a href="${randomItem.boothUrl}" target="_blank" class="recommend-btn">
-      購入はこちら
-    </a>
-  `;
+  <div class="recommend-author">
+    by <a href="/OJapp/shop/author/?name=${encodeURIComponent(randomItem.author)}"
+          class="author-link">${randomItem.author}</a>
+  </div>
+
+  <a href="${randomItem.boothUrl}" target="_blank" class="recommend-btn">購入はこちら</a>
+`;
 
   // モーダルにも対応したいなら addEventListener 付けれる
   box.querySelector(".recommend-thumb")
