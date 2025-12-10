@@ -33,6 +33,15 @@ async function loadCSV() {
     })
     .filter(item => item.boothUrl && item.visible !== "FALSE");
 }
+function getUniqueCategories(items) {
+  const set = new Set();
+  items.forEach(item => {
+    if (item.category && item.category !== "") {
+      set.add(item.category);
+    }
+  });
+  return ["全て", ...Array.from(set)];
+}
 
 // カード描画
 async function renderShop() {
