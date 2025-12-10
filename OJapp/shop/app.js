@@ -122,6 +122,20 @@ function renderShop(list) {
 
 document.addEventListener("DOMContentLoaded", loadAndRender);
 
+/* ------------------------
+   カテゴリー一覧を抽出
+------------------------ */
+function getUniqueCategories(list) {
+  const categories = list
+    .map(i => i.category || "")   // カテゴリー列
+    .filter(c => c.trim() !== ""); // 空を除外
+
+  const unique = Array.from(new Set(categories));
+  unique.unshift("全て"); // 先頭に「全て」を追加
+
+  return unique;
+}
+
 // ダークモード（現状維持）
 function toggleTheme() {
   document.documentElement.classList.toggle("dark");
