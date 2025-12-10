@@ -62,3 +62,61 @@ function toggleTheme() {
   const sw = document.querySelector(".switch");
   sw.textContent = document.documentElement.classList.contains("dark") ? "🌙" : "😆";
 }
+let items = []; // ← グローバルにして再描画できるようにする
+
+// CSV読込後、items に保存してから描画
+async function loadAndRender() {
+  items = await loadCSV();
+  sortAndRender("new"); // ← 初期表示は新着
+}
+
+function sortAndRender(type) {
+  // ---- ソート処理 ----
+  if (type === "new") {
+    items.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+  }
+  if (type === "score") {
+    items.sort((a, b) => Number(b.score) - Number(a.score));
+  }
+  if (type === "author") {
+    items.sort((a, b) => a.author.localeCompare(b.author));
+  }
+
+  // ---- タブの見た目変更 ----
+  document.querySelectorAll(".shop-tab").forEach(tab => {
+    tab.classList.toggle("active", tab.dataset.sort === type);
+  });
+
+  // ---- 再描画 ----
+  renderShop();
+}
+
+// ---- タブクリック ----
+document.addEventListener("click", e => {
+  if (e.target.classList.contains("shop-tab")) {
+    const type = e.target.dataset.sort;
+    sortAndRender(type);
+  }
+});
+
+// ---- 描画 ----
+function renderShop() {
+  const grid = document.querySelector(".shop-grid");
+  grid.innerHTML = ""; // ← 前の表示を消す
+
+  items.forEach(item => {
+    const card = document.createElement("div");
+    card.className = "item-card";
+
+    card.innerHTML = `
+      <img src="${item.thumbnail}" class="item-thumb">
+      <div class="item-title">${item.title}</div>
+      <div class="item-author">by ${item.author}</div>
+      <a href="${item.boothUrl}" target="_blank" class="item-buy-btn">購入はこちら</a>
+    `;
+
+    grid.appendChild(card);
+  });
+}
+
+document.addEventListener("DOMContentLoaded", loadAndRender);
