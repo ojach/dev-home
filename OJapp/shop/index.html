@@ -1,26 +1,16 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-  <!-- ▼ OJapp 共通 HEAD -->
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-  <title>OJapp</title>
-
-  <!-- ファビコン -->
-  <link rel="icon" type="image/png" sizes="16x16" href="/OJapp/icon/favicon-16.png">
-  <link rel="icon" type="image/png" sizes="32x32" href="/OJapp/icon/favicon-32.png">
-  <link rel="icon" type="image/png" sizes="48x48" href="/OJapp/icon/favicon-48.png">
-
-  <!-- iPhone ホームアイコン -->
-  <link rel="apple-touch-icon" sizes="180x180" href="/OJapp/icon/icon-180.png">
-
-  <meta name="theme-color" content="#2bb7ff">
+  <title>OJapp アイコンショップ</title>
 
   <!-- 共通CSS -->
+  <link rel="stylesheet" href="/OJapp/style.css">
+
+  <!-- このページ専用CSS -->
   <link rel="stylesheet" href="/OJapp/shop/style.css">
 
-  <!-- ダークモード -->
   <script src="/OJapp/darkmode.js"></script>
 </head>
 
@@ -34,8 +24,8 @@ fetch("/OJapp/header.html")
   .then(h => document.getElementById("header").innerHTML = h);
 </script>
 
-<!-- ▼ メインページ -->
-<div class="main">
+<!-- ▼ メイン -->
+<div class="main shop-page">
   <section class="shop">
 
     <h1 class="shop-title">OJapp アイコンショップ</h1>
@@ -46,7 +36,7 @@ fetch("/OJapp/header.html")
 
     <h2 class="shop-section-title">All Items</h2>
 
-    <!-- ▼ ショップグリッド（JS がここに商品を挿入） -->
+    <!-- 商品カードが入る場所 -->
     <div class="shop-grid"></div>
 
   </section>
@@ -60,7 +50,7 @@ fetch("/OJapp/footer.html")
   .then(h => document.getElementById("footer").innerHTML = h);
 </script>
 
-<!-- ▼ ショップ機能JS -->
+<!-- ▼ ショップJS -->
 <script src="/OJapp/shop/app.js"></script>
 
 </body>
