@@ -1,29 +1,29 @@
-/* ショップだけ幅広にする */
+/* ショップ全体の幅（広めに） */
 .shop {
-  max-width: 1200px;     /* ここがポイント！ショップ用の広さ */
+  max-width: 1200px;
   margin: 0 auto;
   padding: 24px 16px 60px;
 }
 
-/* カードのグリッド */
+/* グリッド（3列〜4列に自動調整） */
 .shop-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
   gap: 24px;
 }
 
-/* 商品カード */
+/* カード */
 .item-card {
-  background: #ffffff;
+  background: #fff;
   border-radius: 14px;
   padding: 14px;
   box-shadow: 0 4px 14px rgba(0, 0, 0, 0.06);
-  transition: transform 0.15s ease, box-shadow 0.15s ease;
   display: flex;
   flex-direction: column;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
 }
 
-/* ホバーで少し浮く */
+/* hoverでふわっと浮く演出 */
 .item-card:hover {
   transform: translateY(-4px);
   box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12);
@@ -47,7 +47,7 @@
 /* 作者名 */
 .item-author {
   font-size: 0.85rem;
-  color: #555;
+  color: #666;
   margin-bottom: 10px;
 }
 
@@ -55,7 +55,7 @@
 .item-buy-btn {
   margin-top: auto;
   background: #0f9cf5;
-  color: #fff;
+  color: white;
   text-align: center;
   padding: 8px 0;
   border-radius: 999px;
