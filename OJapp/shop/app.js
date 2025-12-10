@@ -224,6 +224,7 @@ async function start() {
   items = await loadCSV();
   viewItems = [...items];
 
+  renderRecommend();
   renderCategoryTabs();
   sortAndRender("new"); // 初期表示は新着
 }
