@@ -1,86 +1,23 @@
-console.log("JS読み込み開始");
+let items = [];
+let currentSort = "new";
+let currentCategory = "全て";
 
-// 設定（CSV）
-const CSV_URL =
-  "https://docs.google.com/spreadsheets/d/e/2PACX-1vRckMXYTdFw-2sSEmeqVTCXymb3F_NwrNdztP01BrZfH1n2WCORVwZuop7IxfG_KHGYqqlCuc3sBUee/pub?gid=1229129034&single=true&output=csv";
-
-// マッピング
-const HEADER_MAP = {
-  "タイムスタンプ": "timestamp",
-  "BOOTH商品URL": "boothUrl",
-  "サムネ画像URL": "thumbnail",
-  "タイトル": "title",
-  "作者名": "author",
-  "カテゴリー": "category",
-  "スコア": "score",
-  "visible": "visible"
-};
-
-// CSV取得
-async function loadCSV() {
-  const res = await fetch(CSV_URL);
-  const text = await res.text();
-
-  const rows = text.split("\n").map(r => r.split(","));
-  const rawHeaders = rows.shift().map(h => h.replace(/"/g, "").trim());
-  const headers = rawHeaders.map(h => HEADER_MAP[h] || h);
-
-  return rows
-    .map(cols => {
-      const obj = {};
-      cols.forEach((val, i) => (obj[headers[i]] = val.replace(/"/g, "").trim()));
-      return obj;
-    })
-    .filter(item => item.boothUrl && item.visible !== "FALSE");
-}
-function getUniqueCategories(items) {
-  const set = new Set();
-  items.forEach(item => {
-    if (item.category && item.category !== "") {
-      set.add(item.category);
-    }
-  });
-  return ["全て", ...Array.from(set)];
-}
-
-// カード描画
-async function renderShop() {
-  const grid = document.querySelector(".shop-grid");
-  const items = await loadCSV();
-
-  items.forEach(item => {
-    const card = document.createElement("div");
-    card.className = "item-card";
-
-    card.innerHTML = `
-      <img src="${item.thumbnail}" class="item-thumb">
-      <div class="item-title">${item.title}</div>
-      <div class="item-author">by ${item.author}</div>
-      <a href="${item.boothUrl}" target="_blank" class="item-buy-btn">購入はこちら</a>
-    `;
-
-    grid.appendChild(card);
-  });
-}
-
-document.addEventListener("DOMContentLoaded", renderShop);
-", renderShop);
-// ダークモード（現状維持）
-function toggleTheme() {
-  document.documentElement.classList.toggle("dark");
-  const sw = document.querySelector(".switch");
-  sw.textContent = document.documentElement.classList.contains("dark") ? "🌙" : "😆";
-}
-let items = []; // ← グローバルにして再描画できるようにする
-
-// CSV読込後、items に保存してから描画
 async function loadAndRender() {
   items = await loadCSV();
-  sortAndRender("new"); // ← 初期表示は新着
+
+  // カテゴリータブ生成
+  renderCategoryTabs(getUniqueCategories(items));
+
+  // 初回は新着 & 全て
+  applyFilters();
 }
 
-function sortAndRender(type) {
-  // ---- ソート処理 ----
+/* ------------------------
+   並び替えタブ
+------------------------ */
+function sortItems(type) {
+  currentSort = type;
+
   if (type === "new") {
     items.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
   }
@@ -91,34 +28,89 @@ function sortAndRender(type) {
     items.sort((a, b) => a.author.localeCompare(b.author));
   }
 
-  // ---- タブの見た目変更 ----
   document.querySelectorAll(".shop-tab").forEach(tab => {
     tab.classList.toggle("active", tab.dataset.sort === type);
   });
-
-  // ---- 再描画 ----
-  renderShop();
 }
 
-// ---- タブクリック ----
+/* ------------------------
+   カテゴリータブ生成
+------------------------ */
+function renderCategoryTabs(categories) {
+  const wrap = document.querySelector(".category-tabs");
+  wrap.innerHTML = "";
+
+  categories.forEach(cat => {
+    const tab = document.createElement("div");
+    tab.className = "category-tab" + (cat === "全て" ? " active" : "");
+    tab.dataset.category = cat;
+    tab.textContent = cat;
+    wrap.appendChild(tab);
+  });
+}
+
+/* ------------------------
+   カテゴリー適用
+------------------------ */
+function filterByCategory(list) {
+  if (currentCategory === "全て") return list;
+  return list.filter(item => item.category === currentCategory);
+}
+
+/* ------------------------
+   ソート＋カテゴリー同時適用
+------------------------ */
+function applyFilters() {
+  // ソート
+  sortItems(currentSort);
+
+  // カテゴリー絞り込み
+  const filtered = filterByCategory(items);
+
+  // 再描画
+  renderShop(filtered);
+}
+
+/* ------------------------
+   タブクリック処理
+------------------------ */
 document.addEventListener("click", e => {
+  // ソート
   if (e.target.classList.contains("shop-tab")) {
     const type = e.target.dataset.sort;
-    sortAndRender(type);
+    sortItems(type);
+    applyFilters();
+    return;
+  }
+
+  // カテゴリー
+  if (e.target.classList.contains("category-tab")) {
+    const cat = e.target.dataset.category;
+    currentCategory = cat;
+
+    document.querySelectorAll(".category-tab").forEach(tab => {
+      tab.classList.toggle("active", tab.dataset.category === cat);
+    });
+
+    applyFilters();
   }
 });
 
-// ---- 描画 ----
-function renderShop() {
+/* ------------------------
+   商品描画
+------------------------ */
+function renderShop(list) {
   const grid = document.querySelector(".shop-grid");
-  grid.innerHTML = ""; // ← 前の表示を消す
+  grid.innerHTML = "";
 
-  items.forEach(item => {
+  list.forEach(item => {
+    const thumb = item.thumbnail || "/OJapp/shop/noimage.png";
+
     const card = document.createElement("div");
     card.className = "item-card";
 
     card.innerHTML = `
-      <img src="${item.thumbnail}" class="item-thumb">
+      <img src="${thumb}" class="item-thumb">
       <div class="item-title">${item.title}</div>
       <div class="item-author">by ${item.author}</div>
       <a href="${item.boothUrl}" target="_blank" class="item-buy-btn">購入はこちら</a>
@@ -129,3 +121,10 @@ function renderShop() {
 }
 
 document.addEventListener("DOMContentLoaded", loadAndRender);
+
+// ダークモード（現状維持）
+function toggleTheme() {
+  document.documentElement.classList.toggle("dark");
+  const sw = document.querySelector(".switch");
+  sw.textContent = document.documentElement.classList.contains("dark") ? "🌙" : "😆";
+}
