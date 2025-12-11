@@ -5,10 +5,79 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>商品ページ | OJapp</title>
 
+  <link rel="stylesheet" href="/OJapp/style.css" />
   <link rel="stylesheet" href="/OJapp/shop/style.css" />
-  <link rel="stylesheet" href="./style.css" />
-
   <script src="/OJapp/darkmode.js"></script>
+
+  <style>
+    .product-page {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+
+    .back-link {
+      display: inline-block;
+      margin-bottom: 16px;
+      cursor: pointer;
+      color: #0f9cf5;
+      font-weight: bold;
+    }
+
+    .product-thumb-box {
+      position: relative;
+      width: 100%;
+      margin-bottom: 16px;
+    }
+
+    .product-thumb {
+      width: 100%;
+      border-radius: 20px;
+      object-fit: cover;
+    }
+
+    .product-author-icon {
+      position: absolute;
+      bottom: 12px;
+      right: 12px;
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      border: 4px solid var(--section-bg);
+      object-fit: cover;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.25);
+      cursor: pointer;
+    }
+
+    .product-title {
+      font-size: 24px;
+      font-weight: bold;
+      margin-bottom: 6px;
+    }
+
+    .product-price {
+      font-size: 20px;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+
+    .product-meta {
+      margin-bottom: 20px;
+      opacity: 0.8;
+    }
+
+    .product-buy-btn {
+      display: block;
+      padding: 14px;
+      text-align: center;
+      background: #2bb7ff;
+      color: #fff;
+      font-weight: bold;
+      border-radius: 14px;
+      text-decoration: none;
+      margin-top: 20px;
+    }
+  </style>
 </head>
 
 <body>
@@ -20,18 +89,12 @@ fetch("/OJapp/header.html")
   .then(h => document.getElementById("header").innerHTML = h);
 </script>
 
-<div class="main product-page">
+<div class="product-page">
+  <div id="backArea" class="back-link">← 一覧に戻る</div>
 
-  <!-- 戻るボタン -->
-  <button class="back-btn" onclick="history.back()">← 過去に戻る</button>
-
-  <!-- 商品詳細 -->
-  <div id="product-detail"></div>
-
-  <!-- 作者の他の作品 -->
-  <h2 class="other-works-title">この作者の他の作品</h2>
-  <div class="shop-grid other-works-grid"></div>
-
+  <div id="productBox">
+    読み込み中...
+  </div>
 </div>
 
 <div id="footer"></div>
@@ -41,7 +104,6 @@ fetch("/OJapp/footer.html")
   .then(h => document.getElementById("footer").innerHTML = h);
 </script>
 
-<script src="./app.js"></script>
-
+<script src="product.js"></script>
 </body>
 </html>
