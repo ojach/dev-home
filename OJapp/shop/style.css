@@ -584,3 +584,10 @@ input:focus {
 .dark .recommend-box {
   background: #222;
 }
+.item-card {
+  cursor: pointer;
+}
+.item-card:hover {
+  transform: scale(1.04);
+  box-shadow: 0 6px 16px rgba(0,0,0,0.15);
+}
