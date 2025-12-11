@@ -199,6 +199,11 @@ function renderShop() {
   animateCards();
 }
 
+// 商品クリック時にスクロール位置保存
+card.addEventListener("click", () => {
+  sessionStorage.setItem("ojapp_scroll_position", window.scrollY);
+  location.href = `/OJapp/shop/product/?id=${item.id}`;
+});
 
 // ================================
 // 今日のおすすめ
