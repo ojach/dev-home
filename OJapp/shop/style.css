@@ -623,18 +623,20 @@ input:focus {
   text-decoration: underline;
 }
 /* =========================================
-   今日のおすすめ（常時2列レイアウト）
+   今日のおすすめ（スマホでも常時2列）
 ========================================= */
 .recommend-box {
   display: grid;
-  grid-template-columns: repeat(2, 1fr); /* ← スマホでも2列 */
-  gap: 16px;
+  grid-template-columns: repeat(2, minmax(0, 1fr)); /* ← 幅を強制均等 */
+  gap: 12px; /* 少し狭めてスマホでも入る */
   margin: 0 auto 28px;
-  max-width: 600px;
-  padding: 16px;
+  width: 100%;
+  max-width: 500px; /* ← 狭すぎた600→500 */
+  padding: 10px;
   border-radius: 18px;
   background: var(--section-bg);
   box-shadow: 0 4px 12px var(--section-shadow);
+  box-sizing: border-box;
 }
 
 .recommend-item {
@@ -654,16 +656,39 @@ input:focus {
 .recommend-thumb {
   width: 100%;
   border-radius: 14px;
-  margin-bottom: 8px;
+  margin-bottom: 6px;
 }
 
 .recommend-title {
-  font-size: 15px;
+  font-size: 14px;
   font-weight: 600;
-  margin-bottom: 4px;
+  margin-bottom: 2px;
+  text-align: center;
 }
 
 .recommend-author {
-  font-size: 13px;
+  font-size: 12px;
   opacity: 0.85;
+  text-align: center;
+}
+/* PC：4列 */
+@media (min-width: 900px) {
+ .recommend-box {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+/* タブレット：3列 */
+@media (min-width: 600px) and (max-width: 899px) {
+ .recommend-box {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+/* スマホ：3列 */
+@media (max-width: 599px) {
+ .recommend-box {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+  }
 }
