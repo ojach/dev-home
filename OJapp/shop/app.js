@@ -6,8 +6,6 @@ console.log("JS読み込み開始");
 const CSV_URL =
   "https://docs.google.com/spreadsheets/d/e/2PACX-1vRckMXYTdFw-2sSEmeqVTCXymb3F_NwrNdztP01BrZfH1n2WCORVwZuop7IxfG_KHGYqqlCuc3sBUee/pub?gid=1229129034&single=true&output=csv";
 
-const AUTHOR_ICON_BASE = "/OJapp/shop/author"; // 作者アイコンのベースパス
-
 const HEADER_MAP = {
   "タイムスタンプ": "timestamp",
   "BOOTH商品URL": "boothUrl",
@@ -17,14 +15,14 @@ const HEADER_MAP = {
   "カテゴリー": "category",
   "スコア": "score",
   "visible": "visible",
-  "価格": "price",
+  "価格": "price"
 };
 
 let items = [];      // 全商品
 let viewItems = [];  // 表示商品のフィルタ後リスト
 
-let currentSort = "new";      // 現在のソート
-let currentCategory = "全て"; // 現在のカテゴリ
+let currentSort = "new";      
+let currentCategory = "全て";
 
 
 // ================================
@@ -49,40 +47,17 @@ async function loadCSV() {
     .filter(item => item.visible !== "FALSE");
 }
 
-async function start() {
-  items = await loadCSV();
-
-  // 自動で itemId を割り当てる
-  items = items.map((item, index) => ({
-    ...item,
-    itemId: index + 1
-  }));
-
-  viewItems = [...items];
-
-  renderRecommend();
-  renderCategoryTabs();
-  sortAndRender("new");
-}
 
 // ================================
-// 作者アイコンの付与（GitHub管理）
-// ================================
-function applyAuthorIcons() {
-  items.forEach(item => {
-    item.authorIcon = `${AUTHOR_ICON_BASE}/${item.author}.png`;
-  });
-}
-
-
-// ================================
-// カテゴリータブの生成
+// カテゴリータブ表示
 // ================================
 function renderCategoryTabs() {
   const categories = ["全て"];
 
   items.forEach(i => {
-    if (i.category && !categories.includes(i.category)) categories.push(i.category);
+    if (i.category && !categories.includes(i.category)) {
+      categories.push(i.category);
+    }
   });
 
   const catArea = document.querySelector(".category-tabs");
@@ -95,6 +70,7 @@ function renderCategoryTabs() {
     div.textContent = cat;
 
     if (cat === currentCategory) div.classList.add("active");
+
     catArea.appendChild(div);
   });
 }
@@ -106,15 +82,18 @@ function renderCategoryTabs() {
 function filterByCategory(category) {
   currentCategory = category;
 
-  if (category === "全て") viewItems = [...items];
-  else viewItems = items.filter(i => i.category === category);
+  if (category === "全て") {
+    viewItems = [...items];
+  } else {
+    viewItems = items.filter(i => i.category === category);
+  }
 
   sortAndRender(currentSort);
 }
 
 
 // ================================
-// ソート機能
+// ソート
 // ================================
 function sortAndRender(type) {
   currentSort = type;
@@ -123,13 +102,12 @@ function sortAndRender(type) {
     viewItems.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
   }
   if (type === "score") {
-    viewItems.sort((a, b) => Number(b.score || 0) - Number(a.score || 0));
+    viewItems.sort((a, b) => Number(b.score) - Number(a.score));
   }
   if (type === "author") {
     viewItems.sort((a, b) => a.author.localeCompare(b.author));
   }
 
-  // タブUI更新
   document.querySelectorAll(".shop-tab").forEach(tab => {
     tab.classList.toggle("active", tab.dataset.sort === type);
   });
@@ -144,14 +122,11 @@ function sortAndRender(type) {
 function openModal(item) {
   const modal = document.getElementById("item-modal");
 
-  document.getElementById("modal-thumb").src =
-    item.thumbnail || "/OJapp/shop/noimage.png";
-
+  document.getElementById("modal-thumb").src = item.thumbnail || "/OJapp/shop/noimage.png";
   document.getElementById("modal-title").textContent = item.title;
   document.getElementById("modal-author").textContent = `作者: ${item.author}`;
   document.getElementById("modal-category").textContent = `カテゴリー: ${item.category}`;
   document.getElementById("modal-link").href = item.boothUrl;
-  document.getElementById("modal-price").textContent = `¥${item.price || 0}`;
 
   modal.classList.remove("hidden");
 }
@@ -176,13 +151,15 @@ document.addEventListener("keydown", e => {
 function animateCards() {
   const cards = document.querySelectorAll(".item-card");
   cards.forEach((card, i) => {
-    setTimeout(() => card.classList.add("show"), i * 60);
+    setTimeout(() => {
+      card.classList.add("show");
+    }, i * 60);
   });
 }
 
 
 // ================================
-// 商品カード描画
+// 商品リスト描画
 // ================================
 function renderShop() {
   const grid = document.querySelector(".shop-grid");
@@ -190,6 +167,7 @@ function renderShop() {
 
   viewItems.forEach(item => {
     const thumb = item.thumbnail || "/OJapp/shop/noimage.png";
+    const authorIcon = `/OJapp/shop/author-icons/${item.author}.png`;
 
     const card = document.createElement("div");
     card.className = "item-card";
@@ -197,27 +175,24 @@ function renderShop() {
     card.innerHTML = `
       <div class="item-thumb-box">
         <img src="${thumb}" class="item-thumb">
-        <img src="${item.authorIcon}"
-             onerror="this.src='${AUTHOR_ICON_BASE}/default.png'"
-             class="author-icon"
+        <img src="${authorIcon}" class="author-icon"
              onclick="location.href='/OJapp/shop/author/?name=${encodeURIComponent(item.author)}'">
       </div>
 
       <div class="item-title">${item.title}</div>
-      <div class="item-price">¥${item.price || 0}</div>
+      <div class="item-price">¥${item.price}</div>
 
       <div class="item-author">
         by <a href="/OJapp/shop/author/?name=${encodeURIComponent(item.author)}"
               class="author-link">${item.author}</a>
       </div>
 
-      <a href="${item.boothUrl}" target="_blank" class="item-buy-btn">購入はこちら</a>
+      <a href="/OJapp/shop/product/?id=${item.itemId}" class="item-buy-btn">
+        購入はこちら
+      </a>
     `;
 
-    // モーダル制御
-    card.addEventListener("click", () => openModal(item));
-    card.querySelector(".item-buy-btn").addEventListener("click", e => e.stopPropagation());
-
+    // モーダルはオフ（商品ページ遷移に変更済み）
     grid.appendChild(card);
   });
 
@@ -226,7 +201,41 @@ function renderShop() {
 
 
 // ================================
-// タブ & カテゴリのクリック
+// 今日のおすすめ
+// ================================
+function renderRecommend() {
+  if (items.length <= 1) return;
+
+  const box = document.getElementById("recommend-box");
+  if (!box) return;
+
+  const randomItem = items[Math.floor(Math.random() * items.length)];
+
+  const thumb = randomItem.thumbnail || "/OJapp/shop/noimage.png";
+  const authorIcon = `/OJapp/shop/author-icons/${randomItem.author}.png`;
+
+  box.innerHTML = `
+    <div class="item-thumb-box">
+      <img src="${thumb}" class="recommend-thumb">
+      <img src="${authorIcon}" class="author-icon">
+    </div>
+
+    <div class="recommend-title">${randomItem.title}</div>
+
+    <div class="recommend-author">
+      by <a href="/OJapp/shop/author/?name=${encodeURIComponent(randomItem.author)}"
+            class="author-link">${randomItem.author}</a>
+    </div>
+
+    <a href="/OJapp/shop/product/?id=${randomItem.itemId}" class="recommend-btn">
+      購入はこちら
+    </a>
+  `;
+}
+
+
+// ================================
+// クリックイベント（タブ & カテゴリー）
 // ================================
 document.addEventListener("click", e => {
   if (e.target.classList.contains("shop-tab")) {
@@ -242,49 +251,22 @@ document.addEventListener("click", e => {
 
 
 // ================================
-// 今日のおすすめ
-// ================================
-function renderRecommend() {
-  if (items.length <= 1) return;
-
-  const box = document.getElementById("recommend-box");
-  if (!box) return;
-
-  const item = items[Math.floor(Math.random() * items.length)];
-  const thumb = item.thumbnail || "/OJapp/shop/noimage.png";
-
-  box.innerHTML = `
-    <div class="item-thumb-box">
-      <img src="${thumb}" class="recommend-thumb">
-      <img src="${item.authorIcon}"
-           onerror="this.src='${AUTHOR_ICON_BASE}/default.png'"
-           class="author-icon"
-           onclick="location.href='/OJapp/shop/author/?name=${encodeURIComponent(item.author)}'">
-    </div>
-
-    <div class="recommend-title">${item.title}</div>
-
-    <div class="recommend-author">
-      by <a href="/OJapp/shop/author/?name=${encodeURIComponent(item.author)}"
-            class="author-link">${item.author}</a>
-    </div>
-
-    <a href="${item.boothUrl}" target="_blank" class="recommend-btn">購入はこちら</a>
-  `;
-}
-
-
-// ================================
-// 初期起動
+// 初期起動（itemId 自動生成版）
 // ================================
 async function start() {
   items = await loadCSV();
-  applyAuthorIcons();
+
+  // ★ itemId を自動生成（1,2,3,...）
+  items = items.map((item, index) => ({
+    ...item,
+    itemId: String(index + 1),
+  }));
+
   viewItems = [...items];
 
   renderRecommend();
   renderCategoryTabs();
-  sortAndRender("new"); // 初期表示は新着
+  sortAndRender("new");
 }
 
 document.addEventListener("DOMContentLoaded", start);
