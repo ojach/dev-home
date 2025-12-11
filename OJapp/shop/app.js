@@ -204,32 +204,47 @@ animateCards();
 }
 
 // ================================
-// 今日のおすすめ
+// 今日のおすすめ（常時2件・カードクリックで遷移）
 // ================================
 function renderRecommend() {
-  if (items.length <= 1) return;
+  if (items.length < 2) return;
 
   const box = document.getElementById("recommend-box");
   if (!box) return;
 
-  const randomItem = items[Math.floor(Math.random() * items.length)];
+  // ★ 2件ランダム選出
+  const shuffled = [...items].sort(() => Math.random() - 0.5);
+  const selected = shuffled.slice(0, 2);
 
-  const thumb = randomItem.thumbnail || "/OJapp/shop/noimage.png";
-  const authorIcon = `/OJapp/shop/author/${randomItem.author}.png`;
+  box.innerHTML = selected.map(item => {
+    const thumb = item.thumbnail || "/OJapp/shop/noimage.png";
+    const authorIcon = `/OJapp/shop/author/${item.author}.png`;
 
-  box.innerHTML = `
-    <div class="item-thumb-box">
-      <img src="${thumb}" class="recommend-thumb">
-      <img src="${authorIcon}" class="author-icon">
-    </div>
+    return `
+      <div class="recommend-item" data-id="${item.itemId}">
+        <div class="item-thumb-box">
+          <img src="${thumb}" class="recommend-thumb">
+          <img src="${authorIcon}" class="author-icon">
+        </div>
 
-    <div class="recommend-title">${randomItem.title}</div>
+        <div class="recommend-title">${item.title}</div>
 
-    <div class="recommend-author">
-      by <a href="/OJapp/shop/author/?name=${encodeURIComponent(randomItem.author)}"
-            class="author-link">${randomItem.author}</a>
-    </div>
-  `;
+        <div class="recommend-author">
+          by <a href="/OJapp/shop/author/?name=${encodeURIComponent(item.author)}"
+                class="author-link">${item.author}</a>
+        </div>
+      </div>
+    `;
+  }).join("");
+
+  // ✅ 各カードクリックで商品ページへ
+  box.querySelectorAll(".recommend-item").forEach(card => {
+    card.addEventListener("click", () => {
+      const id = card.dataset.id;
+      sessionStorage.setItem("ojapp_scroll_position", window.scrollY);
+      location.href = `/OJapp/shop/product/?id=${id}`;
+    });
+  });
 }
 
 
