@@ -43,7 +43,9 @@ async function loadCSV() {
     })
     .filter(item => item.visible !== "FALSE"); // visible=FALSE は非公開
 }
-
+items.forEach(item => {
+  item.authorIcon = authorIcons[item.author] || "/OJapp/shop/default-author.png";
+});
 
 // ================================
 // カテゴリータブの生成
@@ -269,9 +271,28 @@ function renderRecommend() {
   box.querySelector(".recommend-thumb")
      .addEventListener("click", () => openModal(randomItem));
 }
+const AUTHOR_LIST_URL =
+  "https://docs.google.com/spreadsheets/d/e/XXXXXXXXXX/pub?gid=YYYYYY&single=true&output=csv";
+
+let authorIcons = {};
+
+async function loadAuthorList() {
+  const res = await fetch(AUTHOR_LIST_URL);
+  const text = await res.text();
+  
+  const rows = text.split("\n").map(r => r.split(","));
+  rows.shift();
+
+  rows.forEach(([name, icon]) => {
+    authorIcons[name.trim()] = icon.trim();
+  });
+
+  console.log("作者リスト:", authorIcons);
+}
 // ダークモード（現状維持）
 function toggleTheme() {
   document.documentElement.classList.toggle("dark");
   const sw = document.querySelector(".switch");
   sw.textContent = document.documentElement.classList.contains("dark") ? "🌙" : "😆";
 }
+
