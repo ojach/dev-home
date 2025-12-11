@@ -30,7 +30,7 @@ async function loadCSV() {
   const rows = text.split("\n").map(r => r.split(","));
   const rawHeaders = rows.shift().map(h => h.replace(/"/g, "").trim());
   const headers = rawHeaders.map(h => HEADER_MAP[h] || h);
-
+renderAuthorHeader(authorName);
   return rows
     .map(cols => {
       const obj = {};
@@ -73,6 +73,19 @@ async function start() {
 
   renderCards(items);
 }
+function renderAuthorHeader(authorName) {
 
+  const authorIcon = authorIcons[authorName] || "/OJapp/shop/default-author.png";
+
+  const header = document.createElement("div");
+  header.className = "author-header";
+
+  header.innerHTML = `
+    <img class="author-header-icon" src="${authorIcon}">
+    <div class="author-header-name">${authorName}</div>
+  `;
+
+  document.querySelector(".author-page").prepend(header);
+}
 
 document.addEventListener("DOMContentLoaded", start);
