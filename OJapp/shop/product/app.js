@@ -1,6 +1,5 @@
-console.log("product page JS loaded");
+console.log("商品ページ JS 読み込み完了");
 
-// ===== 基本設定 =====
 const CSV_URL =
   "https://docs.google.com/spreadsheets/d/e/2PACX-1vRckMXYTdFw-2sSEmeqVTCXymb3F_NwrNdztP01BrZfH1n2WCORVwZuop7IxfG_KHGYqqlCuc3sBUee/pub?gid=1229129034&single=true&output=csv";
 
@@ -13,124 +12,111 @@ const HEADER_MAP = {
   "カテゴリー": "category",
   "スコア": "score",
   "visible": "visible",
-  "価格": "price",
+  "価格": "price"
 };
 
-// 作者アイコン（とりあえず共通のデフォルト）
-function getAuthorIcon(authorName) {
-  // 必要になったらここを作者ごとのパスにしてOK
-  return "/OJapp/shop/default-author.png";
+// =====================================
+// URL から id を取得
+// =====================================
+function getItemId() {
+  const p = new URLSearchParams(location.search);
+  return Number(p.get("id"));
 }
 
-// ===== CSV 読み込み =====
+// =====================================
+// CSV 読み込み
+// =====================================
 async function loadCSV() {
   const res = await fetch(CSV_URL);
-  const text = await res.text();
+  const txt = await res.text();
 
-  const rows = text.split("\n").map(r => r.split(","));
+  const rows = txt.split("\n").map(r => r.split(","));
   const rawHeaders = rows.shift().map(h => h.replace(/"/g, "").trim());
   const headers = rawHeaders.map(h => HEADER_MAP[h] || h);
 
   return rows
     .map(cols => {
       const obj = {};
-      cols.forEach((val, i) => {
-        obj[headers[i]] = val.replace(/"/g, "").trim();
-      });
+      cols.forEach((v, i) => obj[headers[i]] = v.replace(/"/g, "").trim());
       return obj;
     })
     .filter(item => item.visible !== "FALSE");
 }
 
-// ===== 商品詳細を描画 =====
+// =====================================
+// 作者アイコンの取得
+// =====================================
+function getAuthorIcon(name) {
+  return `/OJapp/shop/author/${name}.png`;
+}
+
+// =====================================
+// 商品ページ描画
+// =====================================
 function renderProduct(item) {
-  const box = document.getElementById("product-detail");
+  const box = document.getElementById("productBox");
+
   const thumb = item.thumbnail || "/OJapp/shop/noimage.png";
-  const authorIcon = getAuthorIcon(item.author);
+  const icon = getAuthorIcon(item.author);
 
   box.innerHTML = `
-    <img class="product-thumb" src="${thumb}">
+    <div class="product-thumb-box">
+      <img src="${thumb}" class="product-thumb">
+
+      <img src="${icon}" class="product-author-icon"
+           onclick="location.href='/OJapp/shop/author/?name=${item.author}'">
+    </div>
 
     <div class="product-title">${item.title}</div>
 
-    <div class="product-author-box">
-      <img class="product-author-icon" src="${authorIcon}">
-      <a href="/OJapp/shop/author/?name=${encodeURIComponent(item.author)}">
-        ${item.author}
-      </a>
-    </div>
-
     <div class="product-price">¥${item.price}</div>
 
-    <a class="product-buy-btn" href="${item.boothUrl}" target="_blank">
-      BOOTHで購入する
+    <div class="product-meta">
+      作者：<a href="/OJapp/shop/author/?name=${item.author}">${item.author}</a><br>
+      カテゴリー：${item.category}
+    </div>
+
+    <a class="product-buy-btn" target="_blank" href="${item.boothUrl}">
+      購入はこちら
     </a>
   `;
 }
 
-// ===== 同じ作者の他の作品（3〜4件） =====
-function renderOtherWorks(allItems, currentItem) {
-  const grid = document.querySelector(".other-works-grid");
-  if (!grid) return;
-
-  const others = allItems
-    .filter(i => i.author === currentItem.author && i._itemId !== currentItem._itemId)
-    .slice(0, 4);
-
-  grid.innerHTML = "";
-
-  if (others.length === 0) {
-    grid.innerHTML = "<p>他の作品はまだありません。</p>";
-    return;
+// =====================================
+// 戻る機能（元の位置まで戻る）
+// =====================================
+document.getElementById("backArea").addEventListener("click", () => {
+  const pos = sessionStorage.getItem("ojapp_scroll_position");
+  if (pos) {
+    history.back();
+    setTimeout(() => {
+      window.scrollTo(0, Number(pos));
+    }, 50);
+  } else {
+    history.back();
   }
+});
 
-  others.forEach(i => {
-    const card = document.createElement("div");
-    card.className = "item-card";
-    const thumb = i.thumbnail || "/OJapp/shop/noimage.png";
-
-    card.innerHTML = `
-      <img src="${thumb}" class="item-thumb">
-      <div class="item-title">${i.title}</div>
-    `;
-
-    card.addEventListener("click", () => {
-      location.href = `/OJapp/shop/product/?id=${i._itemId}`;
-    });
-
-    grid.appendChild(card);
-  });
-}
-
-// ===== 初期起動 =====
+// =====================================
+// 初期起動
+// =====================================
 async function start() {
-  const params = new URLSearchParams(location.search);
-  const idParam = params.get("id"); // "1", "2", ...
-
-  if (!idParam) {
-    document.getElementById("product-detail").innerHTML =
-      "<p>商品IDが指定されていません。</p>";
+  const itemId = getItemId();
+  if (!itemId) {
+    document.getElementById("productBox").textContent = "商品が見つかりません。";
     return;
   }
 
-  let items = await loadCSV();
+  const items = await loadCSV();
 
-  // ★ここで product 側も自動採番する
-  items = items.map((item, index) => ({
-    ...item,
-    _itemId: String(index + 1),
-  }));
-
-  const item = items.find(i => i._itemId === idParam);
-
+  const item = items[itemId - 1]; // itemId は 1 から
   if (!item) {
-    document.getElementById("product-detail").innerHTML =
-      "<p>商品が見つかりませんでした。</p>";
+    document.getElementById("productBox").textContent = "商品が存在しません。";
     return;
   }
 
   renderProduct(item);
-  renderOtherWorks(items, item);
 }
 
-document.addEventListener("DOMContentLoaded", start);
+start();
+
