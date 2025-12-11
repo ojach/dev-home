@@ -1,23 +1,26 @@
-// CSV の場所
+console.log("product page JS loaded");
+
+// ===== 基本設定 =====
 const CSV_URL =
   "https://docs.google.com/spreadsheets/d/e/2PACX-1vRckMXYTdFw-2sSEmeqVTCXymb3F_NwrNdztP01BrZfH1n2WCORVwZuop7IxfG_KHGYqqlCuc3sBUee/pub?gid=1229129034&single=true&output=csv";
 
-// CSV のキー対応
 const HEADER_MAP = {
   "タイムスタンプ": "timestamp",
-  "itemId": "itemId",
   "BOOTH商品URL": "boothUrl",
   "サムネ画像URL": "thumbnail",
   "タイトル": "title",
   "作者名": "author",
   "カテゴリー": "category",
+  "スコア": "score",
+  "visible": "visible",
   "価格": "price",
-  "visible": "visible"
 };
 
-// 作者アイコン（ショップと同じものを使う）
-const authorIcons = window.authorIcons || {}; // グローバル共有用
-
+// 作者アイコン（とりあえず共通のデフォルト）
+function getAuthorIcon(authorName) {
+  // 必要になったらここを作者ごとのパスにしてOK
+  return "/OJapp/shop/default-author.png";
+}
 
 // ===== CSV 読み込み =====
 async function loadCSV() {
@@ -28,20 +31,22 @@ async function loadCSV() {
   const rawHeaders = rows.shift().map(h => h.replace(/"/g, "").trim());
   const headers = rawHeaders.map(h => HEADER_MAP[h] || h);
 
-  return rows.map(cols => {
-    const obj = {};
-    cols.forEach((val, i) => (obj[headers[i]] = val.replace(/"/g, "").trim()));
-    return obj;
-  }).filter(i => i.visible !== "FALSE");
+  return rows
+    .map(cols => {
+      const obj = {};
+      cols.forEach((val, i) => {
+        obj[headers[i]] = val.replace(/"/g, "").trim();
+      });
+      return obj;
+    })
+    .filter(item => item.visible !== "FALSE");
 }
 
-
-// ===== 商品表示 =====
+// ===== 商品詳細を描画 =====
 function renderProduct(item) {
   const box = document.getElementById("product-detail");
-
-  const authorIcon = authorIcons[item.author] || "/OJapp/shop/default-author.png";
   const thumb = item.thumbnail || "/OJapp/shop/noimage.png";
+  const authorIcon = getAuthorIcon(item.author);
 
   box.innerHTML = `
     <img class="product-thumb" src="${thumb}">
@@ -57,51 +62,70 @@ function renderProduct(item) {
 
     <div class="product-price">¥${item.price}</div>
 
-    <a class="product-buy-btn" href="${item.boothUrl}" target="_blank">BOOTHで購入する</a>
+    <a class="product-buy-btn" href="${item.boothUrl}" target="_blank">
+      BOOTHで購入する
+    </a>
   `;
 }
 
-
-// ===== 作者の他の作品（3〜4つだけ） =====
-function renderOtherWorks(allItems, item) {
-  const works = allItems.filter(i => i.author === item.author && i.itemId !== item.itemId);
-
-  const limit = works.slice(0, 4); // ←最大4つだけ
-
+// ===== 同じ作者の他の作品（3〜4件） =====
+function renderOtherWorks(allItems, currentItem) {
   const grid = document.querySelector(".other-works-grid");
+  if (!grid) return;
+
+  const others = allItems
+    .filter(i => i.author === currentItem.author && i._itemId !== currentItem._itemId)
+    .slice(0, 4);
+
   grid.innerHTML = "";
 
-  limit.forEach(w => {
+  if (others.length === 0) {
+    grid.innerHTML = "<p>他の作品はまだありません。</p>";
+    return;
+  }
+
+  others.forEach(i => {
     const card = document.createElement("div");
     card.className = "item-card";
-
-    const thumb = w.thumbnail || "/OJapp/shop/noimage.png";
+    const thumb = i.thumbnail || "/OJapp/shop/noimage.png";
 
     card.innerHTML = `
       <img src="${thumb}" class="item-thumb">
-      <div class="item-title">${w.title}</div>
+      <div class="item-title">${i.title}</div>
     `;
 
-    // 商品ページへ遷移
     card.addEventListener("click", () => {
-      location.href = `/OJapp/shop/product/?id=${w.itemId}`;
+      location.href = `/OJapp/shop/product/?id=${i._itemId}`;
     });
 
     grid.appendChild(card);
   });
 }
 
-
 // ===== 初期起動 =====
 async function start() {
   const params = new URLSearchParams(location.search);
-  const id = params.get("id");
+  const idParam = params.get("id"); // "1", "2", ...
 
-  const items = await loadCSV();
-  const item = items.find(i => i.itemId === id);
+  if (!idParam) {
+    document.getElementById("product-detail").innerHTML =
+      "<p>商品IDが指定されていません。</p>";
+    return;
+  }
+
+  let items = await loadCSV();
+
+  // ★ここで product 側も自動採番する
+  items = items.map((item, index) => ({
+    ...item,
+    _itemId: String(index + 1),
+  }));
+
+  const item = items.find(i => i._itemId === idParam);
 
   if (!item) {
-    document.getElementById("product-detail").innerHTML = "<p>商品が見つかりません。</p>";
+    document.getElementById("product-detail").innerHTML =
+      "<p>商品が見つかりませんでした。</p>";
     return;
   }
 
