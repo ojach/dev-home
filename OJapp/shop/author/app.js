@@ -25,6 +25,8 @@ async function loadCSV() {
   const res = await fetch(CSV_URL);
   const text = await res.text();
 
+  
+
   const rows = text.split("\n").map(r => r.split(","));
   const rawHeaders = rows.shift().map(h => h.replace(/"/g, "").trim());
   const headers = rawHeaders.map(h => HEADER_MAP[h] || h);
@@ -71,5 +73,6 @@ async function start() {
 
   renderCards(items);
 }
+
 
 document.addEventListener("DOMContentLoaded", start);
