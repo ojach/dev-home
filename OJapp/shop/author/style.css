@@ -1,0 +1,20 @@
+.author-header {
+  width: 100%;
+  text-align: center;
+  margin-top: 40px;
+  margin-bottom: 20px;
+}
+
+.author-header-icon {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  object-fit: cover;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+.author-header-name {
+  font-size: 20px;
+  font-weight: 700;
+  margin-top: 12px;
+}
