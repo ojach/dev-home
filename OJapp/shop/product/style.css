@@ -1,0 +1,93 @@
+/* ===============================
+   商品ページ
+=============================== */
+
+.product-page {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 24px 16px 60px;
+}
+
+/* 戻るボタン */
+.back-btn {
+  display: inline-block;
+  margin-bottom: 20px;
+  padding: 8px 18px;
+  font-size: 15px;
+  font-weight: 600;
+  border-radius: 999px;
+  background: var(--section-bg);
+  color: var(--text);
+  border: 1px solid var(--header-border);
+  box-shadow: 0 2px 4px rgba(0,0,0,0.07);
+  cursor: pointer;
+  transition: .15s;
+}
+
+.back-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 10px rgba(0,0,0,0.12);
+}
+
+/* 大サムネ */
+.product-thumb {
+  width: 100%;
+  border-radius: 16px;
+  margin-bottom: 16px;
+}
+
+/* タイトル */
+.product-title {
+  font-size: 24px;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+/* 作者情報 */
+.product-author-box {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+.product-author-icon {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid var(--section-bg);
+}
+
+/* 価格 */
+.product-price {
+  font-size: 20px;
+  font-weight: bold;
+  margin-bottom: 20px;
+}
+
+/* BOOTH ボタン */
+.product-buy-btn {
+  display: block;
+  padding: 14px 0;
+  text-align: center;
+  background: #0f9cf5;
+  color: #fff;
+  font-size: 18px;
+  font-weight: bold;
+  border-radius: 12px;
+  text-decoration: none;
+  margin-bottom: 32px;
+}
+
+/* 作者の他の作品 */
+.other-works-title {
+  margin-top: 40px;
+  margin-bottom: 14px;
+  font-size: 20px;
+  font-weight: bold;
+}
+
+.other-works-grid .item-card {
+  cursor: pointer;
+}
