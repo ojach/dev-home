@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>商品ページ | OJapp</title>
+
+  <link rel="stylesheet" href="/OJapp/style.css" />
+  <link rel="stylesheet" href="/OJapp/shop/style.css" />
+  <link rel="stylesheet" href="./style.css" />
+
+  <script src="/OJapp/darkmode.js"></script>
+</head>
+
+<body>
+
+<div id="header"></div>
+<script>
+fetch("/OJapp/header.html")
+  .then(r => r.text())
+  .then(h => document.getElementById("header").innerHTML = h);
+</script>
+
+<div class="main product-page">
+
+  <!-- 戻るボタン -->
+  <button class="back-btn" onclick="history.back()">← 過去に戻る</button>
+
+  <!-- 商品詳細 -->
+  <div id="product-detail"></div>
+
+  <!-- 作者の他の作品 -->
+  <h2 class="other-works-title">この作者の他の作品</h2>
+  <div class="shop-grid other-works-grid"></div>
+
+</div>
+
+<div id="footer"></div>
+<script>
+fetch("/OJapp/footer.html")
+  .then(r => r.text())
+  .then(h => document.getElementById("footer").innerHTML = h);
+</script>
+
+<script src="./app.js"></script>
+
+</body>
+</html>
