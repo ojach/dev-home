@@ -1,5 +1,10 @@
+// ================================
+// 設定
+// ================================
 const CSV_URL =
   "https://docs.google.com/spreadsheets/d/e/2PACX-1vRckMXYTdFw-2sSEmeqVTCXymb3F_NwrNdztP01BrZfH1n2WCORVwZuop7IxfG_KHGYqqlCuc3sBUee/pub?gid=1229129034&single=true&output=csv";
+
+const AUTHOR_ICON_BASE = "/OJapp/shop/author"; // 作者アイコンの場所
 
 const HEADER_MAP = {
   "タイムスタンプ": "timestamp",
@@ -15,82 +20,116 @@ const HEADER_MAP = {
 let allItems = [];
 let authorName = "";
 
-// URLパラメータ取得
+
+// ================================
+// URLパラメータから作者名取得
+// ================================
 function getAuthorName() {
   const params = new URLSearchParams(location.search);
   return params.get("name") || "";
 }
 
+
+// ================================
+// CSV読み込み
+// ================================
 async function loadCSV() {
   const res = await fetch(CSV_URL);
   const text = await res.text();
 
-  
-
   const rows = text.split("\n").map(r => r.split(","));
   const rawHeaders = rows.shift().map(h => h.replace(/"/g, "").trim());
   const headers = rawHeaders.map(h => HEADER_MAP[h] || h);
-renderAuthorHeader(authorName);
+
   return rows
     .map(cols => {
       const obj = {};
       cols.forEach((val, i) => (obj[headers[i]] = val.replace(/"/g, "").trim()));
       return obj;
     })
-    .filter(item => item.visible !== "FALSE");
+    .filter(item => item.visible !== "FALSE"); // 非公開は除外
 }
 
+
+// ================================
+// 作者ヘッダー描画
+// ================================
+function renderAuthorHeader(authorName) {
+  const authorIcon = `${AUTHOR_ICON_BASE}/${authorName}.png`;
+
+  const header = document.createElement("div");
+  header.className = "author-header";
+
+  header.innerHTML = `
+    <img class="author-header-icon"
+         src="${authorIcon}"
+         onerror="this.src='${AUTHOR_ICON_BASE}/default.png'">
+
+    <div class="author-header-name">${authorName}</div>
+  `;
+
+  document.querySelector(".author-page").prepend(header);
+}
+
+
+// ================================
+// 作品カード描画
+// ================================
 function renderCards(items) {
   const grid = document.querySelector(".shop-grid");
   grid.innerHTML = "";
 
   items.forEach(item => {
+    const thumb = item.thumbnail || "/OJapp/shop/noimage.png";
+
     const card = document.createElement("div");
     card.className = "item-card";
-
-    const thumb = item.thumbnail || "/OJapp/shop/noimage.png";
 
     card.innerHTML = `
       <img src="${thumb}" class="item-thumb">
       <div class="item-title">${item.title}</div>
+
       <div class="item-author">by ${item.author}</div>
-      <a href="${item.boothUrl}" class="item-buy-btn" target="_blank">購入はこちら</a>
+
+      <a href="${item.boothUrl}" class="item-buy-btn" target="_blank">
+        購入はこちら
+      </a>
     `;
 
     grid.appendChild(card);
   });
 }
 
+
+// ================================
+// 初期処理
+// ================================
 async function start() {
   authorName = getAuthorName();
 
+  // ページ上部タイトル
   document.getElementById("author-title").textContent = `${authorName} さんの作品`;
   document.getElementById("author-desc").textContent =
     `作者「${authorName}」が登録したアイコン一覧です。`;
 
+  // 作者ヘッダー表示
+  renderAuthorHeader(authorName);
+
+  // 商品一覧
   allItems = await loadCSV();
   const items = allItems.filter(i => i.author === authorName);
 
   renderCards(items);
 }
-function renderAuthorHeader(authorName) {
 
-  const authorIcon = authorIcons[authorName] || "/OJapp/shop/default-author.png";
+document.addEventListener("DOMContentLoaded", start);
 
-  const header = document.createElement("div");
-  header.className = "author-header";
 
-  header.innerHTML = `
-    <img class="author-header-icon" src="${authorIcon}">
-    <div class="author-header-name">${authorName}</div>
-  `;
-// ダークモード（現状維持）
+// ================================
+// ダークモード（維持）
+// ================================
 function toggleTheme() {
   document.documentElement.classList.toggle("dark");
   const sw = document.querySelector(".switch");
-  sw.textContent = document.documentElement.classList.contains("dark") ? "🌙" : "😆";
+  sw.textContent = document.documentElement.classList.contains("dark") ? "🌙" : "🤩";
 }
-  document.querySelector(".author-page").prepend(header);
-}
-
-document.addEventListener("DOMContentLoaded", start);
