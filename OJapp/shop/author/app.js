@@ -84,7 +84,12 @@ function renderAuthorHeader(authorName) {
     <img class="author-header-icon" src="${authorIcon}">
     <div class="author-header-name">${authorName}</div>
   `;
-
+// ダークモード（現状維持）
+function toggleTheme() {
+  document.documentElement.classList.toggle("dark");
+  const sw = document.querySelector(".switch");
+  sw.textContent = document.documentElement.classList.contains("dark") ? "🌙" : "😆";
+}
   document.querySelector(".author-page").prepend(header);
 }
 
