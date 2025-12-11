@@ -49,6 +49,21 @@ async function loadCSV() {
     .filter(item => item.visible !== "FALSE");
 }
 
+async function start() {
+  items = await loadCSV();
+
+  // 自動で itemId を割り当てる
+  items = items.map((item, index) => ({
+    ...item,
+    itemId: index + 1
+  }));
+
+  viewItems = [...items];
+
+  renderRecommend();
+  renderCategoryTabs();
+  sortAndRender("new");
+}
 
 // ================================
 // 作者アイコンの付与（GitHub管理）
