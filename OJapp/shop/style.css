@@ -591,3 +591,34 @@ input:focus {
   transform: scale(1.04);
   box-shadow: 0 6px 16px rgba(0,0,0,0.15);
 }
+/* =========================================
+   価格＋作者 横並び配置
+========================================= */
+.item-meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 4px;
+  margin-bottom: 10px;
+}
+
+.item-price {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text);
+  opacity: 0.85;
+}
+
+.item-author {
+  font-size: 13px;
+  color: #777;
+}
+
+.item-author .author-link {
+  color: inherit;
+  text-decoration: none;
+}
+
+.item-author .author-link:hover {
+  text-decoration: underline;
+}
