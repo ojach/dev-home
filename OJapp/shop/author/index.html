@@ -5,14 +5,19 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>作者ページ | OJapp</title>
 
+  <!-- 共通CSS -->
   <link rel="stylesheet" href="/OJapp/style.css" />
+
+  <!-- SHOP専用CSS（カードなど） -->
   <link rel="stylesheet" href="/OJapp/shop/style.css" />
 
+  <!-- ダークモード -->
   <script src="/OJapp/darkmode.js"></script>
 </head>
 
 <body>
 
+<!-- ▼ ヘッダー -->
 <div id="header"></div>
 <script>
 fetch("/OJapp/header.html")
@@ -20,15 +25,25 @@ fetch("/OJapp/header.html")
   .then(h => document.getElementById("header").innerHTML = h);
 </script>
 
-<div class="main shop-page">
+<!-- ▼ 作者ページ本体 -->
+<div class="main">
 
+  <!-- ここが作者プロフィールを差し込む場所 -->
+  <div class="author-page">
+
+    <!-- JS で作者アイコン & 名前が挿入される -->
+  </div>
+
+  <!-- タイトル & 説明 -->
   <h1 class="shop-title" id="author-title">作者ページ</h1>
   <p class="shop-desc" id="author-desc"></p>
 
+  <!-- 作者のアイテム一覧 -->
   <div class="shop-grid"></div>
 
 </div>
 
+<!-- ▼ フッター -->
 <div id="footer"></div>
 <script>
 fetch("/OJapp/footer.html")
@@ -36,6 +51,8 @@ fetch("/OJapp/footer.html")
   .then(h => document.getElementById("footer").innerHTML = h);
 </script>
 
+<!-- 作者ページJS -->
 <script src="app.js"></script>
+
 </body>
 </html>
