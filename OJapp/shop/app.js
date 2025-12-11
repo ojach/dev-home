@@ -192,18 +192,18 @@ function renderShop() {
       </a>
     `;
 
-    // モーダルはオフ（商品ページ遷移に変更済み）
+    // ✅ 商品クリックで位置保存＋商品ページ遷移
+    card.addEventListener("click", () => {
+      sessionStorage.setItem("ojapp_scroll_position", window.scrollY);
+      location.href = `/OJapp/shop/product/?id=${item.itemId}`;
+    });
+
     grid.appendChild(card);
   });
 
   animateCards();
 }
 
-// 商品クリック時にスクロール位置保存
-card.addEventListener("click", () => {
-  sessionStorage.setItem("ojapp_scroll_position", window.scrollY);
-  location.href = `/OJapp/shop/product/?id=${item.id}`;
-});
 
 // ================================
 // 今日のおすすめ
