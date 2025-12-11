@@ -186,10 +186,6 @@ viewItems.forEach(item => {
       by <a href="/OJapp/shop/author/?name=${encodeURIComponent(item.author)}"
             class="author-link">${item.author}</a>
     </div>
-
-    <a href="/OJapp/shop/product/?id=${item.itemId}" class="item-buy-btn">
-      購入はこちら
-    </a>
   `;
 
   // ✅ ここが正しい位置！（ループの中）
@@ -230,10 +226,6 @@ function renderRecommend() {
       by <a href="/OJapp/shop/author/?name=${encodeURIComponent(randomItem.author)}"
             class="author-link">${randomItem.author}</a>
     </div>
-
-    <a href="/OJapp/shop/product/?id=${randomItem.itemId}" class="recommend-btn">
-      購入はこちら
-    </a>
   `;
 }
 
