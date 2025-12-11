@@ -172,21 +172,24 @@ viewItems.forEach(item => {
   const card = document.createElement("div");
   card.className = "item-card";
 
-  card.innerHTML = `
-    <div class="item-thumb-box">
-      <img src="${thumb}" class="item-thumb">
-      <img src="${authorIcon}" class="author-icon"
-           onclick="location.href='/OJapp/shop/author/?name=${encodeURIComponent(item.author)}'">
-    </div>
+card.innerHTML = `
+  <div class="item-thumb-box">
+    <img src="${thumb}" class="item-thumb">
+    <img src="${authorIcon}" class="author-icon"
+         onclick="location.href='/OJapp/shop/author/?name=${encodeURIComponent(item.author)}'">
+  </div>
 
-    <div class="item-title">${item.title}</div>
-    <div class="item-price">¥${item.price}</div>
+  <div class="item-title">${item.title}</div>
 
-    <div class="item-author">
+  <div class="item-meta">
+    <span class="item-price">¥${item.price}</span>
+    <span class="item-author">
       by <a href="/OJapp/shop/author/?name=${encodeURIComponent(item.author)}"
             class="author-link">${item.author}</a>
-    </div>
-  `;
+    </span>
+  </div>
+`;
+
 
   // ✅ ここが正しい位置！（ループの中）
   card.addEventListener("click", () => {
