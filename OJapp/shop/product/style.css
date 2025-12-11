@@ -1,3 +1,40 @@
+/* =========================================
+   Theme Variables（色だけを集中管理）
+========================================= */
+:root {
+  --bg: #ffffff;
+  --text: #222;
+  --header-border: #eee;
+
+  --section-bg: #ffffff;
+  --section-shadow: rgba(0, 0, 0, .05);
+
+  --input-bg: #ffffff;
+  --input-border: #ddd;
+
+  --icon-bg: #f5f5f5;
+
+  --assistant-bg: #ffffff;
+  --assistant-border: #2bb7ff;
+}
+
+/* ===== Dark Mode ===== */
+.dark {
+  --bg: #111;
+  --text: #eaeaea;
+  --header-border: #444;
+
+  --section-bg: #1a1a1a;
+  --section-shadow: rgba(0, 0, 0, .4);
+
+  --input-bg: #222;
+  --input-border: #555;
+
+  --icon-bg: #2a2a2a;
+
+  --assistant-bg: #111;
+  --assistant-border: #67c8ff;
+}
 /* ===============================
    商品ページ
 =============================== */
