@@ -418,3 +418,11 @@
     bottom: 8px;
   }
 }
+
+.item-price {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text);
+  opacity: 0.85;
+  margin: 2px 0 8px;
+}
