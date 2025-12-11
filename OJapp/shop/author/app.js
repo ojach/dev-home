@@ -15,6 +15,7 @@ const HEADER_MAP = {
   "カテゴリー": "category",
   "スコア": "score",
   "visible": "visible"
+  "価格": "price",
 };
 
 let allItems = [];
@@ -88,6 +89,7 @@ function renderCards(items) {
     card.innerHTML = `
       <img src="${thumb}" class="item-thumb">
       <div class="item-title">${item.title}</div>
+      <div class="item-price">¥${item.price || 0}</div>
 
       <div class="item-author">by ${item.author}</div>
 
