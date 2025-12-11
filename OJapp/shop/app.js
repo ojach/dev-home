@@ -165,45 +165,44 @@ function renderShop() {
   const grid = document.querySelector(".shop-grid");
   grid.innerHTML = "";
 
-  viewItems.forEach(item => {
-    const thumb = item.thumbnail || "/OJapp/shop/noimage.png";
-    const authorIcon = `/OJapp/shop/author/${item.author}.png`;
+viewItems.forEach(item => {
+  const thumb = item.thumbnail || "/OJapp/shop/noimage.png";
+  const authorIcon = `/OJapp/shop/author/${item.author}.png`;
 
-    const card = document.createElement("div");
-    card.className = "item-card";
+  const card = document.createElement("div");
+  card.className = "item-card";
 
-    card.innerHTML = `
-      <div class="item-thumb-box">
-        <img src="${thumb}" class="item-thumb">
-        <img src="${authorIcon}" class="author-icon"
-             onclick="location.href='/OJapp/shop/author/?name=${encodeURIComponent(item.author)}'">
-      </div>
+  card.innerHTML = `
+    <div class="item-thumb-box">
+      <img src="${thumb}" class="item-thumb">
+      <img src="${authorIcon}" class="author-icon"
+           onclick="location.href='/OJapp/shop/author/?name=${encodeURIComponent(item.author)}'">
+    </div>
 
-      <div class="item-title">${item.title}</div>
-      <div class="item-price">¥${item.price}</div>
+    <div class="item-title">${item.title}</div>
+    <div class="item-price">¥${item.price}</div>
 
-      <div class="item-author">
-        by <a href="/OJapp/shop/author/?name=${encodeURIComponent(item.author)}"
-              class="author-link">${item.author}</a>
-      </div>
+    <div class="item-author">
+      by <a href="/OJapp/shop/author/?name=${encodeURIComponent(item.author)}"
+            class="author-link">${item.author}</a>
+    </div>
 
-      <a href="/OJapp/shop/product/?id=${item.itemId}" class="item-buy-btn">
-        購入はこちら
-      </a>
-    `;
+    <a href="/OJapp/shop/product/?id=${item.itemId}" class="item-buy-btn">
+      購入はこちら
+    </a>
+  `;
 
-    // ✅ 商品クリックで位置保存＋商品ページ遷移
-    card.addEventListener("click", () => {
-      sessionStorage.setItem("ojapp_scroll_position", window.scrollY);
-      location.href = `/OJapp/shop/product/?id=${item.itemId}`;
-    });
-
-    grid.appendChild(card);
+  // ✅ ここが正しい位置！（ループの中）
+  card.addEventListener("click", () => {
+    sessionStorage.setItem("ojapp_scroll_position", window.scrollY);
+    location.href = `/OJapp/shop/product/?id=${item.itemId}`;
   });
 
-  animateCards();
-}
+  grid.appendChild(card);
+}); // ← ここでループが閉じる
 
+animateCards();
+}
 
 // ================================
 // 今日のおすすめ
