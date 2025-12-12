@@ -180,6 +180,84 @@ document.getElementById("createBtn").addEventListener("click", async () => {
   reader.readAsDataURL(resizedIconBlob);
 });
 
+function checkURLLevel(url) {
+  const green = ['https://', 'http://', 'mailto:', 'tel:', 'sms:'];
+
+  const yellow = [
+    'twitter://', 'x://',
+    'instagram://',
+    'youtube://',
+    'twitch://',
+    'discord://',
+    'amazon://',
+    'paypay://'
+  ];
+
+  if (green.some(p => url.startsWith(p))) return 'green';
+  if (yellow.some(p => url.startsWith(p))) return 'yellow';
+  return 'red'; // line:// 含む、それ以外すべて
+}
+function getURLCheckData(level) {
+  if (level === 'green') {
+    return {
+      icon: '🟢',
+      text: '推奨されているURLです。\n多くの環境で安定して動作します。',
+      needConfirm: false
+    };
+  }
+
+  if (level === 'yellow') {
+    return {
+      icon: '🟡',
+      text: 'アプリ用URLが含まれています。\n環境によっては動作しない場合があります。',
+      needConfirm: true
+    };
+  }
+
+  return {
+    icon: '🔴',
+    text: '推奨されていないURLです。\n正常に動作しない可能性があります。',
+    needConfirm: true
+  };
+}
+function onURLInput() {
+  const url = document.getElementById('app-url').value.trim();
+  const result = document.getElementById('url-check');
+  const checkboxWrap = document.getElementById('url-confirm-wrap');
+  const checkbox = document.getElementById('url-confirm');
+  const createBtn = document.getElementById('create-app');
+
+  checkbox.checked = false;
+
+  if (!url) {
+    result.style.display = 'none';
+    checkboxWrap.style.display = 'none';
+    createBtn.disabled = true;
+    return;
+  }
+
+  const level = checkURLLevel(url);
+  const data = getURLCheckData(level);
+
+  result.className = `url-check ${level}`;
+  result.innerText = `${data.icon} ${data.text}`;
+  result.style.display = 'block';
+
+  if (data.needConfirm) {
+    checkboxWrap.style.display = 'block';
+    createBtn.disabled = true;
+  } else {
+    checkboxWrap.style.display = 'none';
+    createBtn.disabled = false;
+  }
+}
+function onURLConfirmChange() {
+  const checkbox = document.getElementById('url-confirm');
+  const createBtn = document.getElementById('create-app');
+
+  createBtn.disabled = !checkbox.checked;
+}
+
 // =========================
 // ダークモード（現状維持）
 // =========================
