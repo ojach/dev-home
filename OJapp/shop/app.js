@@ -161,6 +161,23 @@ function animateCards() {
 // ================================
 // 商品リスト描画
 // ================================
+// ================================
+// DBからお気に入り数を取得して反映
+// ================================
+async function loadFavorites() {
+  try {
+    const res = await fetch("https://ojshop-fav.trc-wasps.workers.dev");
+    const data = await res.json();
+
+    data.forEach(fav => {
+      const el = document.getElementById(`fav-${fav.id}`);
+      if (el) el.textContent = fav.count;
+    });
+  } catch (err) {
+    console.error("お気に入り数の取得失敗:", err);
+  }
+}
+
 function renderShop() {
   const grid = document.querySelector(".shop-grid");
   grid.innerHTML = "";
@@ -240,9 +257,12 @@ function renderShop() {
       }
     });
   });
-}
 
-  
+
+
+    animateCards();
+  loadFavorites(); // ←これ追加
+}
 // ================================
 // 今日のおすすめ（常時2件・カードクリックで遷移）
 // ================================
