@@ -83,6 +83,18 @@ fetch("/OJapp/footer.html")
 </div>
 
 <script src="/OJapp/shop/app.js"></script>
+<button id="fav">お気に入り＋</button>
+<script>
+document.getElementById("fav").onclick = () => {
+  fetch("https://ojshop-fav.trc-wasps.workers.dev", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ id: "1" })
+  })
+  .then(r => r.json())
+  .then(console.log);
+};
+</script>
 
 </body>
 </html>
