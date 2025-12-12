@@ -117,8 +117,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const checkbox = document.getElementById("url-confirm");
   const createBtn = document.getElementById("createBtn");
 
-  // 初期状態
-  createBtn.disabled = true;
+  createBtn.disabled = true; // 初期は不可
 
   urlInput.addEventListener("input", () => {
     const url = urlInput.value.trim();
@@ -151,6 +150,7 @@ document.addEventListener("DOMContentLoaded", () => {
     createBtn.disabled = !checkbox.checked;
   });
 });
+
 
 // ===============================
 // Create App（既存処理そのまま）
