@@ -149,7 +149,7 @@ document.getElementById("createBtn").addEventListener("click", async () => {
         headers: { "Content-Type":"application/json" },
         body: JSON.stringify({
           name: name,
-          app_url: url,
+          appURL: url,
           icon_base64: base64
         })
       });
