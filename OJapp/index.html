@@ -91,14 +91,14 @@ fetch("/OJapp/header.html").then(r=>r.text()).then(h=>header.innerHTML=h)
 <div class="center" style="margin-top:12px;"><a href="https://discord.gg/KZjN5uSBHu" class="guide-link">公式Discord</a></div>
 <div class="center" style="margin-top:12px;"><a href="/OJapp/support" class="guide-link">開発支援</a></div>
 
-
+</div><!-- /main -->
 <!-- FOOTER -->
 <div id="footer"></div>
 <script>
 fetch("/OJapp/footer.html").then(r=>r.text()).then(h=>footer.innerHTML=h)
 </script>
 
-</div><!-- /main -->
+
 
 <!-- ◆ app.jsに機能を集約、indexは読み込みのみ！ -->
 <script type="module" src="app_v2.js?v=1"></script>
