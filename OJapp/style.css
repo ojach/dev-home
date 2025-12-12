@@ -129,7 +129,27 @@ h2 {
 }
 .btn.pulse { animation: pulse 2.4s infinite ease-in-out; }
 
+/* Createボタン：通常（押せる） */
+.btn {
+  opacity: 1;
+}
 
+/* Createボタン：押せない状態でも “色は変えない” */
+.btn:disabled {
+  opacity: 0.6;                  /* ← 少し暗くするだけ */
+  filter: none !important;       /* ← 光/ぼかしを削除 */
+  box-shadow: none !important;   /* ← 光沢や外側の白モヤを消す */
+  backdrop-filter: none !important;
+  pointer-events: none;          /* ← 押せなくする */
+  animation: none !important;    /* ← pulse を止める */
+}
+
+/* ダークモードでも同じ色を維持して OK */
+.dark .btn:disabled {
+  opacity: 0.6;
+  filter: none !important;
+  box-shadow: none !important;
+}
 /* =========================================
    Arrow
 ========================================= */
