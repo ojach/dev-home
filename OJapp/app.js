@@ -157,7 +157,7 @@ document.addEventListener("DOMContentLoaded", () => {
 // ===============================
 document.getElementById("createBtn").addEventListener("click", async () => {
   const name = document.getElementById("appName").value.trim();
-  const url = document.getElementById("appURL").value.trim();
+  const url  = document.getElementById("appURL").value.trim();
 
   if (!resizedIconBlob || !name || !url) {
     alert("アイコン・名前・URLを全部入れてな🔥");
@@ -169,7 +169,7 @@ document.getElementById("createBtn").addEventListener("click", async () => {
     try {
       const res = await fetch(API_ENDPOINT, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { "Content-Type":"application/json" },
         body: JSON.stringify({
           name,
           app_url: url,
@@ -178,18 +178,26 @@ document.getElementById("createBtn").addEventListener("click", async () => {
       });
 
       const result = await res.json();
+
       if (result.status === "ok") {
-        alert("OJapp 発行完了🎉");
+        const accessUrl = result.access_url;
+
+        // ★ これが「消えた」と思ってたやつ
+        showCopyBox(accessUrl);
+
+        alert("OJapp 発行完了🎉\n\nこのURLをホーム画面に追加してな！");
       } else {
-        alert("保存失敗💥");
+        alert("保存失敗💥 時間あけてもう一度！");
       }
-    } catch {
+    } catch (e) {
+      console.error(e);
       alert("通信エラー💥");
     }
   };
 
   reader.readAsDataURL(resizedIconBlob);
 });
+
 
 // ===============================
 // ダークモード
