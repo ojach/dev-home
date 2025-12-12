@@ -221,18 +221,21 @@ function getURLCheckData(level) {
   };
 }
 function onURLInput() {
-  
   console.log('onURLInput fired');
 
+  const urlInput = document.getElementById('appURL');
+  if (!urlInput) return;
 
-  const url = document.getElementById('app_url').value.trim();
   const result = document.getElementById('url-check');
   const checkboxWrap = document.getElementById('url-confirm-wrap');
   const checkbox = document.getElementById('url-confirm');
   const createBtn = document.getElementById('createBtn');
 
-  // URL変わったら必ずチェック解除
-  checkbox.checked = false;
+  if (!result || !checkboxWrap || !createBtn) return;
+
+  const url = urlInput.value.trim();
+
+  if (checkbox) checkbox.checked = false;
 
   if (!url) {
     result.style.display = 'none';
@@ -255,13 +258,6 @@ function onURLInput() {
     checkboxWrap.style.display = 'none';
     createBtn.disabled = false;
   }
-}
-
-function onURLConfirmChange() {
-  const checkbox = document.getElementById('url-confirm');
-  const createBtn = document.getElementById('createBtn');
-
-  createBtn.disabled = !checkbox.checked;
 }
 
 
