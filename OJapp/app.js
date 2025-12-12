@@ -277,6 +277,15 @@ console.log('URL check system loaded');
 window.onURLInput = onURLInput;
 window.onURLConfirmChange = onURLConfirmChange;
 
-// ===== expose functions to global =====
-window.onURLInput = onURLInput;
-window.onURLConfirmChange = onURLConfirmChange;
+document.addEventListener('DOMContentLoaded', () => {
+  const urlInput = document.getElementById('appURL');
+  const checkbox = document.getElementById('url-confirm');
+
+  if (urlInput) {
+    urlInput.addEventListener('input', onURLInput);
+  }
+
+  if (checkbox) {
+    checkbox.addEventListener('change', onURLConfirmChange);
+  }
+});
