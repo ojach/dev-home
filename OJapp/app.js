@@ -3,6 +3,8 @@
 // ===============================
 const API_ENDPOINT = "https://ojapp-auth.trc-wasps.workers.dev/api/create";
 
+document.addEventListener("DOMContentLoaded", () => {
+
 // ===============================
 // 共通UI
 // ===============================
@@ -108,52 +110,49 @@ function getURLCheckData(level) {
 }
 
 // ===============================
-// DOMセッティング（URL判定）
+// URLチェック UIバインド
 // ===============================
-document.addEventListener("DOMContentLoaded", () => {
+const urlInput = document.getElementById("appURL");
+const result = document.getElementById("url-check");
+const wrap = document.getElementById("url-confirm-wrap");
+const checkbox = document.getElementById("url-confirm");
+const createBtn = document.getElementById("createBtn");
 
-  const urlInput = document.getElementById("appURL");
-  const result = document.getElementById("url-check");
-  const wrap = document.getElementById("url-confirm-wrap");
-  const checkbox = document.getElementById("url-confirm");
-  const createBtn = document.getElementById("createBtn");
+createBtn.disabled = true;
 
-  createBtn.disabled = true;
+urlInput.addEventListener("input", () => {
+  const url = urlInput.value.trim();
+  checkbox.checked = false;
 
-  urlInput.addEventListener("input", () => {
-    const url = urlInput.value.trim();
-    checkbox.checked = false;
+  if (!url) {
+    result.style.display = "none";
+    wrap.style.display = "none";
+    createBtn.disabled = true;
+    return;
+  }
 
-    if (!url) {
-      result.style.display = "none";
-      wrap.style.display = "none";
-      createBtn.disabled = true;
-      return;
-    }
+  const level = checkURLLevel(url);
+  const data = getURLCheckData(level);
 
-    const level = checkURLLevel(url);
-    const data = getURLCheckData(level);
+  result.className = `url-check ${level}`;
+  result.textContent = `${data.icon} ${data.text}`;
+  result.style.display = "block";
 
-    result.className = `url-check ${level}`;
-    result.textContent = `${data.icon} ${data.text}`;
-    result.style.display = "block";
+  if (data.needConfirm) {
+    wrap.style.display = "block";
+    createBtn.disabled = true;
+  } else {
+    wrap.style.display = "none";
+    createBtn.disabled = false;
+  }
+});
 
-    if (data.needConfirm) {
-      wrap.style.display = "block";
-      createBtn.disabled = true;
-    } else {
-      wrap.style.display = "none";
-      createBtn.disabled = false;
-    }
-  });
-
-  checkbox.addEventListener("change", () => {
-    createBtn.disabled = !checkbox.checked;
-  });
+checkbox.addEventListener("change", () => {
+  createBtn.disabled = !checkbox.checked;
 });
 
 // ===============================
-// ★ 青く光る OJappカードを表示するUI
+// 結果カード（青く光る OJapp カード）
 // ===============================
 function showCopyBox(url) {
   const area = document.getElementById("resultArea");
@@ -192,7 +191,6 @@ function showCopyBox(url) {
     </div>
   `;
 
-  // コピー機能
   document.getElementById("copyBtn").onclick = () => {
     navigator.clipboard.writeText(url);
     alert("コピーしたで✌");
@@ -202,7 +200,7 @@ function showCopyBox(url) {
 // ===============================
 // Create App（本処理）
 // ===============================
-document.getElementById("createBtn").addEventListener("click", async () => {
+createBtn.addEventListener("click", async () => {
 
   const name = document.getElementById("appName").value.trim();
   const url  = document.getElementById("appURL").value.trim();
@@ -229,26 +227,4 @@ document.getElementById("createBtn").addEventListener("click", async () => {
       const result = await res.json();
 
       if (result.status === "ok") {
-        const accessUrl = result.access_url;
-        showCopyBox(accessUrl); // ★ ここで表示！
-      } else {
-        alert("保存失敗💥 時間をおいて試してみて！");
-      }
-
-    } catch (e) {
-      alert("通信エラー💥 ネット環境を確認！");
-      console.error(e);
-    }
-  };
-
-  reader.readAsDataURL(resizedIconBlob);
-});
-
-// ===============================
-// ダークモード
-// ===============================
-function toggleTheme() {
-  document.documentElement.classList.toggle("dark");
-  const sw = document.querySelector(".switch");
-  sw.textContent = document.documentElement.classList.contains("dark") ? "🌙" : "😆";
-}
+        const accessUrl = result.access
