@@ -59,7 +59,27 @@ fetch("/OJapp/header.html").then(r=>r.text()).then(h=>header.innerHTML=h)
 <!-- Step3 -->
 <div class="section">
   <div class="section-title">Step3：URL</div>
-  <input type="text" id="appURL" placeholder="https://example.com">
+  <input
+    type="text"
+    id="app-url"
+    placeholder="https://example.com"
+    oninput="onURLInput()"
+  >
+</div>
+
+<!-- URLチェック表示 -->
+<div id="url-check" class="url-check" style="display:none;"></div>
+
+<!-- 確認チェック -->
+<div id="url-confirm-wrap" style="display:none; margin-top:8px;">
+  <label>
+    <input
+      type="checkbox"
+      id="url-confirm"
+      onchange="onURLConfirmChange()"
+    >
+    内容を理解した上で作成します
+  </label>
 </div>
 
 <div id="assistantBox">おちゃじ参上😎✨</div>
