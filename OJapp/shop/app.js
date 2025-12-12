@@ -206,43 +206,42 @@ function renderShop() {
 
   animateCards();
 
-  // ✅ ハートボタンにイベント登録
+  // ✅ ハートボタンにイベント登録（1回だけ）
   document.querySelectorAll(".fav-btn").forEach(btn => {
     btn.addEventListener("click", async (e) => {
       e.stopPropagation();
       const id = e.target.dataset.id;
-       try {
-      const res = await fetch("https://ojshop-fav.trc-wasps.workers.dev", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ id })
-      });
-      const data = await res.json();
-      document.getElementById(`fav-${id}`).textContent = data.count;
+      const favKey = `fav_${id}`;
 
-      // ✅ 押した記録を保存
-      localStorage.setItem(favKey, "true");
+      // ✅ すでに押したことあるならスキップ
+      if (localStorage.getItem(favKey)) {
+        alert("もうお気に入り済みです❤️");
+        return;
+      }
 
-      // ✅ ハートの色変更
-      e.target.style.color = "#ff4b7d";
-      e.target.textContent = "❤️";
-    } catch (err) {
-      console.error("お気に入り失敗:", err);
-    }
+      try {
+        const res = await fetch("https://ojshop-fav.trc-wasps.workers.dev", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ id })
+        });
+        const data = await res.json();
+
+        // ✅ カウント表示更新
+        document.getElementById(`fav-${id}`).textContent = data.count;
+
+        // ✅ 押した記録を保存
+        localStorage.setItem(favKey, "true");
+
+        // ✅ ハートの見た目変更
+        e.target.style.color = "#ff4b7d";
+        e.target.textContent = "❤️";
+      } catch (err) {
+        console.error("お気に入り失敗:", err);
+      }
+    });
   });
-});
-
-document.querySelectorAll(".fav-btn").forEach(btn => {
-  btn.addEventListener("click", async (e) => {
-    e.stopPropagation();
-    const id = e.target.dataset.id;
-
-    // ✅ すでに押したことあるならスキップ
-    const favKey = `fav_${id}`;
-    if (localStorage.getItem(favKey)) {
-      alert("もうお気に入り済みです❤️");
-      return;
-    }
+}
 
   
 // ================================
