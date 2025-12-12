@@ -180,85 +180,74 @@ document.getElementById("createBtn").addEventListener("click", async () => {
   reader.readAsDataURL(resizedIconBlob);
 });
 
+// ---------- 判定 ----------
 function checkURLLevel(url) {
   const green = ['https://', 'http://', 'mailto:', 'tel:', 'sms:'];
-
   const yellow = [
-    'twitter://', 'x://',
-    'instagram://',
-    'youtube://',
-    'twitch://',
-    'discord://',
-    'amazon://',
-    'paypay://'
+    'twitter://', 'x://', 'instagram://', 'youtube://',
+    'twitch://', 'discord://', 'amazon://', 'paypay://'
   ];
-
   if (green.some(p => url.startsWith(p))) return 'green';
   if (yellow.some(p => url.startsWith(p))) return 'yellow';
-  return 'red'; // line:// 含む、それ以外すべて
+  return 'red'; // line:// 含む
 }
+
 function getURLCheckData(level) {
   if (level === 'green') {
-    return {
-      icon: '🟢',
-      text: '推奨されているURLです。\n多くの環境で安定して動作します。',
-      needConfirm: false
-    };
+    return { icon:'🟢', text:'推奨されているURLです。\n多くの環境で安定して動作します。', needConfirm:false };
   }
-
   if (level === 'yellow') {
-    return {
-      icon: '🟡',
-      text: 'アプリ用URLが含まれています。\n環境によっては動作しない場合があります。',
-      needConfirm: true
-    };
+    return { icon:'🟡', text:'アプリ用URLが含まれています。\n環境によっては動作しない場合があります。', needConfirm:true };
   }
-
-  return {
-    icon: '🔴',
-    text: '推奨されていないURLです。\n正常に動作しない可能性があります。',
-    needConfirm: true
-  };
+  return { icon:'🔴', text:'推奨されていないURLです。\n正常に動作しない可能性があります。', needConfirm:true };
 }
-function onURLInput() {
-  console.log('onURLInput fired');
 
+// ---------- 結線 ----------
+document.addEventListener('DOMContentLoaded', () => {
   const urlInput = document.getElementById('appURL');
-  if (!urlInput) return;
-
   const result = document.getElementById('url-check');
-  const checkboxWrap = document.getElementById('url-confirm-wrap');
+  const wrap = document.getElementById('url-confirm-wrap');
   const checkbox = document.getElementById('url-confirm');
   const createBtn = document.getElementById('createBtn');
 
-  if (!result || !checkboxWrap || !createBtn) return;
+  function onURLInput() {
+    const url = urlInput.value.trim();
 
-  const url = urlInput.value.trim();
+    // 初期化
+    if (checkbox) checkbox.checked = false;
 
-  if (checkbox) checkbox.checked = false;
+    if (!url) {
+      result.style.display = 'none';
+      wrap.style.display = 'none';
+      createBtn.disabled = true;
+      return;
+    }
 
-  if (!url) {
-    result.style.display = 'none';
-    checkboxWrap.style.display = 'none';
-    createBtn.disabled = true;
-    return;
+    const level = checkURLLevel(url);
+    const data = getURLCheckData(level);
+
+    result.className = `url-check ${level}`;
+    result.textContent = `${data.icon} ${data.text}`;
+    result.style.display = 'block';
+
+    if (data.needConfirm) {
+      wrap.style.display = 'block';
+      createBtn.disabled = true;
+    } else {
+      wrap.style.display = 'none';
+      createBtn.disabled = false;
+    }
   }
 
-  const level = checkURLLevel(url);
-  const data = getURLCheckData(level);
-
-  result.className = `url-check ${level}`;
-  result.innerText = `${data.icon} ${data.text}`;
-  result.style.display = 'block';
-
-  if (data.needConfirm) {
-    checkboxWrap.style.display = 'block';
-    createBtn.disabled = true;
-  } else {
-    checkboxWrap.style.display = 'none';
-    createBtn.disabled = false;
+  function onConfirmChange() {
+    createBtn.disabled = !checkbox.checked;
   }
-}
+
+  urlInput.addEventListener('input', onURLInput);
+  checkbox.addEventListener('change', onConfirmChange);
+
+  console.log('URL check READY');
+});
 
 
 // =========================
