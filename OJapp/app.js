@@ -276,3 +276,7 @@ console.log('URL check system loaded');
 // ===== expose functions to global =====
 window.onURLInput = onURLInput;
 window.onURLConfirmChange = onURLConfirmChange;
+
+// ===== expose functions to global =====
+window.onURLInput = onURLInput;
+window.onURLConfirmChange = onURLConfirmChange;
