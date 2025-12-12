@@ -227,4 +227,25 @@ createBtn.addEventListener("click", async () => {
       const result = await res.json();
 
       if (result.status === "ok") {
-        const accessUrl = result.access
+        const accessUrl = result.access_url;
+        showCopyBox(accessUrl);
+      } else {
+        alert("保存失敗💥 時間をおいて試して！");
+      }
+
+    } catch (e) {
+      alert("通信エラー💥");
+      console.error(e);
+    }
+  };
+
+  reader.readAsDataURL(resizedIconBlob);
+});
+
+// ===============================
+// ダークモード
+// ===============================
+function toggleTheme() {
+  document.documentElement.classList.toggle("dark");
+  const sw = document.querySelector(".switch");
+  sw.textContent = document.d
