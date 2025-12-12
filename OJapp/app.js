@@ -45,7 +45,7 @@ iconInput.addEventListener("change", () => {
     const w = img.width;
     const h = img.height;
 
-    if (w <= 100 || h <= 100) {
+    if (w < 100 || h < 100) {
       showMessage("❌ 画像サイズが小さすぎます（100×100px以上）");
       iconInput.value = "";
       return;
