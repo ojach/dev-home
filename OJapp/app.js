@@ -182,21 +182,53 @@ document.getElementById("createBtn").addEventListener("click", async () => {
       if (result.status === "ok") {
         const accessUrl = result.access_url;
 
-        // ★ これが「消えた」と思ってたやつ
-        showCopyBox(accessUrl);
+       function showCopyBox(url) {
+  const area = document.getElementById("resultArea");
+  if (!area) return;
 
-        alert("OJapp 発行完了🎉\n\nこのURLをホーム画面に追加してな！");
-      } else {
-        alert("保存失敗💥 時間あけてもう一度！");
-      }
-    } catch (e) {
-      console.error(e);
-      alert("通信エラー💥");
-    }
+  area.innerHTML = "";
+
+  const wrap = document.createElement("div");
+  wrap.id = "copyBoxWrap";
+  wrap.style = `
+    margin:20px auto;
+    width:90%;
+    max-width:500px;
+    padding:18px;
+    background:#fff;
+    border-radius:14px;
+    box-shadow:0 6px 16px rgba(0,0,0,.1);
+    text-align:center;
+    font-family:-apple-system,BlinkMacSystemFont;
+  `;
+
+  wrap.innerHTML = `
+    <div style="font-size:14px;color:#444;margin-bottom:6px;">
+      発行された OJapp URL
+    </div>
+    <div id="copyTarget"
+      style="word-break:break-all;background:#f4f4f4;padding:8px;border-radius:8px;font-size:14px;">
+      ${url}
+    </div>
+    <button id="copyBtn"
+      style="
+        margin-top:12px;padding:8px 16px;border-radius:8px;border:none;
+        background:#2bb7ff;color:#fff;font-weight:bold;cursor:pointer;">
+      📋 コピー
+    </button>
+  `;
+
+  area.appendChild(wrap);
+
+  document.getElementById("copyBtn").onclick = () => {
+    navigator.clipboard.writeText(url);
+    alert("コピーしたで✌");
   };
 
-  reader.readAsDataURL(resizedIconBlob);
-});
+  // 視線誘導
+  wrap.scrollIntoView({ behavior: "smooth", block: "center" });
+}
+
 
 
 // ===============================
