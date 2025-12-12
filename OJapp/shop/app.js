@@ -211,33 +211,7 @@ function renderShop() {
     btn.addEventListener("click", async (e) => {
       e.stopPropagation();
       const id = e.target.dataset.id;
-      try {
-        const res = await fetch("https://ojshop-fav.trc-wasps.workers.dev", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ id })
-        });
-        const data = await res.json();
-        document.getElementById(`fav-${id}`).textContent = data.count;
-      } catch (err) {
-        console.error("お気に入り失敗:", err);
-      }
-    });
-  });
-}
-document.querySelectorAll(".fav-btn").forEach(btn => {
-  btn.addEventListener("click", async (e) => {
-    e.stopPropagation();
-    const id = e.target.dataset.id;
-
-    // ✅ すでに押したことあるならスキップ
-    const favKey = `fav_${id}`;
-    if (localStorage.getItem(favKey)) {
-      alert("もうお気に入り済みです❤️");
-      return;
-    }
-
-    try {
+       try {
       const res = await fetch("https://ojshop-fav.trc-wasps.workers.dev", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -258,6 +232,19 @@ document.querySelectorAll(".fav-btn").forEach(btn => {
   });
 });
 
+document.querySelectorAll(".fav-btn").forEach(btn => {
+  btn.addEventListener("click", async (e) => {
+    e.stopPropagation();
+    const id = e.target.dataset.id;
+
+    // ✅ すでに押したことあるならスキップ
+    const favKey = `fav_${id}`;
+    if (localStorage.getItem(favKey)) {
+      alert("もうお気に入り済みです❤️");
+      return;
+    }
+
+  
 // ================================
 // 今日のおすすめ（常時2件・カードクリックで遷移）
 // ================================
