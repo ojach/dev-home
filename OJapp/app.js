@@ -248,4 +248,5 @@ createBtn.addEventListener("click", async () => {
 function toggleTheme() {
   document.documentElement.classList.toggle("dark");
   const sw = document.querySelector(".switch");
-  sw.textContent = document.d
+  sw.textContent = document.documentElement.classList.contains("dark") ? "🌙" : "🤩";
+}
