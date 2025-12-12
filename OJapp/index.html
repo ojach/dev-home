@@ -77,6 +77,7 @@ fetch("/OJapp/header.html").then(r=>r.text()).then(h=>header.innerHTML=h)
       type="checkbox"
       id="url-confirm"
       onchange="onURLConfirmChange()"
+      oninput="onURLInput()"
     >
     内容を理解した上で作成します
   </label>
