@@ -192,11 +192,9 @@ function renderShop() {
       </div>
     `;
 
-    // ✅ カードクリックで商品ページ遷移
+    // ✅ カードクリックで商品ページ遷移（ハート除外）
     card.addEventListener("click", (e) => {
-      // ハートボタンをクリックした時は遷移しない
       if (e.target.classList.contains("fav-btn")) return;
-
       sessionStorage.setItem("ojapp_scroll_position", window.scrollY);
       location.href = `/OJapp/shop/product/?id=${item.itemId}`;
     });
@@ -204,10 +202,12 @@ function renderShop() {
     grid.appendChild(card);
   });
 
+  // ✅ カードのフェードイン
   animateCards();
 
   // ✅ ハートボタンにイベント登録（1回だけ）
-  document.querySelectorAll(".fav-btn").forEach(btn => {
+  const favButtons = document.querySelectorAll(".fav-btn");
+  favButtons.forEach(btn => {
     btn.addEventListener("click", async (e) => {
       e.stopPropagation();
       const id = e.target.dataset.id;
@@ -225,9 +225,8 @@ function renderShop() {
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ id })
         });
-        const data = await res.json();
 
-        // ✅ カウント表示更新
+        const data = await res.json();
         document.getElementById(`fav-${id}`).textContent = data.count;
 
         // ✅ 押した記録を保存
