@@ -250,3 +250,4 @@ function toggleTheme() {
   const sw = document.querySelector(".switch");
   sw.textContent = document.documentElement.classList.contains("dark") ? "🌙" : "🤩";
 }
+}); // ← DOMContentLoaded を閉じる
