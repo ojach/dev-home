@@ -263,3 +263,11 @@ input:focus {
 #create-app:disabled {
   opacity: 0.5;
 }
+/* Create App は disabled でも見た目を変えない */
+#createBtn:disabled {
+  opacity: 1 !important;
+  filter: none !important;
+  background: inherit;
+  color: inherit;
+  cursor: not-allowed; /* 押せないのは分かる */
+}
