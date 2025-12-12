@@ -1,363 +1,254 @@
-console.log("JS読み込み開始");
+// ===============================
+// API
+// ===============================
+const API_ENDPOINT = "https://ojapp-auth.trc-wasps.workers.dev/api/create";
 
-// ================================
-// 設定
-// ================================
-const CSV_URL =
-  "https://docs.google.com/spreadsheets/d/e/2PACX-1vRckMXYTdFw-2sSEmeqVTCXymb3F_NwrNdztP01BrZfH1n2WCORVwZuop7IxfG_KHGYqqlCuc3sBUee/pub?gid=1229129034&single=true&output=csv";
+document.addEventListener("DOMContentLoaded", () => {
 
-const HEADER_MAP = {
-  "タイムスタンプ": "timestamp",
-  "BOOTH商品URL": "boothUrl",
-  "サムネ画像URL": "thumbnail",
-  "タイトル": "title",
-  "作者名": "author",
-  "カテゴリー": "category",
-  "スコア": "score",
-  "visible": "visible",
-  "価格": "price"
-};
-
-let items = [];      // 全商品
-let viewItems = [];  // 表示商品のフィルタ後リスト
-
-let currentSort = "new";      
-let currentCategory = "全て";
-
-
-// ================================
-// CSV読み込み
-// ================================
-async function loadCSV() {
-  const res = await fetch(CSV_URL);
-  const text = await res.text();
-
-  const rows = text.split("\n").map(r => r.split(","));
-  const rawHeaders = rows.shift().map(h => h.replace(/"/g, "").trim());
-  const headers = rawHeaders.map(h => HEADER_MAP[h] || h);
-
-  return rows
-    .map(cols => {
-      const obj = {};
-      cols.forEach((val, i) => {
-        obj[headers[i]] = val.replace(/"/g, "").trim();
-      });
-      return obj;
-    })
-    .filter(item => item.visible !== "FALSE");
+// ===============================
+// 共通UI
+// ===============================
+function toggleA() {
+  const box = document.getElementById("assistantBox");
+  box.style.display = (box.style.display === "none") ? "block" : "none";
 }
 
+function showMessage(text) {
+  const box = document.getElementById("assistantBox");
+  box.textContent = text;
+}
 
-// ================================
-// カテゴリータブ表示
-// ================================
-function renderCategoryTabs() {
-  const categories = ["全て"];
+// ===============================
+// アイコン処理（高品質版）
+// ===============================
+const iconInput = document.getElementById("iconInput");
+const previewImg = document.getElementById("preview");
+let resizedIconBlob = null;
 
-  items.forEach(i => {
-    if (i.category && !categories.includes(i.category)) {
-      categories.push(i.category);
+iconInput.addEventListener("change", () => {
+  const file = iconInput.files[0];
+  if (!file) return;
+
+  if (file.size > 2 * 1024 * 1024) {
+    showMessage("❌ 画像ファイルが大きすぎます（2MBまで）");
+    iconInput.value = "";
+    return;
+  }
+
+  const img = new Image();
+  const reader = new FileReader();
+
+  reader.onload = e => img.src = e.target.result;
+  reader.readAsDataURL(file);
+
+  img.onload = () => {
+    const w = img.width;
+    const h = img.height;
+
+    if (w <= 100 || h <= 100) {
+      showMessage("❌ 画像サイズが小さすぎます（100×100px以上）");
+      iconInput.value = "";
+      return;
     }
-  });
 
-  const catArea = document.querySelector(".category-tabs");
-  catArea.innerHTML = "";
+    if (w !== h) {
+      showMessage("⚠️ 正方形ではありません。歪むことがあります");
+    } else {
+      showMessage("✅ アイコン画像を確認しました");
+    }
 
-  categories.forEach(cat => {
-    const div = document.createElement("div");
-    div.className = "category-tab";
-    div.dataset.category = cat;
-    div.textContent = cat;
+    const size = Math.min(w, h, 512);
+    const canvas = document.createElement("canvas");
+    canvas.width = size;
+    canvas.height = size;
 
-    if (cat === currentCategory) div.classList.add("active");
+    const ctx = canvas.getContext("2d");
+    ctx.drawImage(img, 0, 0, size, size);
 
-    catArea.appendChild(div);
-  });
+    canvas.toBlob(blob => {
+      resizedIconBlob = blob;
+      previewImg.src = URL.createObjectURL(blob);
+    }, "image/png");
+  };
+});
+
+// ===============================
+// URLチェック判定
+// ===============================
+function checkURLLevel(url) {
+  const green = ['https://', 'http://', 'mailto:', 'tel:', 'sms:'];
+  const yellow = [
+    'twitter://', 'x://', 'instagram://',
+    'youtube://', 'twitch://', 'discord://',
+    'amazon://', 'paypay://'
+  ];
+  if (green.some(p => url.startsWith(p))) return 'green';
+  if (yellow.some(p => url.startsWith(p))) return 'yellow';
+  return 'red';
 }
 
+function getURLCheckData(level) {
+  if (level === 'green') {
+    return {
+      icon: '🟢',
+      text: '推奨されているURLです。\n多くの環境で安定して動作します。',
+      needConfirm: false
+    };
+  }
+  if (level === 'yellow') {
+    return {
+      icon: '🟡',
+      text: 'アプリ用URLが含まれています。\n環境によっては動作しない場合があります。',
+      needConfirm: true
+    };
+  }
+  return {
+    icon: '🔴',
+    text: '推奨されていないURLです。\n正常に動作しない可能性があります。',
+    needConfirm: true
+  };
+}
 
-// ================================
-// カテゴリーフィルター
-// ================================
-function filterByCategory(category) {
-  currentCategory = category;
+// ===============================
+// URLチェック UIバインド
+// ===============================
+const urlInput = document.getElementById("appURL");
+const result = document.getElementById("url-check");
+const wrap = document.getElementById("url-confirm-wrap");
+const checkbox = document.getElementById("url-confirm");
+const createBtn = document.getElementById("createBtn");
 
-  if (category === "全て") {
-    viewItems = [...items];
+createBtn.disabled = true;
+
+urlInput.addEventListener("input", () => {
+  const url = urlInput.value.trim();
+  checkbox.checked = false;
+
+  if (!url) {
+    result.style.display = "none";
+    wrap.style.display = "none";
+    createBtn.disabled = true;
+    return;
+  }
+
+  const level = checkURLLevel(url);
+  const data = getURLCheckData(level);
+
+  result.className = `url-check ${level}`;
+  result.textContent = `${data.icon} ${data.text}`;
+  result.style.display = "block";
+
+  if (data.needConfirm) {
+    wrap.style.display = "block";
+    createBtn.disabled = true;
   } else {
-    viewItems = items.filter(i => i.category === category);
+    wrap.style.display = "none";
+    createBtn.disabled = false;
   }
-
-  sortAndRender(currentSort);
-}
-
-
-// ================================
-// ソート
-// ================================
-function sortAndRender(type) {
-  currentSort = type;
-
-  if (type === "new") {
-    viewItems.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
-  }
-  if (type === "score") {
-    viewItems.sort((a, b) => Number(b.score) - Number(a.score));
-  }
-  if (type === "author") {
-    viewItems.sort((a, b) => a.author.localeCompare(b.author));
-  }
-
-  document.querySelectorAll(".shop-tab").forEach(tab => {
-    tab.classList.toggle("active", tab.dataset.sort === type);
-  });
-
-  renderShop();
-}
-
-
-// ================================
-// モーダル
-// ================================
-function openModal(item) {
-  const modal = document.getElementById("item-modal");
-
-  document.getElementById("modal-thumb").src = item.thumbnail || "/OJapp/shop/noimage.png";
-  document.getElementById("modal-title").textContent = item.title;
-  document.getElementById("modal-author").textContent = `作者: ${item.author}`;
-  document.getElementById("modal-category").textContent = `カテゴリー: ${item.category}`;
-  document.getElementById("modal-link").href = item.boothUrl;
-
-  modal.classList.remove("hidden");
-}
-
-function closeModal() {
-  document.getElementById("item-modal").classList.add("hidden");
-}
-
-document.addEventListener("click", e => {
-  if (e.target.classList.contains("modal-bg")) closeModal();
-  if (e.target.classList.contains("modal-close")) closeModal();
 });
 
-document.addEventListener("keydown", e => {
-  if (e.key === "Escape") closeModal();
+checkbox.addEventListener("change", () => {
+  createBtn.disabled = !checkbox.checked;
 });
 
+// ===============================
+// 結果カード（青く光る OJapp カード）
+// ===============================
+function showCopyBox(url) {
+  const area = document.getElementById("resultArea");
+  if (!area) return;
 
-// ================================
-// ふわっとアニメ
-// ================================
-function animateCards() {
-  const cards = document.querySelectorAll(".item-card");
-  cards.forEach((card, i) => {
-    setTimeout(() => {
-      card.classList.add("show");
-    }, i * 60);
-  });
+  area.innerHTML = `
+    <div style="
+      background: linear-gradient(135deg, #2bb7ff, #0077ff);
+      padding: 18px;
+      border-radius: 16px;
+      color: #fff;
+      font-weight: bold;
+      text-align: center;
+      box-shadow: 0 6px 20px rgba(0, 140, 255, 0.35);
+      animation: fadeIn 0.4s ease;
+    ">
+      <div style="font-size:16px; margin-bottom:6px;">✨ 発行された OJapp ✨</div>
+      <div id="copyTarget" style="
+        font-size:14px;
+        word-break: break-all;
+        background: rgba(255,255,255,0.2);
+        padding: 8px;
+        border-radius: 10px;
+      ">${url}</div>
+
+      <button id="copyBtn" style="
+        margin-top: 12px;
+        padding: 8px 16px;
+        background: #ffffff;
+        color: #0077ff;
+        border: none;
+        border-radius: 10px;
+        font-weight: bold;
+        cursor: pointer;
+      ">📋 コピー</button>
+    </div>
+  `;
+
+  document.getElementById("copyBtn").onclick = () => {
+    navigator.clipboard.writeText(url);
+    alert("コピーしたで✌");
+  };
 }
 
+// ===============================
+// Create App（本処理）
+// ===============================
+createBtn.addEventListener("click", async () => {
 
-// ================================
-// 商品リスト描画
-// ================================
-// ================================
-// DBからお気に入り数を取得して反映
-// ================================
-async function loadFavorites() {
-  try {
-    const res = await fetch("https://ojshop-fav.trc-wasps.workers.dev");
-    const data = await res.json();
+  const name = document.getElementById("appName").value.trim();
+  const url  = document.getElementById("appURL").value.trim();
 
-    data.forEach(fav => {
-      const el = document.getElementById(`fav-${fav.id}`);
-      if (el) el.textContent = fav.count;
-    });
-  } catch (err) {
-    console.error("お気に入り数の取得失敗:", err);
+  if (!resizedIconBlob || !name || !url) {
+    alert("アイコン・名前・URLを全部入れてな🔥");
+    return;
   }
-}
 
-function renderShop() {
-  const grid = document.querySelector(".shop-grid");
-  grid.innerHTML = "";
+  const reader = new FileReader();
+  reader.onload = async () => {
+    try {
 
-  viewItems.forEach(item => {
-    const thumb = item.thumbnail || "/OJapp/shop/noimage.png";
-    const authorIcon = `/OJapp/shop/author/${item.author}.png`;
+      const res = await fetch(API_ENDPOINT, {
+        method: "POST",
+        headers: { "Content-Type":"application/json" },
+        body: JSON.stringify({
+          name,
+          app_url: url,
+          icon_base64: reader.result
+        })
+      });
 
-    const card = document.createElement("div");
-    card.className = "item-card";
+      const result = await res.json();
 
-    card.innerHTML = `
-      <div class="item-thumb-box">
-        <img src="${thumb}" class="item-thumb">
-        <img src="${authorIcon}" class="author-icon"
-             onclick="location.href='/OJapp/shop/author/?name=${encodeURIComponent(item.author)}'">
-      </div>
-
-      <div class="item-title">${item.title}</div>
-      <div class="item-price-line">
-        <span class="item-price">¥${item.price}</span>
-        <span class="fav-btn" data-id="${item.itemId}">♡</span>
-        <span class="fav-count" id="fav-${item.itemId}">0</span>
-      </div>
-
-      <div class="item-author">
-        by <a href="/OJapp/shop/author/?name=${encodeURIComponent(item.author)}"
-              class="author-link">${item.author}</a>
-      </div>
-    `;
-
-    // ✅ カードクリックで商品ページ遷移（ハート除外）
-    card.addEventListener("click", (e) => {
-      if (e.target.classList.contains("fav-btn")) return;
-      sessionStorage.setItem("ojapp_scroll_position", window.scrollY);
-      location.href = `/OJapp/shop/product/?id=${item.itemId}`;
-    });
-
-    grid.appendChild(card);
-  });
-
-  // ✅ カードのフェードイン
-  animateCards();
-
-  // ✅ ハートボタンにイベント登録（1回だけ）
-  const favButtons = document.querySelectorAll(".fav-btn");
-  favButtons.forEach(btn => {
-    btn.addEventListener("click", async (e) => {
-      e.stopPropagation();
-      const id = e.target.dataset.id;
-      const favKey = `fav_${id}`;
-
-      // ✅ すでに押したことあるならスキップ
-      if (localStorage.getItem(favKey)) {
-        alert("もうお気に入り済みです❤️");
-        return;
+      if (result.status === "ok") {
+        const accessUrl = result.access_url;
+        showCopyBox(accessUrl);
+      } else {
+        alert("保存失敗💥 時間をおいて試して！");
       }
 
-      try {
-        const res = await fetch("https://ojshop-fav.trc-wasps.workers.dev", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ id })
-        });
+    } catch (e) {
+      alert("通信エラー💥");
+      console.error(e);
+    }
+  };
 
-        const data = await res.json();
-        document.getElementById(`fav-${id}`).textContent = data.count;
-
-        // ✅ 押した記録を保存
-        localStorage.setItem(favKey, "true");
-
-        // ✅ ハートの見た目変更
-        e.target.style.color = "#ff4b7d";
-        e.target.textContent = "❤️";
-      } catch (err) {
-        console.error("お気に入り失敗:", err);
-      }
-    });
-  });
-
-
-
-    animateCards();
-  loadFavorites(); // ←これ追加
-}
-// ================================
-// 今日のおすすめ（常時2件・カードクリックで遷移）
-// ================================
-function renderRecommend() {
-  if (items.length < 2) return;
-
-  const box = document.getElementById("recommend-box");
-  if (!box) return;
-
-  // ★ 2件ランダム選出
-  const shuffled = [...items].sort(() => Math.random() - 0.5);
-  const selected = shuffled.slice(0, 2);
-
-  box.innerHTML = selected.map(item => {
-    const thumb = item.thumbnail || "/OJapp/shop/noimage.png";
-    const authorIcon = `/OJapp/shop/author/${item.author}.png`;
-
-    return `
-      <div class="recommend-item" data-id="${item.itemId}">
-        <div class="item-thumb-box">
-          <img src="${thumb}" class="recommend-thumb">
-          <img src="${authorIcon}" class="author-icon">
-        </div>
-
-        <div class="recommend-title">${item.title}</div>
-
-        <div class="recommend-author">
-          by <a href="/OJapp/shop/author/?name=${encodeURIComponent(item.author)}"
-                class="author-link">${item.author}</a>
-        </div>
-      </div>
-    `;
-  }).join("");
-
-  // ✅ 各カードクリックで商品ページへ
-  box.querySelectorAll(".recommend-item").forEach(card => {
-    card.addEventListener("click", () => {
-      const id = card.dataset.id;
-      sessionStorage.setItem("ojapp_scroll_position", window.scrollY);
-      location.href = `/OJapp/shop/product/?id=${id}`;
-    });
-  });
-}
-
-fetch("https://ojshop-fav.trc-wasps.workers.dev", {
-  method: "POST",
-  headers: { "Content-Type": "application/json" },
-  body: JSON.stringify({ id: "1" })
-})
-  .then(r => r.text())
-  .then(console.log);
-
-// ================================
-// クリックイベント（タブ & カテゴリー）
-// ================================
-document.addEventListener("click", e => {
-  if (e.target.classList.contains("shop-tab")) {
-    sortAndRender(e.target.dataset.sort);
-  }
-
-  if (e.target.classList.contains("category-tab")) {
-    document.querySelectorAll(".category-tab").forEach(c => c.classList.remove("active"));
-    e.target.classList.add("active");
-    filterByCategory(e.target.dataset.category);
-  }
+  reader.readAsDataURL(resizedIconBlob);
 });
 
-
-// ================================
-// 初期起動（itemId 自動生成版）
-// ================================
-async function start() {
-  items = await loadCSV();
-
-  // ★ itemId を自動生成（1,2,3,...）
-  items = items.map((item, index) => ({
-    ...item,
-    itemId: String(index + 1),
-  }));
-
-  viewItems = [...items];
-
-  renderRecommend();
-  renderCategoryTabs();
-  sortAndRender("new");
-}
-
-document.addEventListener("DOMContentLoaded", start);
-
-
-// ================================
-// ダークモードスイッチ
-// ================================
+// ===============================
+// ダークモード
+// ===============================
 function toggleTheme() {
   document.documentElement.classList.toggle("dark");
   const sw = document.querySelector(".switch");
-  sw.textContent = document.documentElement.classList.contains("dark") ? "🌙" : "🤩";
+  sw.textContent = document.documentElement.classList.contains("dark") ? "🌙" : "😆";
 }
+
+}); // ← ★ DOMContentLoaded を閉じる
