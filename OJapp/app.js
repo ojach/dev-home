@@ -225,7 +225,7 @@ function onURLInput() {
   console.log('onURLInput fired');
 
 
-  const url = document.getElementById('app-url').value.trim();
+  const url = document.getElementById('app_url').value.trim();
   const result = document.getElementById('url-check');
   const checkboxWrap = document.getElementById('url-confirm-wrap');
   const checkbox = document.getElementById('url-confirm');
