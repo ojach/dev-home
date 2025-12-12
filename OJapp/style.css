@@ -271,3 +271,29 @@ input:focus {
   color: inherit;
   cursor: not-allowed; /* 押せないのは分かる */
 }
+/* ===============================
+   Create App は disabled でも
+   見た目を一切変えない
+   =============================== */
+
+#createBtn {
+  opacity: 1 !important;
+  filter: none !important;
+}
+
+#createBtn:disabled {
+  opacity: 1 !important;
+  filter: none !important;
+  background: inherit !important;
+  color: inherit !important;
+  box-shadow: inherit !important;
+}
+
+/* btn / pulse 側の影響を完全に無効化 */
+#createBtn.btn,
+#createBtn.pulse,
+#createBtn.btn:disabled,
+#createBtn.pulse:disabled {
+  opacity: 1 !important;
+  filter: none !important;
+}
