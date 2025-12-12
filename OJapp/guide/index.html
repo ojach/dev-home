@@ -37,72 +37,71 @@ fetch("/OJapp/header.html")
 </script>
 
 <div class="main">
-  <!-- ページ固有の内容を書く -->
 
   <h1>使い方ガイド</h1>
 
   <div class="section">
-    <h2>Step1<br>
-      OJapp でアプリ素材を作る</h2>
-    <p>1. OJapp にアクセスします。<br>
-       2. アイコン画像を選択します。<br>
-       3. アプリ名とリンク（URL）を入力します。<br>
-       4. <b>Create App 🎉</b> をタップします。<br>
-       5. ページ下に生成される以下3つをコピーまたは保存します：</p>
+    <h2>Step1：アイコンを選ぶ</h2>
+    <p>
+      アプリの見た目になるアイコン画像を選びます。<br>
+      使用できる形式は <b>PNG / JPG</b> の正方形画像です。<br>
+      長方形の画像は自動で正方形に縮めるため、歪む場合があります。<br><br>
+      <b>推奨サイズ：256×256px 以下（正方形）</b>
+    </p>
+  </div>
+
+  <div class="section">
+    <h2>Step2：アプリ名を入力</h2>
+    <p>
+      ホーム画面に並ぶ名称です。<br>
+      設定後に変更はできませんが、特に注意点はありません。<br>
+      お好きな名前を入力してください。
+    </p>
+  </div>
+
+  <div class="section">
+    <h2>Step3：リンク（URL）を入力</h2>
+    <p>
+      アプリを開いたときに飛ぶ先のリンクです。<br>
+      <code>https://～</code> など通常のURLに加え、<br>
+      <b>URLスキーム（アプリを直接開く特殊URL）</b>にも対応しています。<br><br>
+      ただし URLスキームは端末やアプリにより動作が異なるため、<br>
+      <b>ご利用はご自身の判断（自己責任）でお願いします。</b>
+    </p>
+  </div>
+
+  <div class="section">
+    <h2>Step4：生成されたリンクをコピーして開く</h2>
+    <p>
+      画面下部に OJapp が生成したリンクが表示されます。<br>
+      <b>コピーして Safari / Chrome などで開いてください。</b><br>
+      （初回のみホーム追加設定が必要です）
+    </p>
+  </div>
+
+  <div class="section">
+    <h2>Step5：30秒以内にホーム追加 or ブックマーク</h2>
+    <p>
+      初回アクセス時は <b>30秒カウントダウン画面</b>が表示されます。<br>
+      この間に以下を行うと設定が完了します：
+    </p>
     <ul>
-      <li>index.html</li>
-      <li>manifest.json</li>
-      <li>アイコン画像（PNG）</li>
-    </ul>
-  </div>
-
-  <div class="section">
-    <h2>Step2<br>
-      GitHub にアプリ用ページを作成</h2>
-    <p>⚠️ GitHub アカウントが必要です。</p>
-    <p>1. GitHub にログインします。<br>
-       2. 新しいリポジトリを作成（例：<code>my-app-icon</code>）。<br>
-       3. <b>Add file → Create new file</b> を選択します。<br>
-       4. ファイル名に <code>index.html</code> を入力し、生成したHTMLをペーストします。<br>
-       5. 同様に <code>manifest.json</code> を作成して貼り付けます。<br>
-       6. <b>Add file → Upload files</b> から PNG アイコンをアップロードします。</p>
-  </div>
-
-  <div class="section">
-    <h2>Step3<br>
-      GitHub Pages で公開</h2>
-    <p>1. リポジトリの <b>Settings</b> を開きます。<br>
-       2. 左メニューの <b>Pages</b> を選択します。<br>
-       3. Source を <b>Deploy from branch</b> または <b>GitHub Actions</b> に設定します。<br>
-       4. 表示された URL を確認します（例：<code>https://username.github.io/my-app-icon/</code>）。</p>
-  </div>
-
-  <div class="section">
-    <h2>Step4<br>
-      スマホで公開URLを開く</h2>
-    <p>公開されたURLにアクセスすると：</p>
-    <ul>
-      <li>初回アクセス → 30秒カウントダウン画面</li>
-      <li>自動でリンク先へ移動</li>
-      <li>ホーム画面追加にも対応（iPhone/Android）</li>
-    </ul>
-  </div>
-
-  <div class="section">
-    <h2>Step5<br>
-      30秒以内にブックマーク or ホーム追加</h2>
-    <p>初回30秒以内に以下を行います：</p>
-    <ul>
-      <li>✔ ホームに追加</li>
+      <li>✔ ホーム画面に追加</li>
       <li>✔ ブックマーク保存</li>
     </ul>
-    <p>これで、あなたのオリジナルショートカットが完成です！<br>
-       以後はシンプル画面から2秒で自動ジャンプします。</p>
+    <p>
+      2回目以降は、シンプル画面を経由して<br>
+      <b>約2秒でリンク先へ自動ジャンプ</b>します。
+    </p>
   </div>
 
   <div class="section">
-    <h2>お疲れさまです！🎉</h2>
-    <p>OJapp と GitHub を組み合わせるだけで、完全オリジナルの “ホーム画面アプリ” を作成できます。</p>
+    <h2>完成です！🎉</h2>
+    <p>
+      アイコン・名前・URLを決めるだけで、<br>
+      あなた専用の “ホーム画面アプリ” が完成します。<br>
+      ぜひ OJapp を活用して、自分だけのホーム画面を作ってみてください。
+    </p>
   </div>
 
 </div>
