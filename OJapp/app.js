@@ -245,9 +245,13 @@ createBtn.addEventListener("click", async () => {
 // ===============================
 // ダークモード
 // ===============================
-function toggleTheme() {
-  document.documentElement.classList.toggle("dark");
-  const sw = document.querySelector(".switch");
-  sw.textContent = document.documentElement.classList.contains("dark") ? "🌙" : "🤩";
+function updateThemeIcon() {
+  const button = document.querySelector(".switch");
+  if (!button) return;
 
-}); // ← DOMContentLoaded を閉じる
+  if (document.documentElement.classList.contains("dark")) {
+    button.textContent = "🌙";
+  } else {
+    button.textContent = "🤩";
+  }
+}
