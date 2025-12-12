@@ -3,23 +3,87 @@
 // API のエンドポイント
 const API_ENDPOINT = "https://ojapp-auth.trc-wasps.workers.dev/api/create";
 
+// ===============================
+// 共通UI
+// ===============================
 function toggleA(){
   let box=document.getElementById("assistantBox");
   box.style.display = (box.style.display=="none")?"block":"none";
 }
 
-// アイコンプレビュー
-document.getElementById("iconInput").addEventListener("change", e => {
-  const file = e.target.files[0];
+function showMessage(text) {
+  const box = document.getElementById("assistantBox");
+  box.textContent = text;
+}
+
+// ===============================
+// アイコン処理（Canvas縮小）
+// ===============================
+const iconInput = document.getElementById("iconInput");
+const previewImg = document.getElementById("preview");
+
+let resizedIconBlob = null; // ← これを workers.js に送る
+
+iconInput.addEventListener("change", () => {
+  const file = iconInput.files[0];
   if (!file) return;
-  document.getElementById("preview").src = URL.createObjectURL(file);
+
+  // 最終セーフティ（内部用）
+  if (file.size > 2 * 1024 * 1024) {
+    showMessage("❌ 画像ファイルが大きすぎます");
+    iconInput.value = "";
+    return;
+  }
+
+  const img = new Image();
+  const reader = new FileReader();
+
+  reader.onload = e => img.src = e.target.result;
+  reader.readAsDataURL(file);
+
+  img.onload = () => {
+    const w = img.width;
+    const h = img.height;
+
+    // 小さすぎる画像はNG
+    if (w <= 100 || h <= 100) {
+      showMessage("❌ 画像サイズが小さすぎます（100×100px以上）");
+      iconInput.value = "";
+      return;
+    }
+
+    // 長方形は警告のみ
+    if (w !== h) {
+      showMessage("⚠️ 正方形ではありません。歪んで表示される場合があります");
+    } else {
+      showMessage("✅ アイコン画像を確認しました");
+    }
+
+    // ===== Canvas 縮小（最大512）=====
+    const maxSize = 512;
+    const targetSize = Math.min(w, h, maxSize);
+
+    const canvas = document.createElement("canvas");
+    canvas.width = targetSize;
+    canvas.height = targetSize;
+
+    const ctx = canvas.getContext("2d");
+    ctx.drawImage(img, 0, 0, targetSize, targetSize);
+
+    // Blob化（PNG）
+    canvas.toBlob(blob => {
+      resizedIconBlob = blob;
+
+      // プレビューは縮小後の画像
+      previewImg.src = URL.createObjectURL(blob);
+    }, "image/png");
+  };
 });
 
 // =========================
 // ▼ URLコピーボックス生成
 // =========================
 function showCopyBox(url) {
-  // 既に存在する場合は消す
   const old = document.getElementById("copyBoxWrap");
   if (old) old.remove();
 
@@ -63,19 +127,18 @@ function showCopyBox(url) {
 // ▼ Create App ボタン
 // =========================
 document.getElementById("createBtn").addEventListener("click", async () => {
-  const file = document.getElementById("iconInput").files[0];
   const name = document.getElementById("appName").value.trim();
   const url  = document.getElementById("appURL").value.trim();
 
-  if (!file || !name || !url) {
+  if (!resizedIconBlob || !name || !url) {
     alert("アイコン・名前・URLを全部入れてな🔥");
     return;
   }
 
-  // ★ URLスキーム判定（http/https以外 OK）
+  // URLスキーム判定
   const isScheme = /^[a-zA-Z0-9+\-.]+:\/\//.test(url);
 
-  // アイコン → base64
+  // ★ 縮小後アイコン → base64
   const reader = new FileReader();
   reader.onload = async () => {
     const base64 = reader.result;
@@ -98,17 +161,13 @@ document.getElementById("createBtn").addEventListener("click", async () => {
 
         let guide = "このURLを開いて『ホーム画面に追加』してね！";
 
-        // URLスキームの場合は案内を変更
         if (isScheme) {
           guide = "アプリURLです！\nホーム追加したアイコンを起動するとアプリが直接ひらくで！🔥";
         }
 
         alert("OJapp 発行完了🎉\n\n" + guide);
-
-        // ▼ 画面にコピーボックスを生成
         showCopyBox(accessUrl);
 
-        console.log("issued:", result);
       } else {
         alert("保存失敗💥 時間あけてもう一度！");
       }
@@ -118,10 +177,12 @@ document.getElementById("createBtn").addEventListener("click", async () => {
     }
   };
 
-  reader.readAsDataURL(file);
+  reader.readAsDataURL(resizedIconBlob);
 });
 
+// =========================
 // ダークモード（現状維持）
+// =========================
 function toggleTheme() {
   document.documentElement.classList.toggle("dark");
   const sw = document.querySelector(".switch");
