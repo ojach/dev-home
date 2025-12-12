@@ -221,12 +221,13 @@ function getURLCheckData(level) {
   };
 }
 function onURLInput() {
-  const url = document.getElementById('app-url').value.trim();
+  const url = document.getElementById('appURL').value.trim();
   const result = document.getElementById('url-check');
   const checkboxWrap = document.getElementById('url-confirm-wrap');
   const checkbox = document.getElementById('url-confirm');
-  const createBtn = document.getElementById('create-app');
+  const createBtn = document.getElementById('createBtn');
 
+  // URL変わったら必ずチェック解除
   checkbox.checked = false;
 
   if (!url) {
@@ -251,12 +252,14 @@ function onURLInput() {
     createBtn.disabled = false;
   }
 }
+
 function onURLConfirmChange() {
   const checkbox = document.getElementById('url-confirm');
-  const createBtn = document.getElementById('create-app');
+  const createBtn = document.getElementById('createBtn');
 
   createBtn.disabled = !checkbox.checked;
 }
+
 
 // =========================
 // ダークモード（現状維持）
