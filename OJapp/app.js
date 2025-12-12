@@ -221,6 +221,10 @@ function getURLCheckData(level) {
   };
 }
 function onURLInput() {
+  
+  console.log('onURLInput fired');
+
+
   const url = document.getElementById('appURL').value.trim();
   const result = document.getElementById('url-check');
   const checkboxWrap = document.getElementById('url-confirm-wrap');
