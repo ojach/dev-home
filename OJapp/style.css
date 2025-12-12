@@ -89,6 +89,15 @@ h2 {
 /* =========================================
    Buttons
 ========================================= */
+.btn:disabled {
+  opacity: 1 !important;
+  filter: none !important;
+  box-shadow: 0 6px 0 #d19400 !important;
+  background: linear-gradient(#ffd85a, #ffb726) !important;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
 .btn {
   margin: 25px auto;
   padding: 18px 38px;
