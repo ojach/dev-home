@@ -17,7 +17,7 @@ function showMessage(text) {
 }
 
 // ===============================
-// アイコン処理（そのまま）
+// アイコン処理（高品質版）
 // ===============================
 const iconInput = document.getElementById("iconInput");
 const previewImg = document.getElementById("preview");
@@ -28,7 +28,7 @@ iconInput.addEventListener("change", () => {
   if (!file) return;
 
   if (file.size > 2 * 1024 * 1024) {
-    showMessage("❌ 画像ファイルが大きすぎます");
+    showMessage("❌ 画像ファイルが大きすぎます（2MBまで）");
     iconInput.value = "";
     return;
   }
@@ -50,7 +50,7 @@ iconInput.addEventListener("change", () => {
     }
 
     if (w !== h) {
-      showMessage("⚠️ 正方形ではありません。歪んで表示される場合があります");
+      showMessage("⚠️ 正方形ではありません。歪むことがあります");
     } else {
       showMessage("✅ アイコン画像を確認しました");
     }
@@ -108,16 +108,17 @@ function getURLCheckData(level) {
 }
 
 // ===============================
-// DOM結線（ここだけ！）
+// DOMセッティング（URL判定）
 // ===============================
 document.addEventListener("DOMContentLoaded", () => {
+
   const urlInput = document.getElementById("appURL");
   const result = document.getElementById("url-check");
   const wrap = document.getElementById("url-confirm-wrap");
   const checkbox = document.getElementById("url-confirm");
   const createBtn = document.getElementById("createBtn");
 
-  createBtn.disabled = true; // 初期は不可
+  createBtn.disabled = true;
 
   urlInput.addEventListener("input", () => {
     const url = urlInput.value.trim();
@@ -151,11 +152,58 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 });
 
+// ===============================
+// ★ 青く光る OJappカードを表示するUI
+// ===============================
+function showCopyBox(url) {
+  const area = document.getElementById("resultArea");
+  if (!area) return;
+
+  area.innerHTML = `
+    <div style="
+      background: linear-gradient(135deg, #2bb7ff, #0077ff);
+      padding: 18px;
+      border-radius: 16px;
+      color: #fff;
+      font-weight: bold;
+      text-align: center;
+      box-shadow: 0 6px 20px rgba(0, 140, 255, 0.35);
+      animation: fadeIn 0.4s ease;
+    ">
+      <div style="font-size:16px; margin-bottom:6px;">✨ 発行された OJapp ✨</div>
+      <div id="copyTarget" style="
+        font-size:14px;
+        word-break: break-all;
+        background: rgba(255,255,255,0.2);
+        padding: 8px;
+        border-radius: 10px;
+      ">${url}</div>
+
+      <button id="copyBtn" style="
+        margin-top: 12px;
+        padding: 8px 16px;
+        background: #ffffff;
+        color: #0077ff;
+        border: none;
+        border-radius: 10px;
+        font-weight: bold;
+        cursor: pointer;
+      ">📋 コピー</button>
+    </div>
+  `;
+
+  // コピー機能
+  document.getElementById("copyBtn").onclick = () => {
+    navigator.clipboard.writeText(url);
+    alert("コピーしたで✌");
+  };
+}
 
 // ===============================
-// Create App（既存処理そのまま）
+// Create App（本処理）
 // ===============================
 document.getElementById("createBtn").addEventListener("click", async () => {
+
   const name = document.getElementById("appName").value.trim();
   const url  = document.getElementById("appURL").value.trim();
 
@@ -167,6 +215,7 @@ document.getElementById("createBtn").addEventListener("click", async () => {
   const reader = new FileReader();
   reader.onload = async () => {
     try {
+
       const res = await fetch(API_ENDPOINT, {
         method: "POST",
         headers: { "Content-Type":"application/json" },
@@ -181,55 +230,19 @@ document.getElementById("createBtn").addEventListener("click", async () => {
 
       if (result.status === "ok") {
         const accessUrl = result.access_url;
+        showCopyBox(accessUrl); // ★ ここで表示！
+      } else {
+        alert("保存失敗💥 時間をおいて試してみて！");
+      }
 
-       function showCopyBox(url) {
-  const area = document.getElementById("resultArea");
-  if (!area) return;
-
-  area.innerHTML = "";
-
-  const wrap = document.createElement("div");
-  wrap.id = "copyBoxWrap";
-  wrap.style = `
-    margin:20px auto;
-    width:90%;
-    max-width:500px;
-    padding:18px;
-    background:#fff;
-    border-radius:14px;
-    box-shadow:0 6px 16px rgba(0,0,0,.1);
-    text-align:center;
-    font-family:-apple-system,BlinkMacSystemFont;
-  `;
-
-  wrap.innerHTML = `
-    <div style="font-size:14px;color:#444;margin-bottom:6px;">
-      発行された OJapp URL
-    </div>
-    <div id="copyTarget"
-      style="word-break:break-all;background:#f4f4f4;padding:8px;border-radius:8px;font-size:14px;">
-      ${url}
-    </div>
-    <button id="copyBtn"
-      style="
-        margin-top:12px;padding:8px 16px;border-radius:8px;border:none;
-        background:#2bb7ff;color:#fff;font-weight:bold;cursor:pointer;">
-      📋 コピー
-    </button>
-  `;
-
-  area.appendChild(wrap);
-
-  document.getElementById("copyBtn").onclick = () => {
-    navigator.clipboard.writeText(url);
-    alert("コピーしたで✌");
+    } catch (e) {
+      alert("通信エラー💥 ネット環境を確認！");
+      console.error(e);
+    }
   };
 
-  // 視線誘導
-  wrap.scrollIntoView({ behavior: "smooth", block: "center" });
-}
-
-
+  reader.readAsDataURL(resizedIconBlob);
+});
 
 // ===============================
 // ダークモード
