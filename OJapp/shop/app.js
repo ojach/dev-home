@@ -165,42 +165,65 @@ function renderShop() {
   const grid = document.querySelector(".shop-grid");
   grid.innerHTML = "";
 
-viewItems.forEach(item => {
-  const thumb = item.thumbnail || "/OJapp/shop/noimage.png";
-  const authorIcon = `/OJapp/shop/author/${item.author}.png`;
+  viewItems.forEach(item => {
+    const thumb = item.thumbnail || "/OJapp/shop/noimage.png";
+    const authorIcon = `/OJapp/shop/author/${item.author}.png`;
 
-  const card = document.createElement("div");
-  card.className = "item-card";
+    const card = document.createElement("div");
+    card.className = "item-card";
 
-card.innerHTML = `
-  <div class="item-thumb-box">
-    <img src="${thumb}" class="item-thumb">
-    <img src="${authorIcon}" class="author-icon"
-         onclick="location.href='/OJapp/shop/author/?name=${encodeURIComponent(item.author)}'">
-  </div>
+    card.innerHTML = `
+      <div class="item-thumb-box">
+        <img src="${thumb}" class="item-thumb">
+        <img src="${authorIcon}" class="author-icon"
+             onclick="location.href='/OJapp/shop/author/?name=${encodeURIComponent(item.author)}'">
+      </div>
 
-  <div class="item-title">${item.title}</div>
+      <div class="item-title">${item.title}</div>
+      <div class="item-price-line">
+        <span class="item-price">¥${item.price}</span>
+        <span class="fav-btn" data-id="${item.itemId}">♡</span>
+        <span class="fav-count" id="fav-${item.itemId}">0</span>
+      </div>
 
-  <div class="item-meta">
-    <span class="item-price">¥${item.price}</span>
-    <span class="item-author">
-      by <a href="/OJapp/shop/author/?name=${encodeURIComponent(item.author)}"
-            class="author-link">${item.author}</a>
-    </span>
-  </div>
-`;
+      <div class="item-author">
+        by <a href="/OJapp/shop/author/?name=${encodeURIComponent(item.author)}"
+              class="author-link">${item.author}</a>
+      </div>
+    `;
 
+    // ✅ カードクリックで商品ページ遷移
+    card.addEventListener("click", (e) => {
+      // ハートボタンをクリックした時は遷移しない
+      if (e.target.classList.contains("fav-btn")) return;
 
-  // ✅ ここが正しい位置！（ループの中）
-  card.addEventListener("click", () => {
-    sessionStorage.setItem("ojapp_scroll_position", window.scrollY);
-    location.href = `/OJapp/shop/product/?id=${item.itemId}`;
+      sessionStorage.setItem("ojapp_scroll_position", window.scrollY);
+      location.href = `/OJapp/shop/product/?id=${item.itemId}`;
+    });
+
+    grid.appendChild(card);
   });
 
-  grid.appendChild(card);
-}); // ← ここでループが閉じる
+  animateCards();
 
-animateCards();
+  // ✅ ハートボタンにイベント登録
+  document.querySelectorAll(".fav-btn").forEach(btn => {
+    btn.addEventListener("click", async (e) => {
+      e.stopPropagation();
+      const id = e.target.dataset.id;
+      try {
+        const res = await fetch("https://ojshop-fav.trc-wasps.workers.dev", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ id })
+        });
+        const data = await res.json();
+        document.getElementById(`fav-${id}`).textContent = data.count;
+      } catch (err) {
+        console.error("お気に入り失敗:", err);
+      }
+    });
+  });
 }
 
 // ================================
