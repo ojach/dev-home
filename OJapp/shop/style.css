@@ -692,3 +692,26 @@ input:focus {
     gap: 12px;
   }
 }
+.item-price-line {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 500;
+}
+
+.fav-btn {
+  cursor: pointer;
+  color: #ff7aa0;
+  font-size: 20px;
+  transition: transform 0.1s ease, color 0.2s;
+}
+
+.fav-btn:hover {
+  transform: scale(1.2);
+  color: #ff4b7d;
+}
+
+.fav-count {
+  font-size: 14px;
+  color: #888;
+}
