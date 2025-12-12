@@ -269,4 +269,7 @@ function toggleTheme() {
   const sw = document.querySelector(".switch");
   sw.textContent = document.documentElement.classList.contains("dark") ? "🌙" : "😆";
 }
+window.onURLInput = onURLInput;
+window.onURLConfirmChange = onURLConfirmChange;
+
 console.log('URL check system loaded');
