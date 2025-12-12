@@ -225,6 +225,38 @@ function renderShop() {
     });
   });
 }
+document.querySelectorAll(".fav-btn").forEach(btn => {
+  btn.addEventListener("click", async (e) => {
+    e.stopPropagation();
+    const id = e.target.dataset.id;
+
+    // ✅ すでに押したことあるならスキップ
+    const favKey = `fav_${id}`;
+    if (localStorage.getItem(favKey)) {
+      alert("もうお気に入り済みです❤️");
+      return;
+    }
+
+    try {
+      const res = await fetch("https://ojshop-fav.trc-wasps.workers.dev", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id })
+      });
+      const data = await res.json();
+      document.getElementById(`fav-${id}`).textContent = data.count;
+
+      // ✅ 押した記録を保存
+      localStorage.setItem(favKey, "true");
+
+      // ✅ ハートの色変更
+      e.target.style.color = "#ff4b7d";
+      e.target.textContent = "❤️";
+    } catch (err) {
+      console.error("お気に入り失敗:", err);
+    }
+  });
+});
 
 // ================================
 // 今日のおすすめ（常時2件・カードクリックで遷移）
