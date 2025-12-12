@@ -129,22 +129,6 @@ h2 {
 }
 .btn.pulse { animation: pulse 2.4s infinite ease-in-out; }
 
-/* Createボタン：無効状態（URL未チェック時など） */
-.btn:disabled {
-  opacity: 0.5;
-  filter: none !important;     /* ← 白いモヤ（ドロップシャドウ等）を完全無効化 */
-  backdrop-filter: none !important;
-  color: #aaa !important;      /* ← 白文字を灰色にして視認性UP */
-  background: #ffffff20 !important; /* ← 薄い透明白にして自然に */
-  border: 1px solid #ffffff40;       /* ← 境界線が消えないように */
-}
-
-/* ダークモード時の無効 Createボタン */
-.dark .btn:disabled {
-  background: #ffffff15 !important; /* ← 黒背景に馴染む透明白 */
-  color: #ccc !important;
-  border: 1px solid #ffffff30;
-}
 
 /* =========================================
    Arrow
@@ -274,42 +258,4 @@ input:focus {
 .url-check.red {
   background: #f8d7da;
   color: #721c24;
-}
-
-#create-app:disabled {
-  opacity: 0.5;
-}
-/* Create App は disabled でも見た目を変えない */
-#createBtn:disabled {
-  opacity: 1 !important;
-  filter: none !important;
-  background: inherit;
-  color: inherit;
-  cursor: not-allowed; /* 押せないのは分かる */
-}
-/* ===============================
-   Create App は disabled でも
-   見た目を一切変えない
-   =============================== */
-
-#createBtn {
-  opacity: 1 !important;
-  filter: none !important;
-}
-
-#createBtn:disabled {
-  opacity: 1 !important;
-  filter: none !important;
-  background: inherit !important;
-  color: inherit !important;
-  box-shadow: inherit !important;
-}
-
-/* btn / pulse 側の影響を完全に無効化 */
-#createBtn.btn,
-#createBtn.pulse,
-#createBtn.btn:disabled,
-#createBtn.pulse:disabled {
-  opacity: 1 !important;
-  filter: none !important;
 }
