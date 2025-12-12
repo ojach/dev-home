@@ -56,23 +56,29 @@ fetch("/OJapp/header.html").then(r=>r.text()).then(h=>header.innerHTML=h)
   <input type="text" id="appName" placeholder="OJACH PORTAL">
 </div>
 
-<!-- Step3 -->
+<!-- Step3 : URL -->
 <div class="section">
   <div class="section-title">Step3：URL</div>
- <input
-  type="text"
-  id="appURL"
-  placeholder="https://example.com"
-/>
+  <input
+    type="text"
+    id="appURL"
+    placeholder="https://example.com"
+  />
 
-<div id="url-check" class="url-check" style="display:none;"></div>
+  <!-- URLチェック結果 -->
+  <div id="url-check" class="url-check" style="display:none;"></div>
 
-<div id="url-confirm-wrap" style="display:none; margin-top:8px;">
-  <label>
-    <input type="checkbox" id="url-confirm">
-    内容を理解した上で作成します
-  </label>
+  <!-- 確認チェック（🟡🔴時のみ） -->
+  <div id="url-confirm-wrap" style="display:none; margin-top:8px;">
+    <label>
+      <input type="checkbox" id="url-confirm">
+      内容を理解した上で作成します
+    </label>
+  </div>
 </div>
+
+<!-- Create -->
+<button id="createBtn" disabled>Create App</button>
 
 
 <div id="assistantBox">おちゃじ参上😎✨</div>
