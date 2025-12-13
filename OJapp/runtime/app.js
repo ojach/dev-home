@@ -27,7 +27,7 @@
 
     <!-- 左上 OJapp ブランド -->
     <div id="ojapp-brand">
-      <img src="/OJapp/icon/ojapp-logo.png" alt="OJapp">
+      <img src="https://github.ojach.com/OJapp/icon/ojapp-logo.png" alt="OJapp">
       <span>OJapp</span>
     </div>
 
