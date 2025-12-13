@@ -36,8 +36,6 @@ function getAuthorName() {
 // CSV読み込み
 // ================================
 async function loadCSV() {
-  console.log(allItems.map(i => i.author));
-  console.log("CSV作者:", i.author, "URL作者:", authorName);
   const res = await fetch(CSV_URL);
   const text = await res.text();
 
@@ -45,13 +43,14 @@ async function loadCSV() {
   const rawHeaders = rows.shift().map(h => h.replace(/"/g, "").trim());
   const headers = rawHeaders.map(h => HEADER_MAP[h] || h);
 
-  return rows
-    .map(cols => {
-      const obj = {};
-      cols.forEach((val, i) => (obj[headers[i]] = val.replace(/"/g, "").trim()));
-      return obj;
-    })
-    .filter(item => !item.visible || item.visible.toUpperCase() !== "FALSE"); // 非公開は除外
+  const data = rows.map(cols => {
+    const obj = {};
+    cols.forEach((val, i) => (obj[headers[i]] = val.replace(/"/g, "").trim()));
+    return obj;
+  });
+
+  console.log("CSV読込結果:", data.length, "件");
+  return data.filter(item => !item.visible || item.visible.toUpperCase() !== "FALSE"); // 非公開除外
 }
 
 
@@ -105,10 +104,6 @@ function renderCards(items) {
   });
 }
 
-
-// ================================
-// 初期処理
-// ================================
 async function start() {
   authorName = getAuthorName();
   document.getElementById("author-title").textContent = `${authorName} さんの作品`;
@@ -120,7 +115,7 @@ async function start() {
   // ✅ CSV読み込み
   allItems = await loadCSV();
 
-  // ✅ ここで中身を確認
+  // ✅ 中身チェック
   console.log("作者名:", authorName);
   console.log("全アイテム件数:", allItems.length);
   allItems.forEach(item => console.log("CSV作者:", item.author));
@@ -134,6 +129,8 @@ async function start() {
 
   renderCards(items);
 }
+
+document.addEventListener("DOMContentLoaded", start);
 
 
 // ================================
