@@ -70,7 +70,8 @@
   urlEl.textContent = url;
 
  // ===== QR生成（本実装）=====
-const qrCanvas = document.getElementById("qr");
+try{
+  const qrCanvas = document.getElementById("qr");
 
 QRCode.toCanvas(qrCanvas, url, {
   width: 160,
@@ -82,12 +83,15 @@ QRCode.toCanvas(qrCanvas, url, {
 }, function (error) {
   if (error) console.error(error);
 });
-
+}
 
   // ===== カウントダウン =====
   let sec = 30;
   const cd = document.getElementById("countdown");
-
+if (!cd) {
+  console.error("countdown element not found");
+  return;
+}
   const timer = setInterval(() => {
     sec--;
     if (sec > 0) {
