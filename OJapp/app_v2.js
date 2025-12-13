@@ -15,7 +15,7 @@ function toggleA() {
   box.style.display = (box.style.display === "none") ? "block" : "none";
 }
 
-function showMessage(text, time = 3000) {
+function showMessage(text, time = 6000) {
   const box = document.getElementById("assistantBox");
   box.textContent = text;
   box.style.display = "block";
@@ -60,19 +60,28 @@ iconInput.addEventListener("change", () => {
     }
 
     if (w !== h) {
-      showMessage("⚠️ 正方形ではありません。歪むことがあります");
+      showMessage("⚠️中央でカットされて正方形でアイコンに変わります");
     } else {
       showMessage("✅ アイコン画像を確認しました");
     }
+const size = Math.min(w, h, 256);
+const cropSize = Math.min(w, h);
 
-    const size = Math.min(w, h, 256);
-    const canvas = document.createElement("canvas");
-    canvas.width = size;
-    canvas.height = size;
+const sx = (w - cropSize) / 2;
+const sy = (h - cropSize) / 2;
 
-    const ctx = canvas.getContext("2d");
-    ctx.drawImage(img, 0, 0, size, size);
+const canvas = document.createElement("canvas");
+canvas.width = size;
+canvas.height = size;
 
+const ctx = canvas.getContext("2d");
+ctx.drawImage(
+  img,
+  sx, sy,           // 元画像の切り抜き開始位置（中央）
+  cropSize, cropSize, // 元画像から切り取るサイズ
+  0, 0,             // canvas 上の描画位置
+  size, size        // 出力サイズ（256×256）
+);
     canvas.toBlob(blob => {
       resizedIconBlob = blob;
       previewImg.src = URL.createObjectURL(blob);
