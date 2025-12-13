@@ -37,6 +37,7 @@ function getAuthorName() {
 // ================================
 async function loadCSV() {
   console.log(allItems.map(i => i.author));
+  console.log("CSV作者:", i.author, "URL作者:", authorName);
   const res = await fetch(CSV_URL);
   const text = await res.text();
 
