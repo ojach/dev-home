@@ -105,25 +105,5 @@ QRCode.toCanvas(qrCanvas, url, {
     }, 400);
   }, 1000);
 
-  // ===== 簡易QR生成（依存なし）=====
-  function generateQR(text, canvas) {
-    // 超軽量：Google Chart API 風の簡易実装（オフライン不可）
-    // 本番では qrcode.js 等に置き換えてOK
-    const ctx = canvas.getContext("2d");
-    const size = 160;
-    canvas.width = size;
-    canvas.height = size;
-
-    // プレースホルダ（後で置換）
-    ctx.fillStyle = "#eee";
-    ctx.fillRect(0, 0, size, size);
-    ctx.fillStyle = "#333";
-    ctx.font = "14px sans-serif";
-    ctx.textAlign = "center";
-    ctx.fillText("QR", size / 2, size / 2 - 4);
-    ctx.fillText("READY", size / 2, size / 2 + 14);
-
-    // ※ 本番はここをちゃんとしたQR生成に差し替え
-  }
 
 })();
