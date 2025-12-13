@@ -50,7 +50,7 @@ async function loadCSV() {
       cols.forEach((val, i) => (obj[headers[i]] = val.replace(/"/g, "").trim()));
       return obj;
     })
-    .filter(item => item.visible !== "FALSE"); // 非公開は除外
+    .filter(item => !item.visible || item.visible.toUpperCase() !== "FALSE"); // 非公開は除外
 }
 
 
