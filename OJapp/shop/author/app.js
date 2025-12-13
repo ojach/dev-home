@@ -121,9 +121,13 @@ async function start() {
   renderAuthorHeader(authorName);
 
   // 商品一覧
+  
   allItems = await loadCSV();
- const items = allItems.filter(i => 
-  i.author.trim().toLowerCase() === authorName.trim().toLowerCase()
+console.log("全アイテム件数:", allItems.length);
+allItems.forEach(item => console.log("CSV作者:", item.author));
+
+const items = allItems.filter(item =>
+  item.author.replace(/\r/g, "").trim() === authorName.trim()
 );
 
 
