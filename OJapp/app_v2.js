@@ -90,83 +90,28 @@ ctx.drawImage(
 });
 
 // ===============================
-// URLチェック判定
+// URLチェック（HTTPSのみ許可）
 // ===============================
-function checkURLLevel(url) {
-  const green = ['https://', 'http://', 'mailto:', 'tel:', 'sms:'];
-  const yellow = [
-    'twitter://', 'x://', 'instagram://',
-    'youtube://', 'twitch://', 'discord://',
-    'amazon://', 'paypay://'
-  ];
-  if (green.some(p => url.startsWith(p))) return 'green';
-  if (yellow.some(p => url.startsWith(p))) return 'yellow';
-  return 'red';
-}
-
-function getURLCheckData(level) {
-  if (level === 'green') {
-    return {
-      icon: '🟢',
-      text: '推奨されているURLです。\n多くの環境で安定して動作します。',
-      needConfirm: false
-    };
-  }
-  if (level === 'yellow') {
-    return {
-      icon: '🟡',
-      text: 'アプリ用URLが含まれています。\n環境によっては動作しない場合があります。',
-      needConfirm: true
-    };
-  }
-  return {
-    icon: '🔴',
-    text: '推奨されていないURLです。\n正常に動作しない可能性があります。',
-    needConfirm: true
-  };
-}
-
-// ===============================
-// URLチェック UIバインド
-// ===============================
-const urlInput = document.getElementById("appURL");
-const result = document.getElementById("url-check");
-const wrap = document.getElementById("url-confirm-wrap");
-const checkbox = document.getElementById("url-confirm");
-const createBtn = document.getElementById("createBtn");
-
-createBtn.disabled = true;
-
 urlInput.addEventListener("input", () => {
   const url = urlInput.value.trim();
-  checkbox.checked = false;
 
+  // 空欄ならボタン無効
   if (!url) {
-    result.style.display = "none";
-    wrap.style.display = "none";
     createBtn.disabled = true;
     return;
   }
 
-  const level = checkURLLevel(url);
-  const data = getURLCheckData(level);
-
-  result.className = `url-check ${level}`;
-  result.textContent = `${data.icon} ${data.text}`;
-  result.style.display = "block";
-
-  if (data.needConfirm) {
-    wrap.style.display = "block";
+  // https:// で始まらない → エラー
+  if (!url.startsWith("https://")) {
     createBtn.disabled = true;
-  } else {
-    wrap.style.display = "none";
-    createBtn.disabled = false;
+    showMessage("❌ URLは https:// で始まる必要があります");
+    return;
   }
+
+  // OK
+  createBtn.disabled = false;
 });
 
-checkbox.addEventListener("change", () => {
-  createBtn.disabled = !checkbox.checked;
-});
 
 // ===============================
 // 結果カード（青く光る OJapp カード）
