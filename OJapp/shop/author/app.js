@@ -111,30 +111,29 @@ function renderCards(items) {
 // ================================
 async function start() {
   authorName = getAuthorName();
-
-  // ページ上部タイトル
   document.getElementById("author-title").textContent = `${authorName} さんの作品`;
   document.getElementById("author-desc").textContent =
     `作者「${authorName}」が登録したアイコン一覧です。`;
 
-  // 作者ヘッダー表示
   renderAuthorHeader(authorName);
 
-  // 商品一覧
-  
+  // ✅ CSV読み込み
   allItems = await loadCSV();
-console.log("全アイテム件数:", allItems.length);
-allItems.forEach(item => console.log("CSV作者:", item.author));
 
-const items = allItems.filter(item =>
-  item.author.replace(/\r/g, "").trim() === authorName.trim()
-);
+  // ✅ ここで中身を確認
+  console.log("作者名:", authorName);
+  console.log("全アイテム件数:", allItems.length);
+  allItems.forEach(item => console.log("CSV作者:", item.author));
 
+  // ✅ 作者でフィルタ
+  const items = allItems.filter(item =>
+    item.author.replace(/\r/g, "").trim() === authorName.trim()
+  );
+
+  console.log("フィルタ後:", items);
 
   renderCards(items);
 }
-
-document.addEventListener("DOMContentLoaded", start);
 
 
 // ================================
