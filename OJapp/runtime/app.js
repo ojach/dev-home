@@ -1,5 +1,3 @@
-alert("app.js loaded");
-
 // /OJapp/runtime/app.js
 (function () {
   const data = window.__OJAPP__;
