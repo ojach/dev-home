@@ -75,11 +75,14 @@ html, body {
 }
 
 #qr {
+  width: 160px;
+  height: 160px;
   background: #fff;
   padding: 10px;
   border-radius: 16px;
   box-shadow: 0 6px 16px rgba(0,0,0,.15);
 }
+
 
 /* ===============================
    カットライン
