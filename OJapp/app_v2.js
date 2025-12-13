@@ -15,9 +15,15 @@ function toggleA() {
   box.style.display = (box.style.display === "none") ? "block" : "none";
 }
 
-function showMessage(text) {
+function showMessage(text, time = 3000) {
   const box = document.getElementById("assistantBox");
   box.textContent = text;
+  box.style.display = "block";
+
+  clearTimeout(box._timer);
+  box._timer = setTimeout(() => {
+    box.style.display = "none";
+  }, time);
 }
 
 // ===============================
