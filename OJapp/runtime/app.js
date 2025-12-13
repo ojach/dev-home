@@ -12,11 +12,6 @@
   const KEY = "ojapp_" + token + "_installed";
   const isFirst = !localStorage.getItem(KEY);
 
-  // ===== 2回目以降は即遷移 =====
-  if (!isFirst) {
-    location.replace(url);
-    return;
-  }
 
   // ===== 完成証明書 画面（先に描画）=====
   root.innerHTML = `
@@ -80,3 +75,13 @@
   }, 1000);
 
 })();
+  // ===== 2回目以降は即遷移 =====
+if (!isFirst) {
+  // Safari対策：1フレーム描画してから遷移
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => {
+      location.href = url;
+    });
+  });
+  return;
+}
