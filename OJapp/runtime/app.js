@@ -1,5 +1,4 @@
 // /OJapp/runtime/app.js
-
 (function () {
   const data = window.__OJAPP__;
   if (!data) {
@@ -10,28 +9,110 @@
   const { token, name, url, icon } = data;
   const root = document.getElementById("root");
 
-  const key = "ojapp_" + token + "_installed";
-  const isFirst = !localStorage.getItem(key);
+  const KEY = "ojapp_" + token + "_installed";
+  const isFirst = !localStorage.getItem(KEY);
 
+  // 2回目以降は即アプリ
   if (!isFirst) {
-    // 2回目以降は即アプリへ
     location.href = url;
     return;
   }
 
   // 初回フラグ保存
-  localStorage.setItem(key, "1");
+  localStorage.setItem(KEY, "1");
 
-  // 仮表示（あとで完成証明書に置き換える）
-  root.textContent = "Loading OJapp…";
+  // ===== 完成証明書 画面 =====
+  root.innerHTML = `
+  <div id="certificate">
 
-  // 仮カウントダウン（30秒）
+    <!-- 左上 OJapp ブランド -->
+    <div id="ojapp-brand">
+      <img src="/OJapp/icon/ojapp-logo.png" alt="OJapp">
+      <span>OJapp</span>
+    </div>
+
+    <!-- 上ゾーン（共有・安心） -->
+    <div id="top-zone">
+      <img id="app-icon" alt="App Icon">
+      <div id="app-name"></div>
+      <div id="app-url"></div>
+
+      <div id="qr-wrap">
+        <canvas id="qr"></canvas>
+      </div>
+    </div>
+
+    <!-- カットライン -->
+    <div id="cut-line"></div>
+
+    <!-- 下ゾーン（名刺・説明） -->
+    <div id="bottom-zone">
+      <p>
+        この画面は初回限定で表示されます。<br>
+        ブックマークやホーム画面への追加は<br>
+        この画面で行ってください。
+      </p>
+
+      <div class="count-label">URLに自動で切り替わるまで</div>
+      <div id="countdown">30</div>
+    </div>
+
+  </div>
+  `;
+
+  // ===== データ反映 =====
+  const iconEl = document.getElementById("app-icon");
+  const nameEl = document.getElementById("app-name");
+  const urlEl  = document.getElementById("app-url");
+
+  iconEl.src = icon;
+  nameEl.textContent = name;
+  urlEl.textContent = url;
+
+  // ===== QR生成（最小実装）=====
+  // QR生成ライブラリを使う場合は差し替えOK
+  generateQR(url, document.getElementById("qr"));
+
+  // ===== カウントダウン =====
   let sec = 30;
+  const cd = document.getElementById("countdown");
+
   const timer = setInterval(() => {
     sec--;
-    if (sec <= 0) {
-      clearInterval(timer);
-      location.href = url;
+    if (sec > 0) {
+      cd.textContent = sec;
+      return;
     }
+
+    // 0秒演出 → 🚀
+    clearInterval(timer);
+    cd.textContent = "🚀";
+
+    // 少し見せてから遷移
+    setTimeout(() => {
+      location.href = url;
+    }, 400);
   }, 1000);
+
+  // ===== 簡易QR生成（依存なし）=====
+  function generateQR(text, canvas) {
+    // 超軽量：Google Chart API 風の簡易実装（オフライン不可）
+    // 本番では qrcode.js 等に置き換えてOK
+    const ctx = canvas.getContext("2d");
+    const size = 160;
+    canvas.width = size;
+    canvas.height = size;
+
+    // プレースホルダ（後で置換）
+    ctx.fillStyle = "#eee";
+    ctx.fillRect(0, 0, size, size);
+    ctx.fillStyle = "#333";
+    ctx.font = "14px sans-serif";
+    ctx.textAlign = "center";
+    ctx.fillText("QR", size / 2, size / 2 - 4);
+    ctx.fillText("READY", size / 2, size / 2 + 14);
+
+    // ※ 本番はここをちゃんとしたQR生成に差し替え
+  }
+
 })();
