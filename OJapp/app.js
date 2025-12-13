@@ -7,6 +7,10 @@ const API_ENDPOINT = "https://ojapp-auth.trc-wasps.workers.dev/api/create";
 
 document.addEventListener("DOMContentLoaded", () => {
 
+
+  const urlInput = document.getElementById("appURL");
+const createBtn = document.getElementById("createBtn");
+
 // ===============================
 // 共通UI
 // ===============================
