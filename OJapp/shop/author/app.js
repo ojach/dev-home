@@ -120,7 +120,10 @@ async function start() {
 
   // 商品一覧
   allItems = await loadCSV();
-  const items = allItems.filter(i => i.author === authorName);
+ const items = allItems.filter(i => 
+  i.author.trim().toLowerCase() === authorName.trim().toLowerCase()
+);
+
 
   renderCards(items);
 }
