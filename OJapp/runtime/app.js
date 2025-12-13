@@ -69,9 +69,20 @@
   nameEl.textContent = name;
   urlEl.textContent = url;
 
-  // ===== QR生成（最小実装）=====
-  // QR生成ライブラリを使う場合は差し替えOK
-  generateQR(url, document.getElementById("qr"));
+ // ===== QR生成（本実装）=====
+const qrCanvas = document.getElementById("qr");
+
+QRCode.toCanvas(qrCanvas, url, {
+  width: 160,
+  margin: 1,
+  color: {
+    dark: "#222222",
+    light: "#ffffff"
+  }
+}, function (error) {
+  if (error) console.error(error);
+});
+
 
   // ===== カウントダウン =====
   let sec = 30;
