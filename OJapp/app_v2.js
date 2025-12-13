@@ -37,11 +37,11 @@ iconInput.addEventListener("change", () => {
   const file = iconInput.files[0];
   if (!file) return;
 
-  if (file.size > 2 * 1024 * 1024) {
+ /* if (file.size > 2 * 1024 * 1024) {
     showMessage("❌ 画像ファイルが大きすぎます（2MBまで）");
     iconInput.value = "";
     return;
-  }
+  }*/
 
   const img = new Image();
   const reader = new FileReader();
@@ -65,7 +65,7 @@ iconInput.addEventListener("change", () => {
       showMessage("✅ アイコン画像を確認しました");
     }
 
-    const size = Math.min(w, h, 512);
+    const size = Math.min(w, h, 256);
     const canvas = document.createElement("canvas");
     canvas.width = size;
     canvas.height = size;
