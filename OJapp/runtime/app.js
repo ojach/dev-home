@@ -1,4 +1,4 @@
-// /OJapp/runtime/app.js
+/// /OJapp/runtime/app.js
 (function () {
   const data = window.__OJAPP__;
   if (!data) {
