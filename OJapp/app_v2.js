@@ -1,4 +1,4 @@
-// app.js ver.1.1.2 最新
+// app.js ver.1.1.3 最新
 // 更新日: 2025/12/13
 // ===============================
 // API
@@ -6,6 +6,10 @@
 const API_ENDPOINT = "https://ojapp-auth.trc-wasps.workers.dev/api/create";
 
 document.addEventListener("DOMContentLoaded", () => {
+
+
+  const urlInput = document.getElementById("appURL");
+const createBtn = document.getElementById("createBtn");
 
 // ===============================
 // 共通UI
