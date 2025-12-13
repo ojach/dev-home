@@ -247,29 +247,4 @@ input:focus {
   font-size: 15px;
   display: none;
 }
-/* =========================================
-   URL check
-========================================= */ 
-.url-check {
-  margin-top: 10px;
-  padding: 10px 12px;
-  border-radius: 8px;
-  font-size: 14px;
-  line-height: 1.4;
-  white-space: pre-line;
-}
 
-.url-check.green {
-  background: #e9f7ef;
-  color: #1e7e34;
-}
-
-.url-check.yellow {
-  background: #fff3cd;
-  color: #856404;
-}
-
-.url-check.red {
-  background: #f8d7da;
-  color: #721c24;
-}
