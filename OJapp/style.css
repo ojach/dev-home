@@ -92,6 +92,8 @@ h2 {
 .btn:disabled {
   opacity: 1 !important;
   filter: none !important;
+   color: #ff33cc !important;
+   -webkit-text-fill-color: #ff33cc !important;
   box-shadow: 0 6px 0 #d19400 !important;
   background: linear-gradient(#ffd85a, #ffb726) !important;
   cursor: not-allowed;
