@@ -1,4 +1,4 @@
-/* style.css ver.1.1.1 最新 */
+/* style.css ver.1.1.2 最新 */
 /* =========================================
    Theme Variables（色だけを集中管理）
 ========================================= */
@@ -113,6 +113,8 @@ h2 {
   position: relative;
   cursor: pointer;
   display: inline-block;
+  color: var(--assistant-border);
+  -webkit-text-fill-color: var(--assistant-border);
 }
 
 .btn::after {
