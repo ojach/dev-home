@@ -14,7 +14,7 @@ const HEADER_MAP = {
   "作者名": "author",
   "カテゴリー": "category",
   "スコア": "score",
-  "visible": "visible"
+  "visible": "visible",
   "価格": "price",
 };
 
