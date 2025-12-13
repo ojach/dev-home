@@ -1,3 +1,5 @@
+// app.js ver.1.1.2 最新
+// 更新日: 2025/12/13
 // ===============================
 // API
 // ===============================
@@ -13,9 +15,15 @@ function toggleA() {
   box.style.display = (box.style.display === "none") ? "block" : "none";
 }
 
-function showMessage(text) {
+function showMessage(text, time = 6000) {
   const box = document.getElementById("assistantBox");
   box.textContent = text;
+  box.style.display = "block";
+
+  clearTimeout(box._timer);
+  box._timer = setTimeout(() => {
+    box.style.display = "none";
+  }, time);
 }
 
 // ===============================
@@ -29,11 +37,11 @@ iconInput.addEventListener("change", () => {
   const file = iconInput.files[0];
   if (!file) return;
 
-  if (file.size > 2 * 1024 * 1024) {
+ /* if (file.size > 2 * 1024 * 1024) {
     showMessage("❌ 画像ファイルが大きすぎます（2MBまで）");
     iconInput.value = "";
     return;
-  }
+  }*/
 
   const img = new Image();
   const reader = new FileReader();
@@ -42,29 +50,38 @@ iconInput.addEventListener("change", () => {
   reader.readAsDataURL(file);
 
   img.onload = () => {
-    const w = img.width;
-    const h = img.height;
+    const w = img.naturalWidth;
+    const h = img.naturalHeight;
 
-    if (w < 100 || h < 100) {
+    if (w <= 100 || h <= 100) {
       showMessage("❌ 画像サイズが小さすぎます（100×100px以上）");
       iconInput.value = "";
       return;
     }
 
     if (w !== h) {
-      showMessage("⚠️ 正方形ではありません。歪むことがあります");
+      showMessage("⚠️中央でカットされて正方形でアイコンに変わります");
     } else {
       showMessage("✅ アイコン画像を確認しました");
     }
+const size = Math.min(w, h, 256);
+const cropSize = Math.min(w, h);
 
-    const size = Math.min(w, h, 512);
-    const canvas = document.createElement("canvas");
-    canvas.width = size;
-    canvas.height = size;
+const sx = (w - cropSize) / 2;
+const sy = (h - cropSize) / 2;
 
-    const ctx = canvas.getContext("2d");
-    ctx.drawImage(img, 0, 0, size, size);
+const canvas = document.createElement("canvas");
+canvas.width = size;
+canvas.height = size;
 
+const ctx = canvas.getContext("2d");
+ctx.drawImage(
+  img,
+  sx, sy,           // 元画像の切り抜き開始位置（中央）
+  cropSize, cropSize, // 元画像から切り取るサイズ
+  0, 0,             // canvas 上の描画位置
+  size, size        // 出力サイズ（256×256）
+);
     canvas.toBlob(blob => {
       resizedIconBlob = blob;
       previewImg.src = URL.createObjectURL(blob);
@@ -73,83 +90,28 @@ iconInput.addEventListener("change", () => {
 });
 
 // ===============================
-// URLチェック判定
+// URLチェック（HTTPSのみ許可）
 // ===============================
-function checkURLLevel(url) {
-  const green = ['https://', 'http://', 'mailto:', 'tel:', 'sms:'];
-  const yellow = [
-    'twitter://', 'x://', 'instagram://',
-    'youtube://', 'twitch://', 'discord://',
-    'amazon://', 'paypay://'
-  ];
-  if (green.some(p => url.startsWith(p))) return 'green';
-  if (yellow.some(p => url.startsWith(p))) return 'yellow';
-  return 'red';
-}
-
-function getURLCheckData(level) {
-  if (level === 'green') {
-    return {
-      icon: '🟢',
-      text: '推奨されているURLです。\n多くの環境で安定して動作します。',
-      needConfirm: false
-    };
-  }
-  if (level === 'yellow') {
-    return {
-      icon: '🟡',
-      text: 'アプリ用URLが含まれています。\n環境によっては動作しない場合があります。',
-      needConfirm: true
-    };
-  }
-  return {
-    icon: '🔴',
-    text: '推奨されていないURLです。\n正常に動作しない可能性があります。',
-    needConfirm: true
-  };
-}
-
-// ===============================
-// URLチェック UIバインド
-// ===============================
-const urlInput = document.getElementById("appURL");
-const result = document.getElementById("url-check");
-const wrap = document.getElementById("url-confirm-wrap");
-const checkbox = document.getElementById("url-confirm");
-const createBtn = document.getElementById("createBtn");
-
-createBtn.disabled = true;
-
 urlInput.addEventListener("input", () => {
   const url = urlInput.value.trim();
-  checkbox.checked = false;
 
+  // 空欄ならボタン無効
   if (!url) {
-    result.style.display = "none";
-    wrap.style.display = "none";
     createBtn.disabled = true;
     return;
   }
 
-  const level = checkURLLevel(url);
-  const data = getURLCheckData(level);
-
-  result.className = `url-check ${level}`;
-  result.textContent = `${data.icon} ${data.text}`;
-  result.style.display = "block";
-
-  if (data.needConfirm) {
-    wrap.style.display = "block";
+  // https:// で始まらない → エラー
+  if (!url.startsWith("https://")) {
     createBtn.disabled = true;
-  } else {
-    wrap.style.display = "none";
-    createBtn.disabled = false;
+    showMessage("❌ URLは https:// で始まる必要があります");
+    return;
   }
+
+  // OK
+  createBtn.disabled = false;
 });
 
-checkbox.addEventListener("change", () => {
-  createBtn.disabled = !checkbox.checked;
-});
 
 // ===============================
 // 結果カード（青く光る OJapp カード）
