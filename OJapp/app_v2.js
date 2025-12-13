@@ -268,3 +268,11 @@ function toggleTheme() {
   sw.textContent = document.documentElement.classList.contains("dark") ? "🌙" : "🤩";
 }
 }); 
+
+//再起動後に再読み込みさせる
+window.addEventListener("pageshow", function (event) {
+  if (event.persisted) {
+    // BFCache から復帰したとき
+    location.reload();
+  }
+});
