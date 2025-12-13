@@ -50,8 +50,8 @@ iconInput.addEventListener("change", () => {
   reader.readAsDataURL(file);
 
   img.onload = () => {
-    const w = img.width;
-    const h = img.height;
+    const w = img.naturalWidth;
+    const h = img.naturalHeight;
 
     if (w <= 100 || h <= 100) {
       showMessage("❌ 画像サイズが小さすぎます（100×100px以上）");
