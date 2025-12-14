@@ -179,8 +179,8 @@ h2 {
    Image blocks（←ここ重要！横並びにする処理）
 ========================================= */
 .split-img {
- width: calc(120px * var(--scale, 1));
-  height: calc(120px * var(--scale, 1));
+ width: calc(120px * var(--scale));
+  height: calc(120px * var(--scale));
 
   object-fit: cover;
   border-radius: 14px;
@@ -191,11 +191,11 @@ h2 {
 
 /* 表示エリア */
 #result {
-   display: flex;
-  flex-wrap: wrap;
+  display: grid;
   justify-content: center;
+  gap: 6px;
+  --scale: 1;
 }
-
 
 /* =========================================
    行 × 列入力
