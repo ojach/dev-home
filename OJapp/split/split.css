@@ -90,17 +90,6 @@ html, body {
   box-sizing: border-box;
 }
 
-*, *:before, *:after {
-  box-sizing: inherit;
-}
-
-.center {
-  width: 100%;
-  max-width: 500px;
-  margin: 0 auto;
-  text-align: center;
-}
-
 /* =========================================
    Layout
 ========================================= */
@@ -108,7 +97,7 @@ html, body {
   width: 100%;
   max-width: 500px;
   margin: 0 auto;
-  padding-top: 16px;
+   padding: 20px 0;
   text-align: center;
 }
 
