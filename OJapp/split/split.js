@@ -1,4 +1,4 @@
-// split.js ver.1.0
+// split.js ver.1.1（grid対応）
 
 document.getElementById("splitBtn").addEventListener("click", () => {
 
@@ -8,23 +8,27 @@ document.getElementById("splitBtn").addEventListener("click", () => {
   const rows = Number(document.getElementById("rows").value);
   const cols = Number(document.getElementById("cols").value);
 
+  const resultArea = document.getElementById("result");
+  resultArea.innerHTML = "";
+
+  // ★ グリッド化（ここが超重要）
+  resultArea.style.display = "grid";
+  resultArea.style.gridTemplateColumns = `repeat(${cols}, 120px)`;
+  resultArea.style.gap = "8px";
+  resultArea.style.justifyContent = "center";
+
   const img = new Image();
   const reader = new FileReader();
-
   reader.onload = e => img.src = e.target.result;
   reader.readAsDataURL(file);
 
   img.onload = () => {
-
-    const resultArea = document.getElementById("result");
-    resultArea.innerHTML = ""; // クリア
 
     const size = Math.min(img.width, img.height);
     const startX = (img.width - size) / 2;
     const startY = (img.height - size) / 2;
 
     const piece = size / Math.max(rows, cols);
-    // ※ 行列が違う場合でも最大値で正方形割りOK
 
     let index = 1;
 
@@ -33,7 +37,6 @@ document.getElementById("splitBtn").addEventListener("click", () => {
 
         const canvas = document.createElement("canvas");
         const ctx = canvas.getContext("2d");
-
         canvas.width = piece;
         canvas.height = piece;
 
@@ -41,30 +44,21 @@ document.getElementById("splitBtn").addEventListener("click", () => {
           img,
           startX + c * piece,
           startY + r * piece,
-          piece,
-          piece,
+          piece, piece,
           0, 0,
-          piece,
-          piece
+          piece, piece
         );
 
-        // 出力画像
         const url = canvas.toDataURL("image/png");
 
-        // 表示
         const imgTag = document.createElement("img");
         imgTag.src = url;
         imgTag.className = "split-img";
-
-        // ⬇️ 将来 ZIP で使えるように ID 付けとく
         imgTag.dataset.index = index++;
-        imgTag.dataset.blob = url;
 
         resultArea.appendChild(imgTag);
       }
-
-      // 行ごとに改行
-      resultArea.appendChild(document.createElement("br"));
     }
   };
 });
+
