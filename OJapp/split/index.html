@@ -20,13 +20,13 @@
 <body>
 
 <!-- 共通ヘッダー -->
-<div id="header"></div>
-<script>
-fetch("/OJapp/split/header.html")
-  .then(r => r.text())
-  .then(html => header.innerHTML = html)
-</script>
-
+<div class="header">
+  <a href="/OJapp/" class="logo-link">
+    <img src="/OJapp/split/icon/ojappsplit-logo.png" class="logo-img" alt="OJapp">
+    <span class="logo-text">OJapp splitter</span>
+  </a>
+  <div class="switch" onclick="toggleTheme()">🤩</div>
+</div>
 <div class="main">
 
 <h2>📸 画像を正方形で分割</h2>
