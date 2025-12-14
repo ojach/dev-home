@@ -80,7 +80,7 @@
       return setTimeout(generateQR, 50);
     }
 
-    QRCode.toCanvas(canvas, url, {
+    QRCode.toCanvas(canvas, window.location.href,  {
       width: 160,
       margin: 1
     });
