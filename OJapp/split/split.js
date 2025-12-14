@@ -39,13 +39,20 @@ document.getElementById("splitBtn").addEventListener("click", () => {
     // =====================================
     // ② 正方形切り出し（中央）
     // =====================================
-    const size = Math.min(img.width, img.height);
-    const startX = (img.width - size) / 2;
-    const startY = (img.height - size) / 2;
+  // 最終的な1ブロックのサイズ
+const blockSize = Math.min(
+  img.width  / cols,
+  img.height / rows
+);
 
-    const srcPiece = size / Math.max(rows, cols);
+// 切り出す全体サイズ（正方形ではなく分割全体の縦横）
+const cutWidth  = blockSize * cols;
+const cutHeight = blockSize * rows;
 
-    let index = 1;
+// 中央から開始
+const startX = (img.width  - cutWidth ) / 2;
+const startY = (img.height - cutHeight) / 2;
+
 
     // =====================================
     // ③ 各ピース切り出し → セルへ入れる
@@ -59,14 +66,14 @@ document.getElementById("splitBtn").addEventListener("click", () => {
         canvas.width = srcPiece;
         canvas.height = srcPiece;
 
-        ctx.drawImage(
-          img,
-          startX + c * srcPiece,
-          startY + r * srcPiece,
-          srcPiece, srcPiece,
-          0, 0,
-          srcPiece, srcPiece
-        );
+       ctx.drawImage(
+  img,
+  startX + c * blockSize,
+  startY + r * blockSize,
+  blockSize, blockSize,
+  0, 0,
+  blockSize, blockSize
+);
 
         const url = canvas.toDataURL("image/png");
 
