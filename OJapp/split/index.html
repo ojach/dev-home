@@ -1,1 +1,56 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>写真分割ツール | OJapp Tools</title>
+
+<link rel="stylesheet" href="/OJapp/style.css">
+<link rel="stylesheet" href="split.css">
+</head>
+
+<body>
+
+<!-- 共通ヘッダー -->
+<div id="header"></div>
+<script>
+fetch("/OJapp/split/header.html")
+  .then(r => r.text())
+  .then(html => header.innerHTML = html)
+</script>
+
+<div class="main">
+
+<h2>📸 写真を正方形に分割するツール</h2>
+
+<!-- 画像選択 -->
+<input type="file" id="imgInput" style="margin-top:10px;">
+
+<!-- 分割数入力 -->
+<div class="split-control">
+  <div>行<input type="number" id="rows" value="3" min="1" max="20"></div>
+  <div>列<input type="number" id="cols" value="3" min="1" max="20"></div>
+</div>
+
+<!-- 実行ボタン -->
+<button id="splitBtn" class="btn pulse" style="margin-top:10px;">
+  分割する 🎉
+</button>
+
+<!-- 出力表示エリア -->
+<div id="result"></div>
+
+</div><!-- /main -->
+
+<!-- 共通フッター -->
+<div id="footer"></div>
+<script>
+fetch("/OJapp/footer.html")
+  .then(r => r.text())
+  .then(html => footer.innerHTML = html)
+</script>
+
+<script src="split.js"></script>
+
+</body>
+</html>
 
