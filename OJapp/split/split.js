@@ -73,7 +73,8 @@ document.getElementById("splitBtn").addEventListener("click", () => {
         let scale = maxWidth / gridWidth;
         if (scale > 1) scale = 1;
 
-        result.style.transform = `scale(${scale})`;
+       result.style.setProperty('--cols', cols);
+result.style.gridTemplateColumns = `repeat(${cols}, auto)`;
 
       }
     }
