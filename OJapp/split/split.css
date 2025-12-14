@@ -164,11 +164,6 @@ h2 {
   text-align: center;
 }
 
-/* 結果グリッド */
-#result {
-  margin-top: 20px;
-  text-align: center;
-}
 /* センター揃え */
 .main {
   text-align: center;
@@ -180,11 +175,15 @@ h2 {
   margin: 10px auto;
 }
 
-#result {
-  display: grid;
-  justify-content: center;      /* 全体を中央揃え */
-  gap: 8px;                     /* 画像間の余白 */
-  margin-top: 20px;
+#resultWrap {
+  width: 100%;
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
 }
 
-
+#result {
+  display: grid;
+  gap: 6px;
+  transform-origin: top center;
+}
