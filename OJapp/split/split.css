@@ -188,3 +188,11 @@ input[type=file] {
   margin: 0 auto;
 }
 
+/* =========================================
+   Guide Link
+========================================= */
+.guide-link {
+  color: #2bb7ff;
+  font-weight: bold;
+  text-decoration: none;
+}
