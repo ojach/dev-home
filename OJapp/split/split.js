@@ -1,4 +1,4 @@
-// split.js ver.2.0（列数に応じてセルサイズ自動調整）
+// split.js ver.3.0（完全フィット版）
 
 document.getElementById("splitBtn").addEventListener("click", () => {
 
@@ -11,18 +11,19 @@ document.getElementById("splitBtn").addEventListener("click", () => {
   const result = document.getElementById("result");
   result.innerHTML = "";
 
-  // ---- ★ セルの表示サイズを決定（ここが超重要） ----
-  const wrapWidth = document.querySelector(".main").clientWidth;
-  const cellSize = Math.floor(wrapWidth / cols);   // 列で割る → フィットする
+  // 📌 スマホの画面幅をそのまま使う（UI の幅ではない）
+  const screenWidth = window.innerWidth;
 
-  result.style.display = "grid";
+  // 📌 パディングなどを考慮して少し余白
+  const usableWidth = screenWidth - 32; // 16px * 2 くらいの余白
+
+  // 📌 列数に応じて自動でセルの大きさが決まる
+  const cellSize = Math.floor(usableWidth / cols);
+
   result.style.gridTemplateColumns = `repeat(${cols}, ${cellSize}px)`;
-  result.style.gap = "8px";
+  result.style.gap = "6px";
   result.style.justifyContent = "center";
 
-  // -----------------------------------------
-  //     元画像読み込み
-  // -----------------------------------------
   const img = new Image();
   const reader = new FileReader();
   reader.onload = e => img.src = e.target.result;
@@ -30,19 +31,18 @@ document.getElementById("splitBtn").addEventListener("click", () => {
 
   img.onload = () => {
 
-    // 正方形切り出し用（中央から）
+    // 正方形切り出し
     const size = Math.min(img.width, img.height);
     const startX = (img.width - size) / 2;
     const startY = (img.height - size) / 2;
 
-    const srcPiece = size / Math.max(rows, cols); // 元画像の分割単位
+    const srcPiece = size / Math.max(rows, cols);
 
     let index = 1;
 
     for (let r = 0; r < rows; r++) {
       for (let c = 0; c < cols; c++) {
 
-        // ★ Canvas は大きいまま（高画質維持）
         const canvas = document.createElement("canvas");
         const ctx = canvas.getContext("2d");
         canvas.width = srcPiece;
@@ -52,20 +52,20 @@ document.getElementById("splitBtn").addEventListener("click", () => {
           img,
           startX + c * srcPiece,
           startY + r * srcPiece,
-          srcPiece, srcPiece, 
+          srcPiece, srcPiece,
           0, 0,
           srcPiece, srcPiece
         );
 
         const url = canvas.toDataURL("image/png");
 
-        // ★ 表示サイズだけ縮小する
         const imgTag = document.createElement("img");
         imgTag.src = url;
         imgTag.className = "split-img";
+
+        // 🔥 表示だけ縮小（高解像度は維持）
         imgTag.style.width = cellSize + "px";
         imgTag.style.height = cellSize + "px";
-        imgTag.dataset.index = index++;
 
         result.appendChild(imgTag);
       }
