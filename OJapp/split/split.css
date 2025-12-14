@@ -1,0 +1,40 @@
+/* split.css ver.1.0 */
+
+/* タイトルだけ少しアクセント色（ピンク） */
+h2 {
+  color: #ff66cc;
+}
+
+/* 画像の見た目統一 */
+.split-img {
+  width: 120px;
+  height: 120px;
+  object-fit: cover;
+  border-radius: 14px;
+  margin: 6px;
+  box-shadow: 0 0 10px rgba(0,0,0,.12);
+  background: #fafafa;
+}
+
+/* 行 × 列入力 */
+.split-control {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  margin: 12px auto;
+}
+
+.split-control input {
+  width: 60px;
+  padding: 8px;
+  border-radius: 10px;
+  border: 1px solid #ddd;
+  font-size: 16px;
+  text-align: center;
+}
+
+/* 結果グリッド */
+#result {
+  margin-top: 20px;
+  text-align: center;
+}
