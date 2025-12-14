@@ -1,4 +1,4 @@
-// split.js ver.3.0（完全版）
+// split.js ver.3.0（中央から正しくトリミング + スマホ幅フィット）
 
 document.getElementById("splitBtn").addEventListener("click", () => {
 
@@ -11,19 +11,20 @@ document.getElementById("splitBtn").addEventListener("click", () => {
   const result = document.getElementById("result");
   result.innerHTML = "";
 
-  // =====================================
-  // ① 表示幅を取得（スマホ基準）
-  // =====================================
-  const displayWidth = document.querySelector(".main").clientWidth;
+  // ====================================================================================
+  // ★ 表示するセルサイズ（スマホ幅にフィットさせる）
+  // ====================================================================================
+  const wrapWidth = document.querySelector(".main").clientWidth;
+  const cellSize = Math.floor(wrapWidth / cols);   // スマホ画面に確実に収めるためのサイズ
 
-  // gap 4px * (cols-1) を引いた分を割る
-  const totalGap = 4 * (cols - 1);
-  const cellSize = Math.floor((displayWidth - totalGap) / cols);
-
-  // グリッド設定
+  // 表示グリッドを作成
   result.style.gridTemplateColumns = `repeat(${cols}, ${cellSize}px)`;
+  result.style.gap = "8px";
 
-  // 画像読込
+
+  // ====================================================================================
+  // ★ 元画像読み込み（ここから切り出し）
+  // ====================================================================================
   const img = new Image();
   const reader = new FileReader();
   reader.onload = e => img.src = e.target.result;
@@ -31,60 +32,56 @@ document.getElementById("splitBtn").addEventListener("click", () => {
 
   img.onload = () => {
 
-    // =====================================
-    // ② 正方形切り出し（中央）
-    // =====================================
-  // 最終的な1ブロックのサイズ
-const blockSize = Math.min(
-  img.width  / cols,
-  img.height / rows
-);
+    // ★ ブロックの1つあたりのサイズ（元画像から切る時のピクセル数）
+    const blockSize = Math.min(
+      img.width  / cols,
+      img.height / rows
+    );
 
-// 切り出す全体サイズ（正方形ではなく分割全体の縦横）
-const cutWidth  = blockSize * cols;
-const cutHeight = blockSize * rows;
+    // 切り取り領域の総サイズ（分割した全体）
+    const cutWidth  = blockSize * cols;
+    const cutHeight = blockSize * rows;
 
-// 中央から開始
-const startX = (img.width  - cutWidth ) / 2;
-const startY = (img.height - cutHeight) / 2;
+    // ★ 中央基準で切り始めるポイント（重要）
+    const startX = (img.width  - cutWidth)  / 2;
+    const startY = (img.height - cutHeight) / 2;
 
+    // ====================================================================================
+    // ★ 画像を行 × 列で切り出し
+    // ====================================================================================
 
-    // =====================================
-    // ③ 各ピース切り出し → セルへ入れる
-    // =====================================
+    let index = 1;
+
     for (let r = 0; r < rows; r++) {
       for (let c = 0; c < cols; c++) {
 
-        // 元画像は高画質のまま切る
+        // 高画質のまま保持するため、大きめ Canvas を使う
         const canvas = document.createElement("canvas");
         const ctx = canvas.getContext("2d");
-        canvas.width = srcPiece;
-        canvas.height = srcPiece;
 
-       ctx.drawImage(
-  img,
-  startX + c * blockSize,
-  startY + r * blockSize,
-  blockSize, blockSize,
-  0, 0,
-  blockSize, blockSize
-);
+        canvas.width  = blockSize;
+        canvas.height = blockSize;
+
+        ctx.drawImage(
+          img,
+          startX + c * blockSize,   // 元画像の切り出し X
+          startY + r * blockSize,   // 元画像の切り出し Y
+          blockSize, blockSize,
+          0, 0,
+          blockSize, blockSize
+        );
 
         const url = canvas.toDataURL("image/png");
 
-        // 表示枠（サイズはCSSではなく JS で固定）
-        const cell = document.createElement("div");
-        cell.className = "split-cell";
-        cell.style.width = cellSize + "px";
-        cell.style.height = cellSize + "px";
-
+        // 表示サイズは cellSize に縮小（スマホ幅に合わせる）
         const imgTag = document.createElement("img");
         imgTag.src = url;
+        imgTag.className = "split-img";
+        imgTag.style.width  = cellSize + "px";
+        imgTag.style.height = cellSize + "px";
+        imgTag.dataset.index = index++;
 
-        cell.appendChild(imgTag);
-        result.appendChild(cell);
-
-        index++;
+        result.appendChild(imgTag);
       }
     }
   };
