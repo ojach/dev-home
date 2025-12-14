@@ -177,44 +177,51 @@ h2 {
 /* =========================================
    Image blocks
 ========================================= */
-.split-img {
-  object-fit: cover;
-  border-radius: 14px;
-  margin: 6px;
-  box-shadow: 0 0 10px rgba(0,0,0,.12);
-}
 
-/* 表示エリア */
 #result {
   display: grid;
   justify-content: center;
-  gap: 6px;
-  --scale: 1;
+  gap: 4px;
+  margin-top: 20px;
+}
+
+/* 1つの枠（サイズはJSで固定） */
+.split-cell {
+  background: #fafafa;
+  border-radius: 14px;
+  overflow: hidden;
+  box-shadow: 0 0 8px rgba(0,0,0,.12);
+}
+
+/* 画像は枠にフィット */
+.split-cell img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 
 /* =========================================
-   行 × 列入力
+   Inputs
 ========================================= */
+input[type=file] {
+  display: block;
+  margin: 0 auto;
+}
+
 .split-control {
+  margin: 12px 0;
   display: flex;
-  gap: 12px;
   justify-content: center;
-  margin: 12px auto;
+  gap: 12px;
 }
 
 .split-control input {
   width: 60px;
+  text-align: center;
   padding: 8px;
   border-radius: 10px;
-  border: 1px solid #ddd;
+  border: 1px solid #ccc;
   font-size: 16px;
-  text-align: center;
-}
-
-/* ファイル選択を中央に */
-input[type=file] {
-  display: block;
-  margin: 0 auto;
 }
 
 /* =========================================
