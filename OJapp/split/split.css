@@ -92,8 +92,8 @@ html, body {
    Layout
 ========================================= */
 .main {
-  width: 90%;
-  max-width: 90%;
+  width: 95%;
+  max-width: 500px;
   margin: 0 auto;
    padding: 20px 0;
   text-align: center;
