@@ -55,6 +55,23 @@ document.getElementById("splitBtn").addEventListener("click", () => {
     if (scale > 1) scale = 1;
 
     result.style.setProperty('--scale', scale);
+
+    // 列数に応じてグリッドを設定
+result.style.gridTemplateColumns = `repeat(${cols}, 1fr)`;
+
+// 本来の幅（120px * 列数）
+const baseWidth = cols * 120 + (cols - 1) * 6;
+
+// 実際の表示領域
+const containerWidth = document.querySelector(".main").clientWidth;
+
+// 縮小比率
+let scale = containerWidth / baseWidth;
+if (scale > 1) scale = 1;
+
+// CSS に反映
+result.style.setProperty("--scale", scale);
+
     // ▲▲ スケール調整ここまで ▲▲
   };
 });
