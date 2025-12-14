@@ -1,4 +1,4 @@
-// split.js ver.1.1（grid対応）
+// split.js ver.1.2（スマホ完全対応・正方形グリッド）
 
 document.getElementById("splitBtn").addEventListener("click", () => {
 
@@ -8,14 +8,17 @@ document.getElementById("splitBtn").addEventListener("click", () => {
   const rows = Number(document.getElementById("rows").value);
   const cols = Number(document.getElementById("cols").value);
 
-  const resultArea = document.getElementById("result");
-  resultArea.innerHTML = "";
+  const result = document.getElementById("result");
+  const wrap = document.getElementById("resultWrap");
 
-  // ★ グリッド化（ここが超重要）
-  resultArea.style.display = "grid";
-  resultArea.style.gridTemplateColumns = `repeat(${cols}, 120px)`;
-  resultArea.style.gap = "8px";
-  resultArea.style.justifyContent = "center";
+  // まず消す
+  result.innerHTML = "";
+
+  // グリッド基本設定
+  result.style.display = "grid";
+  result.style.gridTemplateColumns = `repeat(${cols}, 120px)`;
+  result.style.gap = "8px";
+  result.style.justifyContent = "center";
 
   const img = new Image();
   const reader = new FileReader();
@@ -24,13 +27,13 @@ document.getElementById("splitBtn").addEventListener("click", () => {
 
   img.onload = () => {
 
+    // ■ 正方形トリミング開始位置
     const size = Math.min(img.width, img.height);
     const startX = (img.width - size) / 2;
     const startY = (img.height - size) / 2;
 
+    // ■ 1ピースの長さ（元画像から切り出す用）
     const piece = size / Math.max(rows, cols);
-
-    let index = 1;
 
     for (let r = 0; r < rows; r++) {
       for (let c = 0; c < cols; c++) {
@@ -40,6 +43,7 @@ document.getElementById("splitBtn").addEventListener("click", () => {
         canvas.width = piece;
         canvas.height = piece;
 
+        // 元画像 → キャンバスに切り出し
         ctx.drawImage(
           img,
           startX + c * piece,
@@ -54,30 +58,29 @@ document.getElementById("splitBtn").addEventListener("click", () => {
         const imgTag = document.createElement("img");
         imgTag.src = url;
         imgTag.className = "split-img";
-        imgTag.dataset.index = index++;
 
-        resultArea.appendChild(imgTag);
-
-        const wrap = document.getElementById("resultWrap");
-        const result = document.getElementById("result");
-
-        result.style.gridTemplateColumns = `repeat(${cols}, 120px)`;
-
-        // グリッドの本来の幅
-        const gridWidth = cols * 120 + (cols - 1) * 6;
-
-        // スマホ画面幅
-        const maxWidth = wrap.clientWidth;
-
-        // 収まるスケールを計算（最大1）
-        let scale = maxWidth / gridWidth;
-        if (scale > 1) scale = 1;
-
-       result.style.setProperty('--cols', cols);
-result.style.gridTemplateColumns = `repeat(${cols}, auto)`;
-
+        result.appendChild(imgTag);
       }
     }
+
+    // ======== ▼ スマホ用スケール処理（ここが重要） ▼ ========
+
+    // グリッド全体の本来の幅
+    const gridWidth = cols * 120 + (cols - 1) * 8;
+
+    // スマホ画面に収まる最大幅
+    const maxWidth = wrap.clientWidth;
+
+    // スケール計算
+    let scale = maxWidth / gridWidth;
+    if (scale > 1) scale = 1;
+
+    // transformで縮小（見た目は小さいけど画像自体は高画質）
+    result.style.transform = `scale(${scale})`;
+    result.style.transformOrigin = "top center";
+
+    // 縮小後の高さを wrap に反映（ずれ防止）
+    result.style.height = "auto";
   };
 });
 
