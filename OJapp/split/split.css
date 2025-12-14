@@ -180,5 +180,11 @@ h2 {
   margin: 10px auto;
 }
 
+#result {
+  display: grid;
+  justify-content: center;      /* 全体を中央揃え */
+  gap: 8px;                     /* 画像間の余白 */
+  margin-top: 20px;
+}
 
 
