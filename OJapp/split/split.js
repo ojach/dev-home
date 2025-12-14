@@ -1,4 +1,4 @@
-// split.js ver.1.2（スマホ完全対応・正方形グリッド）
+// split.js ver.1.3（PC正常 ＋ スマホ自動縮小）
 
 document.getElementById("splitBtn").addEventListener("click", () => {
 
@@ -11,10 +11,9 @@ document.getElementById("splitBtn").addEventListener("click", () => {
   const result = document.getElementById("result");
   const wrap = document.getElementById("resultWrap");
 
-  // まず消す
   result.innerHTML = "";
 
-  // グリッド基本設定
+  // PC・スマホ共通のグリッド基礎
   result.style.display = "grid";
   result.style.gridTemplateColumns = `repeat(${cols}, 120px)`;
   result.style.gap = "8px";
@@ -27,12 +26,10 @@ document.getElementById("splitBtn").addEventListener("click", () => {
 
   img.onload = () => {
 
-    // ■ 正方形トリミング開始位置
     const size = Math.min(img.width, img.height);
     const startX = (img.width - size) / 2;
     const startY = (img.height - size) / 2;
 
-    // ■ 1ピースの長さ（元画像から切り出す用）
     const piece = size / Math.max(rows, cols);
 
     for (let r = 0; r < rows; r++) {
@@ -43,7 +40,6 @@ document.getElementById("splitBtn").addEventListener("click", () => {
         canvas.width = piece;
         canvas.height = piece;
 
-        // 元画像 → キャンバスに切り出し
         ctx.drawImage(
           img,
           startX + c * piece,
@@ -63,24 +59,21 @@ document.getElementById("splitBtn").addEventListener("click", () => {
       }
     }
 
-    // ======== ▼ スマホ用スケール処理（ここが重要） ▼ ========
-
-    // グリッド全体の本来の幅
+    // ------- スマホだけ縮小する --------
     const gridWidth = cols * 120 + (cols - 1) * 8;
-
-    // スマホ画面に収まる最大幅
     const maxWidth = wrap.clientWidth;
 
-    // スケール計算
     let scale = maxWidth / gridWidth;
-    if (scale > 1) scale = 1;
+    
+    // PC の場合は scale を必ず 1 にする（縮小禁止）
+    if (window.innerWidth > 640) {
+      scale = 1;
+    } else {
+      if (scale > 1) scale = 1;
+    }
 
-    // transformで縮小（見た目は小さいけど画像自体は高画質）
     result.style.transform = `scale(${scale})`;
     result.style.transformOrigin = "top center";
-
-    // 縮小後の高さを wrap に反映（ずれ防止）
-    result.style.height = "auto";
   };
 });
 
