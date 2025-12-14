@@ -48,3 +48,12 @@ body {
   margin-top: 20px;
   text-align: center;
 }
+
+/* 強制的に splitter 専用の .main にする */
+body .main {
+  width: 80% !important;
+  max-width: 500px !important;
+  margin: 0 auto !important;
+  display: block !important;
+  padding-top: 16px !important;
+}
