@@ -142,24 +142,20 @@ h2 {
    Image blocks（←ここ重要！横並びにする処理）
 ========================================= */
 .split-img {
-  width: 120px;
-  height: 120px;
+  width: min(120px, calc(90vw / var(--cols)));
+  height: min(120px, calc(90vw / var(--cols)));
   object-fit: cover;
   border-radius: 14px;
-  margin: 4px;
   box-shadow: 0 0 10px rgba(0,0,0,.12);
   background: #fafafa;
 
-  /* 横に並んで、スマホでは折り返す */
-  display: inline-block;
 }
 
 /* 表示エリア */
 #result {
-  display: flex;
+   display: flex;
   flex-wrap: wrap;
   justify-content: center;
-  margin-top: 20px;
 }
 
 
