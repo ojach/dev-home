@@ -29,11 +29,6 @@ document.getElementById("splitBtn").addEventListener("click", () => {
   reader.onload = e => img.src = e.target.result;
   reader.readAsDataURL(file);
 
-  function toggleTheme() {
-  document.documentElement.classList.toggle("dark");
-  const sw = document.querySelector(".switch");
-  sw.textContent = document.documentElement.classList.contains("dark") ? "🌙" : "🤩";
-}
   img.onload = () => {
 
     // =====================================
