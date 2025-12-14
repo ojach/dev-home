@@ -1,4 +1,5 @@
-// split.js ver.2.3
+// split.js ver.3.0（スマホ500px幅に完全対応）
+
 document.getElementById("splitBtn").addEventListener("click", () => {
 
   const file = document.getElementById("imgInput").files[0];
@@ -10,19 +11,18 @@ document.getElementById("splitBtn").addEventListener("click", () => {
   const result = document.getElementById("result");
   result.innerHTML = "";
 
-  // ✅ main の実幅を使う
-  const main = document.querySelector(".main");
-  const usableWidth = main.clientWidth;
+  // ---- ★ 表示幅（スマホ最大500px） ----
+  const wrapWidth = document.querySelector(".main").clientWidth;  
+  const gap = 6; // CSS と合わせる
+  const cellSize = Math.floor((wrapWidth - (gap * (cols - 1))) / cols);
 
-  // gap 分を引く（6px × (cols - 1)）
-  const gap = 6;
-  const cellSize = Math.floor(
-    (usableWidth - gap * (cols - 1)) / cols
-  );
-
+  // グリッド設定
   result.style.gridTemplateColumns = `repeat(${cols}, ${cellSize}px)`;
   result.style.gap = gap + "px";
 
+  // -----------------------------------------
+  //     元画像読み込み
+  // -----------------------------------------
   const img = new Image();
   const reader = new FileReader();
   reader.onload = e => img.src = e.target.result;
@@ -30,38 +30,45 @@ document.getElementById("splitBtn").addEventListener("click", () => {
 
   img.onload = () => {
 
+    // 正方形切り出し（中央）
     const size = Math.min(img.width, img.height);
     const startX = (img.width - size) / 2;
     const startY = (img.height - size) / 2;
 
-    const srcPiece = size / Math.max(rows, cols);
+    const piece = size / Math.max(rows, cols);
+
+    let index = 1;
 
     for (let r = 0; r < rows; r++) {
       for (let c = 0; c < cols; c++) {
 
+        // ★ Canvas は高画質のまま
         const canvas = document.createElement("canvas");
         const ctx = canvas.getContext("2d");
-        canvas.width = srcPiece;
-        canvas.height = srcPiece;
+        canvas.width = piece;
+        canvas.height = piece;
 
         ctx.drawImage(
           img,
-          startX + c * srcPiece,
-          startY + r * srcPiece,
-          srcPiece, srcPiece,
+          startX + c * piece,
+          startY + r * piece,
+          piece, piece,
           0, 0,
-          srcPiece, srcPiece
+          piece, piece
         );
 
+        const url = canvas.toDataURL("image/png");
+
+        // ★ 表示だけ縮小
         const imgTag = document.createElement("img");
-        imgTag.src = canvas.toDataURL("image/png");
+        imgTag.src = url;
         imgTag.className = "split-img";
         imgTag.style.width = cellSize + "px";
         imgTag.style.height = cellSize + "px";
+        imgTag.dataset.index = index++;
 
         result.appendChild(imgTag);
       }
     }
   };
 });
-
