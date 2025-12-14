@@ -1,0 +1,100 @@
+<!-- index.html ver.1.1.2 最新 -->
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OJapp</title>
+
+<!-- Favicons -->
+  <link rel="icon" type="image/png" sizes="16x16" href="/OJapp/icon/favicon-16.png?v=1">
+  <link rel="icon" type="image/png" sizes="32x32" href="/OJapp/icon/favicon-32.png?v=1">
+  <link rel="icon" type="image/png" sizes="64x64" href="/OJapp/icon/favicon-64.png?v=1">
+  <link rel="apple-touch-icon" sizes="180x180" href="/OJapp/icon/icon-180.png?v=1">
+
+<meta name="theme-color" content="#2bb7ff">
+<link rel="stylesheet" href="style.css">
+<script src="/OJapp/darkmode.js"></script>
+</head>
+
+<body>
+
+<!-- ▼ 会員登録用保留 -->
+
+<div id="header"></div>
+<script>
+fetch("/OJapp/header.html").then(r=>r.text()).then(h=>header.innerHTML=h)
+</script>
+<!-- 未実装会員登録用
+<div style="text-align:center;margin-top:10px;">
+<button id="loginGithub" style="
+  background:#24292f;color:#fff;padding:8px 14px;border:none;
+  border-radius:6px;font-size:14px;cursor:pointer;">
+  🔐 Sign in with GitHub
+</button>
+</div> 
+-->
+<!-- ================= MAIN ================= -->
+<div class="main">
+
+<h2>ホームを変える 自分を変える</h2>
+
+<div class="center" style="margin-bottom:10px;">
+  <button id="createBtn" class="btn pulse">Create App 🎉</button>
+  <div class="arrow">▼</div>
+</div>
+
+  <!-- ★ 生成結果URLを表示するエリア -->
+  <div id="resultArea" style="margin-top:10px;"></div>
+
+<!-- Step1 -->
+<div class="section">
+  <div class="section-title">Step1：アイコン画像</div>
+  <input type="file" id="iconInput">
+  <div class="icon-box"><img id="preview"></div>
+<div id="assistantBox" class="msg-box"></div>
+</div>
+
+<!-- Step2 -->
+<div class="section">
+  <div class="section-title">Step2：アプリ名</div>
+  <input type="text" id="appName" placeholder="OJapp!!!">
+</div>
+
+<!-- Step3 : URL -->
+<div class="section">
+  <div class="section-title">Step3：URL</div>
+  <input
+    type="text"
+    id="appURL"
+    placeholder="https://example.com"
+  />
+
+  </div>
+</div>
+
+
+
+
+<!-- ▼ LINK AREA ▼ -->
+<div class="center" style="margin-top:20px;"><a href="/OJapp/safety/" class="guide-link">安全性ガイドライン</a></div>
+<div class="center" style="margin-top:12px;"><a href="/OJapp/guide/" class="guide-link">使い方ガイド</a></div>
+<div class="center" style="margin-top:12px;"><a href="/OJapp/faq/" class="guide-link">よくある質問</a></div>
+<div class="center" style="margin-top:12px;"><a href="/OJapp/changelog/" class="guide-link">更新履歴</a></div>
+<div class="center" style="margin-top:12px;"><a href="https://discord.gg/KZjN5uSBHu" class="guide-link">公式Discord</a></div>
+<div class="center" style="margin-top:12px;"><a href="/OJapp/support" class="guide-link">開発支援</a></div>
+<div class="center" style="margin-top:12px;"><a href="https://github.com/ojach/OJapp" class="guide-link">開発者向け GitHub</a></div>
+</div><!-- /main -->
+<!-- FOOTER -->
+<div id="footer"></div>
+<script>
+fetch("/OJapp/footer.html").then(r=>r.text()).then(h=>footer.innerHTML=h)
+</script>
+
+
+
+<!-- ◆ app.jsに機能を集約、indexは読み込みのみ！ -->
+<script type="module" src="app.js"></script>
+
+</body>
+</html>
