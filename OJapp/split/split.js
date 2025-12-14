@@ -59,15 +59,23 @@ document.getElementById("splitBtn").addEventListener("click", () => {
 
         const url = canvas.toDataURL("image/png");
 
-        // ★ 表示だけ縮小
-        const imgTag = document.createElement("img");
-        imgTag.src = url;
-        imgTag.className = "split-img";
-        imgTag.style.width = cellSize + "px";
-        imgTag.style.height = cellSize + "px";
-        imgTag.dataset.index = index++;
+       // ★ 表示だけ縮小（Safari対策付き）
+const imgTag = document.createElement("img");
+imgTag.src = url;
+imgTag.className = "split-img";
 
-        result.appendChild(imgTag);
+imgTag.style.width = cellSize + "px";
+imgTag.style.height = cellSize + "px";
+
+// Safari が勝手に本来の画像サイズに戻すのを防ぐ
+imgTag.style.maxWidth = cellSize + "px";
+imgTag.style.maxHeight = cellSize + "px";
+imgTag.style.objectFit = "cover";
+imgTag.style.display = "block"; // ← inline-block のズレ防止
+
+imgTag.dataset.index = index++;
+result.appendChild(imgTag);
+
       }
     }
   };
