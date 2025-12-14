@@ -57,6 +57,24 @@ document.getElementById("splitBtn").addEventListener("click", () => {
         imgTag.dataset.index = index++;
 
         resultArea.appendChild(imgTag);
+
+        const wrap = document.getElementById("resultWrap");
+        const result = document.getElementById("result");
+
+        result.style.gridTemplateColumns = `repeat(${cols}, 120px)`;
+
+        // グリッドの本来の幅
+        const gridWidth = cols * 120 + (cols - 1) * 6;
+
+        // スマホ画面幅
+        const maxWidth = wrap.clientWidth;
+
+        // 収まるスケールを計算（最大1）
+        let scale = maxWidth / gridWidth;
+        if (scale > 1) scale = 1;
+
+        result.style.transform = `scale(${scale})`;
+
       }
     }
   };
