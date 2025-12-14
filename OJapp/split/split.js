@@ -1,6 +1,7 @@
-// split.js ver.2.0（安定版・スマホ対応）
+// split.js ver.2.1（スケール対応版）
 
 document.getElementById("splitBtn").addEventListener("click", () => {
+
   const file = document.getElementById("imgInput").files[0];
   if (!file) return alert("画像を選んでね！");
 
@@ -46,5 +47,14 @@ document.getElementById("splitBtn").addEventListener("click", () => {
         result.appendChild(imgTag);
       }
     }
+
+    // ▼▼ ここからスケール調整 ▼▼
+    const wrapWidth = document.querySelector(".main").clientWidth;
+    const baseSize = cols * 120 + (cols - 1) * 12;
+    let scale = wrapWidth / baseSize;
+    if (scale > 1) scale = 1;
+
+    result.style.setProperty('--scale', scale);
+    // ▲▲ スケール調整ここまで ▲▲
   };
 });
