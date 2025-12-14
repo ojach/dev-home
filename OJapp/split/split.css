@@ -169,6 +169,16 @@ h2 {
   margin-top: 20px;
   text-align: center;
 }
+/* センター揃え */
+.main {
+  text-align: center;
+}
+
+/* ファイル選択を中央に配置 */
+#imgInput {
+  display: block;
+  margin: 10px auto;
+}
 
 
 
