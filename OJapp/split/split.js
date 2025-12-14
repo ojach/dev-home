@@ -1,4 +1,4 @@
-// split.js ver.2.1（スケール対応版）
+// split.js ver.2.0（列数に応じてセルサイズ自動調整）
 
 document.getElementById("splitBtn").addEventListener("click", () => {
 
@@ -11,6 +11,18 @@ document.getElementById("splitBtn").addEventListener("click", () => {
   const result = document.getElementById("result");
   result.innerHTML = "";
 
+  // ---- ★ セルの表示サイズを決定（ここが超重要） ----
+  const wrapWidth = document.querySelector(".main").clientWidth;
+  const cellSize = Math.floor(wrapWidth / cols);   // 列で割る → フィットする
+
+  result.style.display = "grid";
+  result.style.gridTemplateColumns = `repeat(${cols}, ${cellSize}px)`;
+  result.style.gap = "8px";
+  result.style.justifyContent = "center";
+
+  // -----------------------------------------
+  //     元画像読み込み
+  // -----------------------------------------
   const img = new Image();
   const reader = new FileReader();
   reader.onload = e => img.src = e.target.result;
@@ -18,60 +30,46 @@ document.getElementById("splitBtn").addEventListener("click", () => {
 
   img.onload = () => {
 
+    // 正方形切り出し用（中央から）
     const size = Math.min(img.width, img.height);
     const startX = (img.width - size) / 2;
     const startY = (img.height - size) / 2;
 
-    const piece = size / Math.max(rows, cols);
+    const srcPiece = size / Math.max(rows, cols); // 元画像の分割単位
+
+    let index = 1;
 
     for (let r = 0; r < rows; r++) {
       for (let c = 0; c < cols; c++) {
 
+        // ★ Canvas は大きいまま（高画質維持）
         const canvas = document.createElement("canvas");
-        canvas.width = piece;
-        canvas.height = piece;
-
         const ctx = canvas.getContext("2d");
+        canvas.width = srcPiece;
+        canvas.height = srcPiece;
+
         ctx.drawImage(
           img,
-          startX + c * piece, startY + r * piece,
-          piece, piece,
+          startX + c * srcPiece,
+          startY + r * srcPiece,
+          srcPiece, srcPiece, 
           0, 0,
-          piece, piece
+          srcPiece, srcPiece
         );
 
+        const url = canvas.toDataURL("image/png");
+
+        // ★ 表示サイズだけ縮小する
         const imgTag = document.createElement("img");
-        imgTag.src = canvas.toDataURL("image/png");
+        imgTag.src = url;
         imgTag.className = "split-img";
+        imgTag.style.width = cellSize + "px";
+        imgTag.style.height = cellSize + "px";
+        imgTag.dataset.index = index++;
 
         result.appendChild(imgTag);
       }
     }
-
-    // ▼▼ ここからスケール調整 ▼▼
-    const wrapWidth = document.querySelector(".main").clientWidth;
-    const baseSize = cols * 120 + (cols - 1) * 12;
-    let scale = wrapWidth / baseSize;
-    if (scale > 1) scale = 1;
-
-    result.style.setProperty('--scale', scale);
-
-    // 列数に応じてグリッドを設定
-result.style.gridTemplateColumns = `repeat(${cols}, 1fr)`;
-
-// 本来の幅（120px * 列数）
-const baseWidth = cols * 120 + (cols - 1) * 6;
-
-// 実際の表示領域
-const containerWidth = document.querySelector(".main").clientWidth;
-
-// 縮小比率
-let scale = containerWidth / baseWidth;
-if (scale > 1) scale = 1;
-
-// CSS に反映
-result.style.setProperty("--scale", scale);
-
-    // ▲▲ スケール調整ここまで ▲▲
   };
 });
+
