@@ -1,4 +1,4 @@
-/* split.css ver.1.0 */
+/* split.css ver.1.1 最新 */
 /* =========================================
    Theme Variables（色だけを集中管理）
 ========================================= */
@@ -72,6 +72,7 @@ html, body {
   max-width: 500px;
   margin: 0 auto;
   padding-top: 16px;
+  text-align: center;
 }
 
 /* =========================================
@@ -82,7 +83,6 @@ h2 {
   margin-top: 24px;
   font-weight: 600;
   font-size: 20px;
-  display: block;
   white-space: pre-line;
   color: #ff66cc;
 }
@@ -91,7 +91,6 @@ h2 {
 /* =========================================
    Buttons
 ========================================= */
-
 .btn {
   margin: 25px auto;
   padding: 18px 38px;
@@ -140,7 +139,9 @@ h2 {
 }
 
 
-/* 画像の見た目統一 */
+/* =========================================
+   Image blocks（←ここ重要！横並びにする処理）
+========================================= */
 .split-img {
   width: 120px;
   height: 120px;
@@ -149,13 +150,24 @@ h2 {
   margin: 6px;
   box-shadow: 0 0 10px rgba(0,0,0,.12);
   background: #fafafa;
+
+  /* 横に並んで、スマホでは折り返す */
+  display: inline-block;
 }
 
-/* 行 × 列入力 */
+/* 表示エリア */
+#result {
+  text-align: center; /* 中央寄せで OK */
+  margin-top: 20px;
+}
+
+
+/* =========================================
+   行 × 列入力
+========================================= */
 .split-control {
   display: flex;
   gap: 12px;
-  text-align: center;
   justify-content: center;
   margin: 12px auto;
 }
@@ -169,30 +181,10 @@ h2 {
   text-align: center;
 }
 
-/* センター揃え */
-.main {
-  text-align: center;
-}
 
-/* ファイル選択を中央に配置 */
-#imgInput {
-  display: block;
-  margin: 10px auto;
-}
-
-#resultWrap {
-  width: 100%;
-  overflow: hidden;
-  display: flex;
-  justify-content: center;
-}
-
-#result {
-  display: grid;
-  gap: 6px;
-  transform-origin: top center;
-}
+/* ファイル選択を中央に */
 input[type=file] {
   display: block;
   margin: 0 auto;
 }
+
