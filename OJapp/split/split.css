@@ -1,19 +1,150 @@
 /* split.css ver.1.0 */
+/* =========================================
+   Theme Variables（色だけを集中管理）
+========================================= */
+:root {
+  --bg: #ffffff;
+  --text: #222;
+  --header-border: #eee;
 
-/* タイトルだけ少しアクセント色（ピンク） */
-h2 {
-  color: #ff66cc;
+  --section-bg: #ffffff;
+  --section-shadow: rgba(0, 0, 0, .05);
+
+  --input-bg: #ffffff;
+  --input-border: #ddd;
+
+  --icon-bg: #f5f5f5;
+
+  --assistant-bg: #ffffff;
+  --assistant-border: #2bb7ff;
 }
-.main {
-  width: 80% !important;
-  max-width: 500px !important;
-  margin: 0 auto !important;
-  display: block !important;
+
+/* ===== Dark Mode ===== */
+.dark {
+  --bg: #111;
+  --text: #eaeaea;
+  --header-border: #444;
+
+  --section-bg: #1a1a1a;
+  --section-shadow: rgba(0, 0, 0, .4);
+
+  --input-bg: #222;
+  --input-border: #555;
+
+  --icon-bg: #2a2a2a;
+
+  --assistant-bg: #111;
+  --assistant-border: #67c8ff;
 }
-body {
+
+
+/* =========================================
+   Base
+========================================= */
+html, body {
+  margin: 0;
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden;
+  font-family: "Helvetica","Arial","YuGothic",sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  box-sizing: border-box;
+}
+
+*, *:before, *:after {
+  box-sizing: inherit;
+}
+
+.center {
+  width: 100%;
   max-width: 500px;
   margin: 0 auto;
+  text-align: center;
 }
+
+
+/* =========================================
+   Layout
+========================================= */
+.main {
+  width: 80%;
+  max-width: 500px;
+  margin: 0 auto;
+  padding-top: 16px;
+}
+
+/* =========================================
+   Title
+========================================= */
+h2 {
+  text-align: center;
+  margin-top: 24px;
+  font-weight: 600;
+  font-size: 20px;
+  display: block;
+  white-space: pre-line;
+  color: #ff66cc;
+}
+
+
+/* =========================================
+   Buttons
+========================================= */
+.btn:disabled {
+  opacity: 1 !important;
+  filter: none !important;
+   color: #ff33cc !important;
+   -webkit-text-fill-color: #ff33cc !important;
+  box-shadow: 0 6px 0 #d19400 !important;
+  background: linear-gradient(#ffd85a, #ffb726) !important;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+.btn {
+  margin: 25px auto;
+  padding: 18px 38px;
+  background: linear-gradient(#ffd85a, #ffb726);
+  border-radius: 40px;
+  font-weight: bold;
+  font-size: 20px;
+  box-shadow: 0 6px 0 #d19400;
+  transition: .2s;
+  position: relative;
+  cursor: pointer;
+  display: inline-block;
+  color: var(--assistant-border);
+  -webkit-text-fill-color: var(--assistant-border);
+}
+
+.btn::after {
+  content: "";
+  position: absolute;
+  top: 6px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 70%;
+  height: 30%;
+  border-radius: 30px;
+  background: rgba(255,255,255,.55);
+  filter: blur(2px);
+}
+
+.btn:hover { transform: scale(1.06); }
+.btn:active {
+  transform: scale(.97);
+  box-shadow: 0 3px 0 #a87500;
+}
+
+@keyframes pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.04); }
+  100% { transform: scale(1); }
+}
+.btn.pulse { animation: pulse 2.4s infinite ease-in-out; }
+
+
 
 /* 画像の見た目統一 */
 .split-img {
@@ -49,11 +180,5 @@ body {
   text-align: center;
 }
 
-/* 強制的に splitter 専用の .main にする */
-body .main {
-  width: 80% !important;
-  max-width: 500px !important;
-  margin: 0 auto !important;
-  display: block !important;
-  padding-top: 16px !important;
-}
+
+
