@@ -1,4 +1,4 @@
-// split.js ver.3.0（完全フィット版）
+// split.js ver.3.5（スマホ幅完全フィット版）
 
 document.getElementById("splitBtn").addEventListener("click", () => {
 
@@ -11,19 +11,21 @@ document.getElementById("splitBtn").addEventListener("click", () => {
   const result = document.getElementById("result");
   result.innerHTML = "";
 
-  // 📌 スマホの画面幅をそのまま使う（UI の幅ではない）
+  // 💥 main の幅ではなく「実際の画面幅」を使う
   const screenWidth = window.innerWidth;
 
-  // 📌 パディングなどを考慮して少し余白
-  const usableWidth = screenWidth - 32; // 16px * 2 くらいの余白
+  // 少し余白（16px × 2）
+  const usableWidth = screenWidth - 32;
 
-  // 📌 列数に応じて自動でセルの大きさが決まる
+  // 💥 1セルの表示サイズ（←これが足りてなかった）
   const cellSize = Math.floor(usableWidth / cols);
 
+  // グリッド設定
   result.style.gridTemplateColumns = `repeat(${cols}, ${cellSize}px)`;
   result.style.gap = "6px";
   result.style.justifyContent = "center";
 
+  // 元画像読み込み
   const img = new Image();
   const reader = new FileReader();
   reader.onload = e => img.src = e.target.result;
@@ -31,7 +33,6 @@ document.getElementById("splitBtn").addEventListener("click", () => {
 
   img.onload = () => {
 
-    // 正方形切り出し
     const size = Math.min(img.width, img.height);
     const startX = (img.width - size) / 2;
     const startY = (img.height - size) / 2;
@@ -43,6 +44,7 @@ document.getElementById("splitBtn").addEventListener("click", () => {
     for (let r = 0; r < rows; r++) {
       for (let c = 0; c < cols; c++) {
 
+        // Canvas は高画質のまま
         const canvas = document.createElement("canvas");
         const ctx = canvas.getContext("2d");
         canvas.width = srcPiece;
@@ -59,11 +61,10 @@ document.getElementById("splitBtn").addEventListener("click", () => {
 
         const url = canvas.toDataURL("image/png");
 
+        // 表示だけ縮小（←これが超大事）
         const imgTag = document.createElement("img");
         imgTag.src = url;
         imgTag.className = "split-img";
-
-        // 🔥 表示だけ縮小（高解像度は維持）
         imgTag.style.width = cellSize + "px";
         imgTag.style.height = cellSize + "px";
 
@@ -72,4 +73,3 @@ document.getElementById("splitBtn").addEventListener("click", () => {
     }
   };
 });
-
