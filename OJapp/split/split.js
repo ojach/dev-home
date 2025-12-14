@@ -1,5 +1,4 @@
-// split.js ver.3.5（スマホ幅完全フィット版）
-
+// split.js ver.2.3
 document.getElementById("splitBtn").addEventListener("click", () => {
 
   const file = document.getElementById("imgInput").files[0];
@@ -11,21 +10,19 @@ document.getElementById("splitBtn").addEventListener("click", () => {
   const result = document.getElementById("result");
   result.innerHTML = "";
 
-  // 💥 main の幅ではなく「実際の画面幅」を使う
-  const screenWidth = window.innerWidth;
+  // ✅ main の実幅を使う
+  const main = document.querySelector(".main");
+  const usableWidth = main.clientWidth;
 
-  // 少し余白（16px × 2）
-  const usableWidth = screenWidth - 32;
+  // gap 分を引く（6px × (cols - 1)）
+  const gap = 6;
+  const cellSize = Math.floor(
+    (usableWidth - gap * (cols - 1)) / cols
+  );
 
-  // 💥 1セルの表示サイズ（←これが足りてなかった）
-  const cellSize = Math.floor(usableWidth / cols);
-
-  // グリッド設定
   result.style.gridTemplateColumns = `repeat(${cols}, ${cellSize}px)`;
-  result.style.gap = "6px";
-  result.style.justifyContent = "center";
+  result.style.gap = gap + "px";
 
-  // 元画像読み込み
   const img = new Image();
   const reader = new FileReader();
   reader.onload = e => img.src = e.target.result;
@@ -39,12 +36,9 @@ document.getElementById("splitBtn").addEventListener("click", () => {
 
     const srcPiece = size / Math.max(rows, cols);
 
-    let index = 1;
-
     for (let r = 0; r < rows; r++) {
       for (let c = 0; c < cols; c++) {
 
-        // Canvas は高画質のまま
         const canvas = document.createElement("canvas");
         const ctx = canvas.getContext("2d");
         canvas.width = srcPiece;
@@ -59,11 +53,8 @@ document.getElementById("splitBtn").addEventListener("click", () => {
           srcPiece, srcPiece
         );
 
-        const url = canvas.toDataURL("image/png");
-
-        // 表示だけ縮小（←これが超大事）
         const imgTag = document.createElement("img");
-        imgTag.src = url;
+        imgTag.src = canvas.toDataURL("image/png");
         imgTag.className = "split-img";
         imgTag.style.width = cellSize + "px";
         imgTag.style.height = cellSize + "px";
@@ -73,3 +64,4 @@ document.getElementById("splitBtn").addEventListener("click", () => {
     }
   };
 });
+
