@@ -123,3 +123,69 @@
 .dark .item-buy-btn:hover {
   background: #4fb7ff;
 }
+/* ===== デバッグ表示：カードを確実に可視化 ===== */
+.shop-grid {
+  background: transparent !important;
+}
+
+.item-card {
+  background: var(--section-bg) !important;
+  color: var(--text) !important;
+  border: 1px solid rgba(255,255,255,0.1) !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+}
+
+.item-thumb {
+  display: block !important;
+  width: 100% !important;
+  height: auto !important;
+  border-radius: 12px !important;
+  background: #333 !important; /* サムネがない時の背景 */
+}
+
+.item-title,
+.item-price,
+.item-author {
+  color: var(--text) !important;
+  position: relative !important;
+  z-index: 2 !important;
+}
+
+.item-buy-btn {
+  display: inline-block !important;
+  background: #2bb7ff !important;
+  color: #fff !important;
+  z-index: 2 !important;
+}
+/* =========================================
+   🔧 ダークモード補正（作者ページ用）
+========================================= */
+.dark .shop-grid {
+  background: transparent !important;
+}
+
+.dark .item-card {
+  background: #1c1c1c !important;
+  color: #f2f2f2 !important;
+  border: 1px solid rgba(255,255,255,0.1);
+}
+
+.dark .item-thumb {
+  background: #222 !important;
+}
+
+.dark .item-title,
+.dark .item-price,
+.dark .item-author {
+  color: #f2f2f2 !important;
+}
+
+.dark .item-buy-btn {
+  background: #67c8ff !important;
+  color: #111 !important;
+}
+
+.dark .item-buy-btn:hover {
+  background: #4fb7ff !important;
+}
