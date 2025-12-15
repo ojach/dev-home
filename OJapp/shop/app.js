@@ -166,9 +166,20 @@ async function loadFavorites() {
     const res = await fetch("https://ojshop-fav.trc-wasps.workers.dev");
     const data = await res.json();
 
+    // データベース上のカウントを反映
     data.forEach(fav => {
       const el = document.getElementById(`fav-${fav.id}`);
       if (el) el.textContent = fav.count;
+    });
+
+    // ローカル保存済みのハートを赤く戻す
+    document.querySelectorAll(".fav-btn").forEach(btn => {
+      const id = btn.dataset.id;
+      const favKey = `fav_${id}`;
+      if (localStorage.getItem(favKey)) {
+        btn.style.color = "#ff4b7d";
+        btn.textContent = "❤️";
+      }
     });
   } catch (err) {
     console.error("お気に入り数の取得失敗:", err);
