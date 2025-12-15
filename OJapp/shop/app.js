@@ -201,29 +201,31 @@ function renderShop() {
     const card = document.createElement("div");
     card.className = "item-card";
 
-    card.innerHTML = `
-      <div class="item-thumb-box">
-        <img src="${thumb}" class="item-thumb">
-        <img src="${authorIcon}" class="author-icon"
-             onclick="location.href='/OJapp/shop/author/?name=${encodeURIComponent(item.author)}'">
-      </div>
+   const favKey = `fav_${item.itemId}`;
+const isFav = localStorage.getItem(favKey);
 
-      <div class="item-title">${item.title}</div>
+card.innerHTML = `
+  <div class="item-thumb-box">
+    <img src="${thumb}" class="item-thumb">
+    <img src="${authorIcon}" class="author-icon"
+         onclick="location.href='/OJapp/shop/author/?name=${encodeURIComponent(item.author)}'">
+  </div>
 
-      <!-- 👇 お気に入りブロックをちょっと整理 -->
-      <div class="item-price-line">
-        <span class="item-price">¥${item.price}</span>
-        <span class="fav-zone">
-          <span class="fav-btn" data-id="${item.itemId}">♡</span>
-          <span class="fav-count" id="fav-${item.itemId}">0</span>
-        </span>
-      </div>
+  <div class="item-title">${item.title}</div>
+  <div class="item-price-line">
+    <span class="item-price">¥${item.price}</span>
+    <span class="fav-btn" data-id="${item.itemId}" style="color:${isFav ? '#ff4b7d' : '#999'}">
+      ${isFav ? "❤️" : "♡"}
+    </span>
+    <span class="fav-count" id="fav-${item.itemId}">0</span>
+  </div>
 
-      <div class="item-author">
-        by <a href="/OJapp/shop/author/?name=${encodeURIComponent(item.author)}"
-              class="author-link">${item.author}</a>
-      </div>
-    `;
+  <div class="item-author">
+    by <a href="/OJapp/shop/author/?name=${encodeURIComponent(item.author)}"
+          class="author-link">${item.author}</a>
+  </div>
+`;
+
 
     // ✅ カードクリックで商品ページ遷移（ハート除外）
     card.addEventListener("click", (e) => {
