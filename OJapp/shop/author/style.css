@@ -157,3 +157,72 @@
   font-weight: 700;
   margin-top: 12px;
 }
+/* =========================================
+   作者ページ 商品グリッド 強制表示
+========================================= */
+.shop-grid {
+  display: grid !important;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)) !important;
+  gap: 18px;
+  margin-top: 24px;
+  width: 100%;
+  max-width: 900px;
+  margin-inline: auto;
+  box-sizing: border-box;
+}
+
+.item-card {
+  display: block !important;
+  background: var(--section-bg);
+  border-radius: 14px;
+  box-shadow: 0 4px 10px var(--section-shadow);
+  overflow: hidden;
+  padding: 10px;
+  text-align: center;
+  transition: transform .18s ease, box-shadow .18s ease;
+}
+
+.item-card:hover {
+  transform: scale(1.04);
+  box-shadow: 0 6px 16px rgba(0,0,0,0.15);
+}
+
+.item-thumb {
+  width: 100%;
+  border-radius: 12px;
+  margin-bottom: 8px;
+}
+
+.item-title {
+  font-size: 15px;
+  font-weight: 600;
+  margin-bottom: 4px;
+  color: var(--text);
+}
+
+.item-price {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text);
+  opacity: 0.8;
+}
+
+.item-author {
+  font-size: 13px;
+  color: #888;
+  margin-bottom: 6px;
+}
+
+.item-buy-btn {
+  display: inline-block;
+  padding: 8px 14px;
+  background: #2bb7ff;
+  color: #fff;
+  border-radius: 10px;
+  text-decoration: none;
+  font-weight: 600;
+  transition: opacity .2s;
+}
+.item-buy-btn:hover {
+  opacity: 0.85;
+}
