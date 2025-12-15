@@ -285,7 +285,6 @@ viewItems.forEach(item => {
         console.error("お気に入り失敗:", err);
       }
     });
-  });
 
   // ✅ お気に入り数を読み込み
   loadFavorites();
