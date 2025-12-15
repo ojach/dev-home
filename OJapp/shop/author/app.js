@@ -49,9 +49,9 @@ async function start() {
 
   console.log("フィルタ後:", items);
 
-
+renderCards(items);
 }
-
+document.addEventListener("DOMContentLoaded", start);
 // ================================
 // URLパラメータから作者名取得
 // ================================
