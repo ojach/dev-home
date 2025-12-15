@@ -62,9 +62,11 @@ function renderAuthorHeader(authorName) {
   header.className = "author-header";
 
   header.innerHTML = `
-    <img class="author-header-icon"
-         src="${authorIcon}"
-         onerror="this.src='${AUTHOR_ICON_BASE}/default.png'">
+    <div class="author-header-frame">
+      <img class="author-header-icon"
+           src="${authorIcon}"
+           onerror="this.src='${AUTHOR_ICON_BASE}/default.png'">
+    </div>
     <div class="author-header-name">${authorName}</div>
   `;
 
