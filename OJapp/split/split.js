@@ -1,6 +1,4 @@
-// =============================
-//  split.js ver.3.0（完全版）
-// =============================
+// split.js ver.3.0.1（中央クロップ & スマホ幅フィット版）
 
 document.getElementById("splitBtn").addEventListener("click", () => {
 
@@ -13,20 +11,6 @@ document.getElementById("splitBtn").addEventListener("click", () => {
   const result = document.getElementById("result");
   result.innerHTML = "";
 
-  // main の実幅（スマホでの最大幅）
-  const wrapWidth = document.querySelector(".main").clientWidth;
-
-  // grid のセル表示サイズ
-  const cellSize = Math.floor(wrapWidth / cols);
-
-  result.style.display = "grid";
-  result.style.gridTemplateColumns = `repeat(${cols}, ${cellSize}px)`;
-  result.style.gap = "6px";
-  result.style.justifyContent = "center";
-
-  // --------------------------------------
-  // 画像読み込み
-  // --------------------------------------
   const img = new Image();
   const reader = new FileReader();
   reader.onload = e => img.src = e.target.result;
@@ -34,48 +18,63 @@ document.getElementById("splitBtn").addEventListener("click", () => {
 
   img.onload = () => {
 
-    // 画像の短い方を基準に正方形切り出し
-    const shortSide = Math.min(img.width, img.height);
+    const W = img.width;
+    const H = img.height;
 
-    // 行数と列数に応じて切り出しサイズを決定
-    const blockSize = Math.floor(shortSide / Math.max(rows, cols));
+    // ① 正方形1ピースのサイズ（元画像基準）
+    const pieceSize = Math.min(W / cols, H / rows);
 
-    // 上中央が基準
-    const startX = (img.width - shortSide) / 2;
-    const startY = 0;
+    // ② 切り出す全体サイズ
+    const cropW = pieceSize * cols;
+    const cropH = pieceSize * rows;
+
+    // ③ 中央基準の開始位置（上下左右どこも整合）
+    const startX = (W - cropW) / 2;
+    const startY = (H - cropH) / 2;
+
+    // ④ スマホ表示用の1マス表示サイズ
+    const wrapWidth = document.querySelector(".main").clientWidth;
+    const cellSize = Math.floor(wrapWidth / cols);
+
+    // ⑤ グリッド設定（絶対に収まる）
+    result.style.display = "grid";
+    result.style.gridTemplateColumns = `repeat(${cols}, ${cellSize}px)`;
+    result.style.gap = "6px";
+    result.style.justifyContent = "center";
 
     let index = 1;
 
     for (let r = 0; r < rows; r++) {
       for (let c = 0; c < cols; c++) {
 
-        // Canvas（元解像度で切り出す → 高画質のまま保存可）
         const canvas = document.createElement("canvas");
         const ctx = canvas.getContext("2d");
-        canvas.width = blockSize;
-        canvas.height = blockSize;
 
+        canvas.width = pieceSize;
+        canvas.height = pieceSize;
+
+        // ★ 中央基準の正しいトリミング
         ctx.drawImage(
           img,
-          startX + c * blockSize,
-          startY + r * blockSize,
-          blockSize, blockSize,
+          startX + c * pieceSize,
+          startY + r * pieceSize,
+          pieceSize, pieceSize,
           0, 0,
-          blockSize, blockSize
+          pieceSize, pieceSize
         );
 
         const url = canvas.toDataURL("image/png");
 
-        // 表示用の小さいサイズ
         const imgTag = document.createElement("img");
         imgTag.src = url;
         imgTag.className = "split-img";
+        imgTag.dataset.index = index++;
         imgTag.style.width = cellSize + "px";
         imgTag.style.height = cellSize + "px";
-        imgTag.dataset.index = index++;
 
         result.appendChild(imgTag);
       }
     }
+
   };
 });
