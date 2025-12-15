@@ -119,7 +119,6 @@ async function start() {
 // ================================
 // 実行
 // ================================
-document.addEventListener("DOMContentLoaded", start);
 // 全部のヘッダー・フッター読込完了後に実行
 window.addEventListener("load", () => {
   setTimeout(start, 300); // ← 0.3秒遅らせて確実にDOM構築後に動かす
