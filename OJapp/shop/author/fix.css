@@ -1,0 +1,20 @@
+/* =========================================
+   作者ページ ヘッダーアイコン調整
+========================================= */
+.author-header-icon {
+  width: 72px !important;
+  height: 72px !important;
+  border-radius: 50%;
+  object-fit: cover;
+  background: var(--icon-bg);
+  box-shadow: 0 4px 10px rgba(0,0,0,0.25);
+}
+
+.author-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin: 24px auto 12px;
+  text-align: center;
+}
