@@ -19,3 +19,25 @@
   margin: 24px auto 12px !important;
   text-align: center !important;
 }
+/* =========================================
+   作者ページ アイコン統一フレーム
+========================================= */
+.author-header-frame {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: var(--section-bg);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 10px;
+}
+
+.author-header-icon {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+}
