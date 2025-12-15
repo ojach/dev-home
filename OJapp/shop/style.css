@@ -355,6 +355,28 @@ input:focus {
   display: block;
   font-weight: bold;
 }
+.fav-zone {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.fav-btn {
+  cursor: pointer;
+  font-size: 18px;
+  color: #aaa;
+  transition: transform 0.2s, color 0.2s;
+}
+
+.fav-btn.active {
+  color: #ff4b7d;
+  transform: scale(1.15);
+}
+
+.fav-count {
+  font-size: 14px;
+  color: #666;
+}
 
 /* =========================================
    作者アイコン（丸アイコン）
