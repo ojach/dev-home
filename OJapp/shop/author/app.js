@@ -72,49 +72,35 @@ function renderAuthorHeader(authorName) {
 }
 
 
-// ================================
-// 作品カード描画
-// ================================
 function renderCards(items) {
   console.log("🎨 renderCards起動！", items.length);
-
   const grid = document.querySelector(".shop-grid");
-  if (!grid) {
-    console.error("❌ .shop-grid が見つかりません");
-    return;
-  }
+  if (!grid) return;
 
   grid.innerHTML = "";
 
-  if (items.length === 0) {
-    grid.innerHTML = `<p style="text-align:center;opacity:.7;">まだ作品が登録されていません。</p>`;
-    return;
-  }
-
   items.forEach(item => {
-    const thumb =
-      (item.thumbnail && item.thumbnail.startsWith("http"))
-        ? item.thumbnail
-        : "/OJapp/shop/noimage.png";
-
+    const thumb = item.thumbnail || "/OJapp/shop/noimage.png";
     const card = document.createElement("div");
     card.className = "item-card";
 
     card.innerHTML = `
-      <img src="${thumb}" class="item-thumb">
-      <div class="item-title">${item.title || "タイトルなし"}</div>
+      <div class="item-thumb-box">
+        <img src="${thumb}" class="item-thumb">
+      </div>
+      <div class="item-title">${item.title}</div>
       <div class="item-price">¥${item.price || 0}</div>
       <div class="item-author">by ${item.author}</div>
-      <a href="${item.boothUrl || "#"}" class="item-buy-btn" target="_blank">
-        購入はこちら
-      </a>
+      <a href="${item.boothUrl}" class="item-buy-btn" target="_blank">購入はこちら</a>
     `;
 
     grid.appendChild(card);
-  });
 
-  console.log("✅ DOMに追加完了:", items.length);
+    // ✅ ここを追加：描画後に「show」クラスを付けて表示アニメを有効化
+    setTimeout(() => card.classList.add("show"), 50);
+  });
 }
+
 
 
 // ================================
