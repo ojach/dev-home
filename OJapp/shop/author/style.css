@@ -268,3 +268,73 @@
   color: #fff !important;
   font-size: 14px !important;
 }
+/* =========================================
+   作者ページ カード強制表示
+========================================= */
+
+.shop-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 20px;
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+.item-card {
+  background: var(--section-bg);
+  border-radius: 16px;
+  box-shadow: 0 4px 12px var(--section-shadow);
+  overflow: hidden;
+  padding: 12px;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.item-card:hover {
+  transform: scale(1.03);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.2);
+}
+
+.item-thumb {
+  width: 100%;
+  height: auto;
+  display: block;
+  border-radius: 12px;
+  margin-bottom: 10px;
+  object-fit: cover;
+}
+
+.item-title {
+  font-size: 16px;
+  font-weight: bold;
+  margin-bottom: 6px;
+  color: var(--text);
+}
+
+.item-price {
+  font-size: 14px;
+  font-weight: 600;
+  color: #ff4b7d;
+  margin-bottom: 4px;
+}
+
+.item-author {
+  font-size: 13px;
+  opacity: 0.8;
+  margin-bottom: 10px;
+}
+
+.item-buy-btn {
+  display: inline-block;
+  background: #2bb7ff;
+  color: #fff;
+  padding: 8px 16px;
+  border-radius: 8px;
+  text-decoration: none;
+  font-weight: bold;
+  text-align: center;
+  transition: background 0.2s ease;
+}
+
+.item-buy-btn:hover {
+  background: #1a9fe0;
+}
