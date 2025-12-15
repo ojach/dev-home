@@ -194,48 +194,50 @@ function renderShop() {
   const grid = document.querySelector(".shop-grid");
   grid.innerHTML = "";
 
-  viewItems.forEach(item => {
-    const thumb = item.thumbnail || "/OJapp/shop/noimage.png";
-    const authorIcon = `/OJapp/shop/author/${item.author}.png`;
+viewItems.forEach(item => {
+  // 🩷 IDのキーを安全に拾う
+  const itemId = item.itemId || item.id || item.ID;
+  const favKey = `fav_${itemId}`;
+  const isFav = localStorage.getItem(favKey);
 
-    const card = document.createElement("div");
-    card.className = "item-card";
+  const thumb = item.thumbnail || "/OJapp/shop/noimage.png";
+  const authorIcon = `/OJapp/shop/author/${item.author}.png`;
 
-   const favKey = `fav_${item.itemId}`;
-const isFav = localStorage.getItem(favKey);
+  const card = document.createElement("div");
+  card.className = "item-card";
 
-card.innerHTML = `
-  <div class="item-thumb-box">
-    <img src="${thumb}" class="item-thumb">
-    <img src="${authorIcon}" class="author-icon"
-         onclick="location.href='/OJapp/shop/author/?name=${encodeURIComponent(item.author)}'">
-  </div>
+  card.innerHTML = `
+    <div class="item-thumb-box">
+      <img src="${thumb}" class="item-thumb">
+      <img src="${authorIcon}" class="author-icon"
+           onclick="location.href='/OJapp/shop/author/?name=${encodeURIComponent(item.author)}'">
+    </div>
 
-  <div class="item-title">${item.title}</div>
-  <div class="item-price-line">
-    <span class="item-price">¥${item.price}</span>
-    <span class="fav-btn" data-id="${item.itemId}" style="color:${isFav ? '#ff4b7d' : '#999'}">
-      ${isFav ? "❤️" : "♡"}
-    </span>
-    <span class="fav-count" id="fav-${item.itemId}">0</span>
-  </div>
+    <div class="item-title">${item.title}</div>
+    <div class="item-price-line">
+      <span class="item-price">¥${item.price}</span>
+      <span class="fav-btn" data-id="${itemId}" style="color:${isFav ? '#ff4b7d' : '#999'}">
+        ${isFav ? "❤️" : "♡"}
+      </span>
+      <span class="fav-count" id="fav-${itemId}">0</span>
+    </div>
 
-  <div class="item-author">
-    by <a href="/OJapp/shop/author/?name=${encodeURIComponent(item.author)}"
-          class="author-link">${item.author}</a>
-  </div>
-`;
+    <div class="item-author">
+      by <a href="/OJapp/shop/author/?name=${encodeURIComponent(item.author)}"
+            class="author-link">${item.author}</a>
+    </div>
+  `;
 
-
-    // ✅ カードクリックで商品ページ遷移（ハート除外）
-    card.addEventListener("click", (e) => {
-      if (e.target.classList.contains("fav-btn")) return;
-      sessionStorage.setItem("ojapp_scroll_position", window.scrollY);
-      location.href = `/OJapp/shop/product/?id=${item.itemId}`;
-    });
-
-    grid.appendChild(card);
+  // ✅ 商品クリックで商品ページへ（ハート除外）
+  card.addEventListener("click", (e) => {
+    if (e.target.classList.contains("fav-btn")) return;
+    sessionStorage.setItem("ojapp_scroll_position", window.scrollY);
+    location.href = `/OJapp/shop/product/?id=${itemId}`;
   });
+
+  grid.appendChild(card);
+});
+
 
   // ✅ カードのフェードイン
   animateCards();
