@@ -159,9 +159,6 @@ function animateCards() {
 
 
 // ================================
-// 商品リスト描画
-// ================================
-// ================================
 // DBからお気に入り数を取得して反映
 // ================================
 async function loadFavorites() {
@@ -178,6 +175,9 @@ async function loadFavorites() {
   }
 }
 
+// ================================
+// 商品グリッドの描画
+// ================================
 function renderShop() {
   const grid = document.querySelector(".shop-grid");
   grid.innerHTML = "";
@@ -197,10 +197,14 @@ function renderShop() {
       </div>
 
       <div class="item-title">${item.title}</div>
+
+      <!-- 👇 お気に入りブロックをちょっと整理 -->
       <div class="item-price-line">
         <span class="item-price">¥${item.price}</span>
-        <span class="fav-btn" data-id="${item.itemId}">♡</span>
-        <span class="fav-count" id="fav-${item.itemId}">0</span>
+        <span class="fav-zone">
+          <span class="fav-btn" data-id="${item.itemId}">♡</span>
+          <span class="fav-count" id="fav-${item.itemId}">0</span>
+        </span>
       </div>
 
       <div class="item-author">
@@ -222,7 +226,7 @@ function renderShop() {
   // ✅ カードのフェードイン
   animateCards();
 
-  // ✅ ハートボタンにイベント登録（1回だけ）
+  // ✅ お気に入りボタン登録
   const favButtons = document.querySelectorAll(".fav-btn");
   favButtons.forEach(btn => {
     btn.addEventListener("click", async (e) => {
@@ -249,8 +253,8 @@ function renderShop() {
         // ✅ 押した記録を保存
         localStorage.setItem(favKey, "true");
 
-        // ✅ ハートの見た目変更
-        e.target.style.color = "#ff4b7d";
+        // ✅ ハート見た目変更
+        e.target.classList.add("active");
         e.target.textContent = "❤️";
       } catch (err) {
         console.error("お気に入り失敗:", err);
@@ -258,11 +262,10 @@ function renderShop() {
     });
   });
 
-
-
-    animateCards();
-  loadFavorites(); // ←これ追加
+  // ✅ お気に入り数を読み込み
+  loadFavorites();
 }
+
 // ================================
 // 今日のおすすめ（常時2件・カードクリックで遷移）
 // ================================
