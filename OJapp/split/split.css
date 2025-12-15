@@ -1,40 +1,40 @@
-/* split.css ver.1.3.2 最新 */
+/* split.css ver.1.4 最新 */
 /* =========================================
    Theme Variables（色だけを集中管理）
 ========================================= */
 :root {
   --bg: #ffffff;
   --text: #222;
-  --header-border: #eee;
+  --header-border: #ddd;
 
   --section-bg: #ffffff;
-  --section-shadow: rgba(0, 0, 0, .05);
+  --section-shadow: rgba(0,0,0,.08);
 
   --input-bg: #ffffff;
-  --input-border: #ddd;
+  --input-border: #ccc;
 
-  --icon-bg: #f5f5f5;
+  --cell-bg: #fafafa;
+  --cell-shadow: rgba(0,0,0,.12);
 
-  --assistant-bg: #ffffff;
-  --assistant-border: #2bb7ff;
+  --btn-text: #ff66cc;
 }
 
 /* ===== Dark Mode ===== */
 .dark {
-  --bg: #111;
+  --bg: #121212;
   --text: #eaeaea;
   --header-border: #444;
 
-  --section-bg: #1a1a1a;
-  --section-shadow: rgba(0, 0, 0, .4);
+  --section-bg: #1b1b1b;
+  --section-shadow: rgba(0,0,0,.5);
 
   --input-bg: #222;
   --input-border: #555;
 
-  --icon-bg: #2a2a2a;
+  --cell-bg: #2a2a2a;
+  --cell-shadow: rgba(0,0,0,.6);
 
-  --assistant-bg: #111;
-  --assistant-border: #67c8ff;
+  --btn-text: #ff99dd;
 }
 
 /* =========================================
@@ -42,6 +42,7 @@
 ========================================= */
 html, body {
   margin: 0;
+  padding: 0;
   background: var(--bg);
   color: var(--text);
   font-family: "Helvetica","Arial","YuGothic",sans-serif;
@@ -51,17 +52,19 @@ html, body {
 * {
   box-sizing: border-box;
 }
+
 /* =========================================
-   Header（OJapp 共通風）
+   Header
 ========================================= */
 .header {
   width: 100%;
   height: 58px;
   padding: 0 16px;
   display: flex;
-  justify-content: space-between;
   align-items: center;
+  justify-content: space-between;
   border-bottom: 1px solid var(--header-border);
+  background: var(--section-bg);
 }
 
 .logo-link {
@@ -69,7 +72,7 @@ html, body {
   align-items: center;
   gap: 6px;
   text-decoration: none;
-  color: inherit;
+  color: var(--text);
 }
 
 .logo-img {
@@ -82,15 +85,13 @@ html, body {
 .logo-text {
   font-size: 22px;
   font-weight: bold;
-  line-height: 1;
-  position: relative;
-  top: 1px;
 }
 
 .switch {
   font-size: 24px;
   cursor: pointer;
 }
+
 /* =========================================
    Layout
 ========================================= */
@@ -98,7 +99,7 @@ html, body {
   width: 100%;
   max-width: 500px;
   margin: 0 auto;
-   padding: 20px 0;
+  padding: 20px 0;
   text-align: center;
 }
 
@@ -106,11 +107,9 @@ html, body {
    Title
 ========================================= */
 h2 {
-  text-align: center;
   margin-top: 24px;
   font-weight: 600;
   font-size: 20px;
-  white-space: pre-line;
   color: #ff66cc;
 }
 
@@ -124,13 +123,13 @@ h2 {
   border-radius: 40px;
   font-weight: bold;
   font-size: 20px;
+  color: var(--btn-text);
+  -webkit-text-fill-color: var(--btn-text);
   box-shadow: 0 6px 0 #d19400;
   transition: .2s;
-  position: relative;
   cursor: pointer;
+  position: relative;
   display: inline-block;
-  color: var(--assistant-border);
-  -webkit-text-fill-color: var(--assistant-border);
 }
 
 .btn:after {
@@ -152,33 +151,23 @@ h2 {
   box-shadow: 0 3px 0 #a87500;
 }
 
-@keyframes pulse {
-  0% { transform: scale(1); }
-  50% { transform: scale(1.04); }
-  100% { transform: scale(1); }
-}
-.btn.pulse { animation: pulse 2.4s infinite ease-in-out; }
-
 /* =========================================
-   Image blocks
+   Image Grid
 ========================================= */
-
 #result {
   display: grid;
+  gap: 6px;
   justify-content: center;
-  gap: 4px;
   margin-top: 20px;
 }
 
-/* 1つの枠（サイズはJSで固定） */
 .split-cell {
-  background: #fafafa;
+  background: var(--cell-bg);
   border-radius: 14px;
   overflow: hidden;
-  box-shadow: 0 0 8px rgba(0,0,0,.12);
+  box-shadow: 0 0 10px var(--cell-shadow);
 }
 
-/* 画像は枠にフィット */
 .split-cell img {
   width: 100%;
   height: 100%;
@@ -190,23 +179,29 @@ h2 {
 ========================================= */
 input[type=file] {
   display: block;
-  margin: 0 auto;
+  margin: 10px auto;
 }
 
 .split-control {
-  margin: 12px 0;
   display: flex;
   justify-content: center;
   gap: 12px;
+  margin: 16px 0;
 }
 
 .split-control input {
   width: 60px;
-  text-align: center;
   padding: 8px;
   border-radius: 10px;
-  border: 1px solid #ccc;
+  border: 1px solid var(--input-border);
+  background: var(--input-bg);
+  color: var(--text);
+  text-align: center;
   font-size: 16px;
+}
+
+.split-control input:focus {
+  border-color: #67c8ff;
 }
 
 /* =========================================
@@ -217,3 +212,8 @@ input[type=file] {
   font-weight: bold;
   text-decoration: none;
 }
+
+.dark .guide-link {
+  color: #67c8ff;
+}
+
