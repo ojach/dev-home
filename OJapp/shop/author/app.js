@@ -78,9 +78,15 @@ function renderAuthorHeader(authorName) {
 // ================================
 // 作品カード描画
 // ================================
-console.log("🪄 renderCards 呼び出し")
+console.log("🪄 renderCardsを呼ぶ直前", items.length);
 function renderCards(items) {
+   console.log("🎨 renderCards起動！", items.length);
   const grid = document.querySelector(".shop-grid");
+  if (!grid) {
+    console.error("❌ .shop-grid が見つかりません");
+    return;
+  }
+
   grid.innerHTML = "";
 
   items.forEach(item => {
@@ -104,7 +110,7 @@ function renderCards(items) {
     grid.appendChild(card);
   });
 }
-
+console.log("✅ renderCards呼び出し完了");
 // ================================
 // 初期処理
 // ================================
