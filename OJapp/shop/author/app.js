@@ -49,7 +49,7 @@ async function start() {
 
   console.log("フィルタ後:", items);
 
-  renderCards(items); // ← ここでitemsが未定義だった
+
 }
 
 // ================================
