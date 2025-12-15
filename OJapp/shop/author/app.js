@@ -5,6 +5,7 @@ const CSV_URL =
   "https://docs.google.com/spreadsheets/d/e/2PACX-1vRckMXYTdFw-2sSEmeqVTCXymb3F_NwrNdztP01BrZfH1n2WCORVwZuop7IxfG_KHGYqqlCuc3sBUee/pub?gid=1229129034&single=true&output=csv";
 
 const AUTHOR_ICON_BASE = "/OJapp/shop/author";
+
 const HEADER_MAP = {
   "タイムスタンプ": "timestamp",
   "BOOTH商品URL": "boothUrl",
@@ -26,7 +27,7 @@ let authorName = "";
 // ================================
 function getAuthorName() {
   const params = new URLSearchParams(location.search);
-  return params.get("name")?.trim() || "";
+  return params.get("name") || "";
 }
 
 
@@ -46,49 +47,73 @@ async function loadCSV() {
     return obj;
   });
 
+  console.log("CSV読込結果:", data.length, "件");
   return data.filter(item => !item.visible || item.visible.toUpperCase() !== "FALSE");
 }
 
 
 // ================================
-// 作者ヘッダー
+// 作者ヘッダー描画
 // ================================
-function renderAuthorHeader(name) {
-  const icon = `${AUTHOR_ICON_BASE}/${name}.png`;
-  const wrap = document.createElement("div");
-  wrap.className = "author-header";
-  wrap.innerHTML = `
-    <img class="author-header-icon" src="${icon}" onerror="this.src='${AUTHOR_ICON_BASE}/default.png'">
-    <div class="author-header-name">${name}</div>
+function renderAuthorHeader(authorName) {
+  const authorIcon = `${AUTHOR_ICON_BASE}/${authorName}.png`;
+
+  const header = document.createElement("div");
+  header.className = "author-header";
+
+  header.innerHTML = `
+    <img class="author-header-icon"
+         src="${authorIcon}"
+         onerror="this.src='${AUTHOR_ICON_BASE}/default.png'">
+    <div class="author-header-name">${authorName}</div>
   `;
-  document.querySelector(".author-page")?.prepend(wrap);
+
+  document.querySelector(".author-page").prepend(header);
 }
 
 
 // ================================
-// 商品カード描画
+// 作品カード描画
 // ================================
 function renderCards(items) {
-  console.log("🎨 renderCards起動", items.length);
+  console.log("🎨 renderCards起動！", items.length);
+
   const grid = document.querySelector(".shop-grid");
-  if (!grid) return console.error("❌ .shop-grid が見つからない");
+  if (!grid) {
+    console.error("❌ .shop-grid が見つかりません");
+    return;
+  }
+
   grid.innerHTML = "";
 
+  if (items.length === 0) {
+    grid.innerHTML = `<p style="text-align:center;opacity:.7;">まだ作品が登録されていません。</p>`;
+    return;
+  }
+
   items.forEach(item => {
-    const thumb = item.thumbnail || "/OJapp/shop/noimage.png";
+    const thumb =
+      (item.thumbnail && item.thumbnail.startsWith("http"))
+        ? item.thumbnail
+        : "/OJapp/shop/noimage.png";
+
     const card = document.createElement("div");
     card.className = "item-card";
+
     card.innerHTML = `
       <img src="${thumb}" class="item-thumb">
-      <div class="item-title">${item.title}</div>
+      <div class="item-title">${item.title || "タイトルなし"}</div>
       <div class="item-price">¥${item.price || 0}</div>
       <div class="item-author">by ${item.author}</div>
-      <a href="${item.boothUrl}" class="item-buy-btn" target="_blank">購入はこちら</a>
+      <a href="${item.boothUrl || "#"}" class="item-buy-btn" target="_blank">
+        購入はこちら
+      </a>
     `;
+
     grid.appendChild(card);
   });
 
-  console.log("✅ DOMカード数:", items.length);
+  console.log("✅ DOMに追加完了:", items.length);
 }
 
 
@@ -100,15 +125,16 @@ async function start() {
   console.log("作者名:", authorName);
 
   document.getElementById("author-title").textContent = `${authorName} さんの作品`;
-  document.getElementById("author-desc").textContent = `作者「${authorName}」が登録したアイコン一覧です。`;
+  document.getElementById("author-desc").textContent =
+    `作者「${authorName}」が登録したアイコン一覧です。`;
 
   renderAuthorHeader(authorName);
 
   allItems = await loadCSV();
-  console.log("CSV読込完了:", allItems.length, "件");
 
-  const items = allItems.filter(
-    i => i.author.replace(/\r/g, "").trim() === authorName
+  console.log("全アイテム件数:", allItems.length);
+  const items = allItems.filter(i =>
+    i.author.replace(/\r/g, "").trim() === authorName.trim()
   );
 
   console.log("フィルタ後:", items.length);
@@ -117,11 +143,10 @@ async function start() {
 
 
 // ================================
-// 実行
+// 確実にDOM構築後に起動
 // ================================
-// 全部のヘッダー・フッター読込完了後に実行
 window.addEventListener("load", () => {
-  setTimeout(start, 300); // ← 0.3秒遅らせて確実にDOM構築後に動かす
+  setTimeout(start, 500); // ← ヘッダー・フッター読み込み待ち
 });
 
 // ================================
