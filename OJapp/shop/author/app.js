@@ -144,3 +144,13 @@ function toggleTheme() {
   const sw = document.querySelector(".switch");
   sw.textContent = document.documentElement.classList.contains("dark") ? "🌙" : "🤩";
 }
+// ===== デバッグ用：DOM上に商品が生成されてるか確認 =====
+setTimeout(() => {
+  const cards = document.querySelectorAll(".item-card");
+  console.log("🧱 DOM上のカード数:", cards.length);
+  if (cards.length > 0) {
+    console.log("✅ 商品は描画されてるけどCSSで隠れてる可能性があります。");
+  } else {
+    console.warn("❌ 商品のHTMLが生成されていません。renderCardsが動いてない可能性。");
+  }
+}, 1500);
