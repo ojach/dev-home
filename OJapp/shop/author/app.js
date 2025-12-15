@@ -1,12 +1,10 @@
-console.log("作者名:", getAuthorName());
 // ================================
 // 設定
 // ================================
 const CSV_URL =
   "https://docs.google.com/spreadsheets/d/e/2PACX-1vRckMXYTdFw-2sSEmeqVTCXymb3F_NwrNdztP01BrZfH1n2WCORVwZuop7IxfG_KHGYqqlCuc3sBUee/pub?gid=1229129034&single=true&output=csv";
 
-const AUTHOR_ICON_BASE = "/OJapp/shop/author"; // 作者アイコンの場所
-
+const AUTHOR_ICON_BASE = "/OJapp/shop/author";
 const HEADER_MAP = {
   "タイムスタンプ": "timestamp",
   "BOOTH商品URL": "boothUrl",
@@ -22,42 +20,13 @@ const HEADER_MAP = {
 let allItems = [];
 let authorName = "";
 
+
 // ================================
-// 初期処理
-// ================================
-async function start() {
-  authorName = getAuthorName();
-
-  // ページ上部タイトル
-  document.getElementById("author-title").textContent = `${authorName} さんの作品`;
-  document.getElementById("author-desc").textContent =
-    `作者「${authorName}」が登録したアイコン一覧です。`;
-
-  // 作者ヘッダー表示
-  renderAuthorHeader(authorName);
-
-  // CSV読み込み
-  allItems = await loadCSV();
-
-  console.log("作者名:", authorName);
-  console.log("全アイテム件数:", allItems.length);
-
-  // ✅ itemsをここで定義してから渡す！
-  const items = allItems.filter(item =>
-    item.author.replace(/\r/g, "").trim() === authorName.trim()
-  );
-
-  console.log("フィルタ後:", items);
-
-renderCards(items);
-}
-document.addEventListener("DOMContentLoaded", start);
-// ================================
-// URLパラメータから作者名取得
+// 作者名取得
 // ================================
 function getAuthorName() {
   const params = new URLSearchParams(location.search);
-  return params.get("name") || "";
+  return params.get("name")?.trim() || "";
 }
 
 
@@ -67,7 +36,6 @@ function getAuthorName() {
 async function loadCSV() {
   const res = await fetch(CSV_URL);
   const text = await res.text();
-
   const rows = text.split("\n").map(r => r.split(","));
   const rawHeaders = rows.shift().map(h => h.replace(/"/g, "").trim());
   const headers = rawHeaders.map(h => HEADER_MAP[h] || h);
@@ -78,68 +46,80 @@ async function loadCSV() {
     return obj;
   });
 
-  console.log("CSV読込結果:", data.length, "件");
-  return data.filter(item => !item.visible || item.visible.toUpperCase() !== "FALSE"); // 非公開除外
+  return data.filter(item => !item.visible || item.visible.toUpperCase() !== "FALSE");
 }
 
 
 // ================================
-// 作者ヘッダー描画
+// 作者ヘッダー
 // ================================
-function renderAuthorHeader(authorName) {
-  const authorIcon = `${AUTHOR_ICON_BASE}/${authorName}.png`;
-
-  const header = document.createElement("div");
-  header.className = "author-header";
-
-  header.innerHTML = `
-    <img class="author-header-icon"
-         src="${authorIcon}"
-         onerror="this.src='${AUTHOR_ICON_BASE}/default.png'">
-
-    <div class="author-header-name">${authorName}</div>
+function renderAuthorHeader(name) {
+  const icon = `${AUTHOR_ICON_BASE}/${name}.png`;
+  const wrap = document.createElement("div");
+  wrap.className = "author-header";
+  wrap.innerHTML = `
+    <img class="author-header-icon" src="${icon}" onerror="this.src='${AUTHOR_ICON_BASE}/default.png'">
+    <div class="author-header-name">${name}</div>
   `;
-
-  document.querySelector(".author-page").prepend(header);
+  document.querySelector(".author-page")?.prepend(wrap);
 }
 
 
 // ================================
-// 作品カード描画
+// 商品カード描画
 // ================================
 function renderCards(items) {
-   console.log("🎨 renderCards起動！", items.length);
+  console.log("🎨 renderCards起動", items.length);
   const grid = document.querySelector(".shop-grid");
-  if (!grid) {
-    console.error("❌ .shop-grid が見つかりません");
-    return;
-  }
-
+  if (!grid) return console.error("❌ .shop-grid が見つからない");
   grid.innerHTML = "";
 
   items.forEach(item => {
     const thumb = item.thumbnail || "/OJapp/shop/noimage.png";
-
     const card = document.createElement("div");
     card.className = "item-card";
-
     card.innerHTML = `
       <img src="${thumb}" class="item-thumb">
       <div class="item-title">${item.title}</div>
       <div class="item-price">¥${item.price || 0}</div>
-
       <div class="item-author">by ${item.author}</div>
-
-      <a href="${item.boothUrl}" class="item-buy-btn" target="_blank">
-        購入はこちら
-      </a>
+      <a href="${item.boothUrl}" class="item-buy-btn" target="_blank">購入はこちら</a>
     `;
-
     grid.appendChild(card);
   });
-}
-console.log("✅ renderCards呼び出し完了");
 
+  console.log("✅ DOMカード数:", items.length);
+}
+
+
+// ================================
+// 初期処理
+// ================================
+async function start() {
+  authorName = getAuthorName();
+  console.log("作者名:", authorName);
+
+  document.getElementById("author-title").textContent = `${authorName} さんの作品`;
+  document.getElementById("author-desc").textContent = `作者「${authorName}」が登録したアイコン一覧です。`;
+
+  renderAuthorHeader(authorName);
+
+  allItems = await loadCSV();
+  console.log("CSV読込完了:", allItems.length, "件");
+
+  const items = allItems.filter(
+    i => i.author.replace(/\r/g, "").trim() === authorName
+  );
+
+  console.log("フィルタ後:", items.length);
+  renderCards(items);
+}
+
+
+// ================================
+// 実行
+// ================================
+document.addEventListener("DOMContentLoaded", start);
 
 // ================================
 // ダークモード（維持）
