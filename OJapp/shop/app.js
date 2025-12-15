@@ -166,13 +166,13 @@ async function loadFavorites() {
     const res = await fetch("https://ojshop-fav.trc-wasps.workers.dev");
     const data = await res.json();
 
-    // データベース上のカウントを反映
+    // ✅ DBのカウントを反映
     data.forEach(fav => {
       const el = document.getElementById(`fav-${fav.id}`);
       if (el) el.textContent = fav.count;
     });
 
-    // ローカル保存済みのハートを赤く戻す
+    // ✅ ローカルで押したハートを再描画
     document.querySelectorAll(".fav-btn").forEach(btn => {
       const id = btn.dataset.id;
       const favKey = `fav_${id}`;
@@ -185,6 +185,7 @@ async function loadFavorites() {
     console.error("お気に入り数の取得失敗:", err);
   }
 }
+
 
 // ================================
 // 商品グリッドの描画
@@ -236,10 +237,15 @@ function renderShop() {
 
   // ✅ カードのフェードイン
   animateCards();
-// ✅ カード描画が完全に終わってから、お気に入り情報をロード
-setTimeout(() => {
-  loadFavorites();
-}, 300);
+
+  // ✅ 少し待ってからお気に入りデータを反映
+  setTimeout(() => {
+    console.log("🩷 loadFavorites 実行中");
+    loadFavorites().then(() => {
+      console.log("✅ お気に入り反映完了");
+    });
+  }, 500);
+}
 
   // ✅ お気に入りボタン登録
   const favButtons = document.querySelectorAll(".fav-btn");
