@@ -78,6 +78,7 @@ function renderAuthorHeader(authorName) {
 // ================================
 // 作品カード描画
 // ================================
+console.log("🪄 renderCards 呼び出し")
 function renderCards(items) {
   const grid = document.querySelector(".shop-grid");
   grid.innerHTML = "";
