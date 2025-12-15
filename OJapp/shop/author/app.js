@@ -104,8 +104,11 @@ function renderCards(items) {
   });
 }
 
+// ================================
+// 初期処理
+// ================================
 async function start() {
-  authorName = getAuthorName();
+  authorName = getAuthorName().trim().replace(/\r|\n/g, "");
   document.getElementById("author-title").textContent = `${authorName} さんの作品`;
   document.getElementById("author-desc").textContent =
     `作者「${authorName}」が登録したアイコン一覧です。`;
@@ -115,15 +118,15 @@ async function start() {
   // ✅ CSV読み込み
   allItems = await loadCSV();
 
-  // ✅ 中身チェック
-  console.log("作者名:", authorName);
-  console.log("全アイテム件数:", allItems.length);
-  allItems.forEach(item => console.log("CSV作者:", item.author));
+  // ✅ ログ確認（作者ごとの比較）
+  console.log("URL作者名:", `"${authorName}"`);
+  allItems.forEach((item, idx) => {
+    console.log(`${idx}: "${item.author}" == "${authorName}" →`, item.author.trim() === authorName);
+  });
 
-  // ✅ 作者でフィルタ
-  const items = allItems.filter(item =>
-    item.author.replace(/\r/g, "").trim() === authorName.trim()
-  );
+  // ✅ クリーニングした比較
+  const clean = (s) => s ? s.replace(/\r|\n/g, "").trim().toLowerCase() : "";
+  const items = allItems.filter(item => clean(item.author) === clean(authorName));
 
   console.log("フィルタ後:", items);
 
