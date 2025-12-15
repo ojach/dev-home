@@ -1,20 +1,21 @@
 /* =========================================
-   作者ページ ヘッダーアイコン調整
+   作者ページ ヘッダーアイコン完全固定
 ========================================= */
-.author-header-icon {
+.author-page .author-header-icon {
   width: 72px !important;
   height: 72px !important;
-  border-radius: 50%;
-  object-fit: cover;
-  background: var(--icon-bg);
-  box-shadow: 0 4px 10px rgba(0,0,0,0.25);
+  border-radius: 50% !important;
+  object-fit: cover !important;
+  background: var(--icon-bg) !important;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.25) !important;
+  border: 2px solid rgba(255,255,255,0.15) !important;
 }
 
-.author-header {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  margin: 24px auto 12px;
-  text-align: center;
+.author-page .author-header {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+  margin: 24px auto 12px !important;
+  text-align: center !important;
 }
