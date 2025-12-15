@@ -107,7 +107,6 @@ function renderAuthorHeader(authorName) {
 // ================================
 // 作品カード描画
 // ================================
-console.log("🪄 renderCardsを呼ぶ直前", items.length);
 function renderCards(items) {
    console.log("🎨 renderCards起動！", items.length);
   const grid = document.querySelector(".shop-grid");
