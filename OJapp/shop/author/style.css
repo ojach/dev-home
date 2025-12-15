@@ -226,3 +226,45 @@
 .item-buy-btn:hover {
   opacity: 0.85;
 }
+/* =========================================
+   作者ページ 強制デバッグ表示
+========================================= */
+.shop-grid,
+.item-card,
+.item-thumb {
+  all: unset; /* 既存のスタイルを全部リセット */
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+}
+
+.shop-grid {
+  display: grid !important;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)) !important;
+  gap: 20px !important;
+  padding: 20px !important;
+  background: #111 !important;
+  z-index: 9999 !important;
+}
+
+.item-card {
+  background: #222 !important;
+  border-radius: 10px !important;
+  padding: 10px !important;
+  color: #fff !important;
+  box-shadow: 0 0 10px rgba(255,255,255,0.2) !important;
+}
+
+.item-thumb {
+  width: 100% !important;
+  height: auto !important;
+  border-radius: 8px !important;
+  margin-bottom: 8px !important;
+}
+
+.item-title,
+.item-price,
+.item-author {
+  color: #fff !important;
+  font-size: 14px !important;
+}
