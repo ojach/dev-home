@@ -236,6 +236,10 @@ function renderShop() {
 
   // ✅ カードのフェードイン
   animateCards();
+// ✅ カード描画が完全に終わってから、お気に入り情報をロード
+setTimeout(() => {
+  loadFavorites();
+}, 300);
 
   // ✅ お気に入りボタン登録
   const favButtons = document.querySelectorAll(".fav-btn");
