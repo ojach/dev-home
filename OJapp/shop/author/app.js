@@ -22,6 +22,35 @@ const HEADER_MAP = {
 let allItems = [];
 let authorName = "";
 
+// ================================
+// 初期処理
+// ================================
+async function start() {
+  authorName = getAuthorName();
+
+  // ページ上部タイトル
+  document.getElementById("author-title").textContent = `${authorName} さんの作品`;
+  document.getElementById("author-desc").textContent =
+    `作者「${authorName}」が登録したアイコン一覧です。`;
+
+  // 作者ヘッダー表示
+  renderAuthorHeader(authorName);
+
+  // CSV読み込み
+  allItems = await loadCSV();
+
+  console.log("作者名:", authorName);
+  console.log("全アイテム件数:", allItems.length);
+
+  // ✅ itemsをここで定義してから渡す！
+  const items = allItems.filter(item =>
+    item.author.replace(/\r/g, "").trim() === authorName.trim()
+  );
+
+  console.log("フィルタ後:", items);
+
+  renderCards(items); // ← ここでitemsが未定義だった
+}
 
 // ================================
 // URLパラメータから作者名取得
@@ -111,36 +140,6 @@ function renderCards(items) {
   });
 }
 console.log("✅ renderCards呼び出し完了");
-// ================================
-// 初期処理
-// ================================
-async function start() {
-  authorName = getAuthorName().trim().replace(/\r|\n/g, "");
-  document.getElementById("author-title").textContent = `${authorName} さんの作品`;
-  document.getElementById("author-desc").textContent =
-    `作者「${authorName}」が登録したアイコン一覧です。`;
-
-  renderAuthorHeader(authorName);
-
-  // ✅ CSV読み込み
-  allItems = await loadCSV();
-
-  // ✅ ログ確認（作者ごとの比較）
-  console.log("URL作者名:", `"${authorName}"`);
-  allItems.forEach((item, idx) => {
-    console.log(`${idx}: "${item.author}" == "${authorName}" →`, item.author.trim() === authorName);
-  });
-
-  // ✅ クリーニングした比較
-  const clean = (s) => s ? s.replace(/\r|\n/g, "").trim().toLowerCase() : "";
-  const items = allItems.filter(item => clean(item.author) === clean(authorName));
-
-  console.log("フィルタ後:", items);
-
-  renderCards(items);
-}
-
-document.addEventListener("DOMContentLoaded", start);
 
 
 // ================================
