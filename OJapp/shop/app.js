@@ -418,7 +418,7 @@ function renderRecommendMore() {
   const box = document.getElementById("recommend-more");
   if (!box) return;
 
-  const selected = [...items].sort(() => Math.random() - 0.5).slice(0, 10);
+  const selected = [...items].sort(() => Math.random() - 0.5).slice(0, 5);
 
   box.innerHTML = selected.map(item => `
     <div class="recommend-more-item" data-id="${item.itemId}">
