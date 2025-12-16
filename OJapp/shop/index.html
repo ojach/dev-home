@@ -50,7 +50,11 @@ fetch("/OJapp/header.html")
 </div>
 
 
-<div class="category-tabs"></div>
+<div class="shop-filters">
+  <select id="filter-category" onchange="applyFilters()"></select>
+  <select id="filter-author" onchange="applyFilters()"></select>
+  <select id="filter-price" onchange="applyFilters()"></select>
+</div>
 
     <!-- 商品カードが入る場所 -->
     <div class="shop-grid"></div>
