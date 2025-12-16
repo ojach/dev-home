@@ -418,7 +418,10 @@ async function start() {
   // ★ itemId を自動生成（1,2,3,...）
   items = items.map((item, index) => ({
     ...item,
-    itemId: String(index + 1),
+   itemId: String(index + 1),
+    date: new Date(item.timestamp),     // ★ ここが最重要
+    price: Number(item.price || 0),
+    favCount: Number(item.favCount || 0)
   }));
 
   viewItems = [...items];
