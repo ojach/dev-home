@@ -24,6 +24,7 @@ let currentSort = "new";
 let currentAuthor = "全て";
 let currentCategory = "全て";
 let lastSortMode = "new";
+let randomCache = null;
 
 // ================================
 // CSV読み込み
@@ -140,10 +141,17 @@ function applyFilters() {
   }
 
   // === 🎲 おすすめ＝ランダム20件 ===
+  
+
+  // まだキャッシュが無ければ作る
   if (sort === "random") {
-    viewItems = shuffle(filtered).slice(0, 20);
-    renderShop();
-    return;
+    if (!randomCache) {
+    randomCache = shuffle(filtered).slice(0, 20);
+  }
+
+  viewItems = randomCache;
+  renderShop();
+  return;
   }
 
   // === 🆕 新着順 ===
@@ -392,6 +400,7 @@ document.addEventListener("click", e => {
   if (e.target.classList.contains("shop-tab")) {
     document.querySelectorAll(".shop-tab").forEach(t => t.classList.remove("active"));
     e.target.classList.add("active");
+    randomCache = null;
     applyFilters();
   }
 });
