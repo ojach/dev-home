@@ -643,4 +643,48 @@ input:focus {
 .item-author .author-link:hover {
   text-decoration: underline;
 }
+/* プルダウン全体の行（横並び） */
+.shop-filters {
+  display: flex;
+  gap: 12px;
+  margin: 16px 0 28px 0;
+}
+
+/* 各セレクトを “ふわっとタブ化” */
+.shop-filters select {
+  appearance: none;            /* デフォルト矢印消す */
+  padding: 8px 24px 8px 14px;  
+  font-size: 15px;
+  border-radius: 999px;        /* pill 形 */
+  border: 1px solid #e5e5e5;
+  background: #fff;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.07);
+  cursor: pointer;
+  transition: 0.25s cubic-bezier(.25,.8,.25,1);
+  position: relative;
+}
+
+/* 矢印の代替アイコンを疑似要素で入れる */
+.shop-filters select::after {
+  content: "▼";
+  font-size: 10px;
+  color: #666;
+  position: absolute;
+  right: 12px;
+  pointer-events: none;
+}
+
+/* hover ふわっと */
+.shop-filters select:hover {
+  box-shadow: 0 6px 16px rgba(0,0,0,0.12);
+  transform: translateY(-1px);
+}
+
+/* active（選択中）っぽく青背景にしたい場合 */
+.shop-filters select:focus {
+  border-color: #3fa7ff;
+  background: #e9f4ff;
+  outline: none;
+  box-shadow: 0 0 0 4px rgba(63,167,255,0.2);
+}
 
