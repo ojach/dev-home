@@ -49,46 +49,58 @@ async function loadCSV() {
 
 
 // ================================
-// カテゴリータブ表示
+// フィルター生成（動的）
 // ================================
-function renderCategoryTabs() {
-  const categories = ["全て"];
+function renderDynamicFilters() {
+  // カテゴリ一覧を収集
+  const categories = new Set(["全て"]);
+  const authors = new Set(["全て"]);
 
   items.forEach(i => {
-    if (i.category && !categories.includes(i.category)) {
-      categories.push(i.category);
-    }
+    if (i.category) categories.add(i.category);
+    if (i.author) authors.add(i.author);
   });
 
-  const catArea = document.querySelector(".category-tabs");
-  catArea.innerHTML = "";
+  const categorySelect = document.getElementById("filter-category");
+  const authorSelect = document.getElementById("filter-author");
+  const priceSelect = document.getElementById("filter-price");
 
-  categories.forEach(cat => {
-    const div = document.createElement("div");
-    div.className = "category-tab";
-    div.dataset.category = cat;
-    div.textContent = cat;
+  // 🔄 既存内容リセット
+  categorySelect.innerHTML = "";
+  authorSelect.innerHTML = "";
+  priceSelect.innerHTML = "";
 
-    if (cat === currentCategory) div.classList.add("active");
-
-    catArea.appendChild(div);
+  // ✅ カテゴリー
+  [...categories].forEach(cat => {
+    const opt = document.createElement("option");
+    opt.value = cat === "全て" ? "all" : cat;
+    opt.textContent = cat;
+    if (cat === currentCategory) opt.selected = true;
+    categorySelect.appendChild(opt);
   });
-}
 
+  // ✅ 作者
+  [...authors].forEach(a => {
+    const opt = document.createElement("option");
+    opt.value = a === "全て" ? "all" : a;
+    opt.textContent = a;
+    if (a === currentAuthor) opt.selected = true;
+    authorSelect.appendChild(opt);
+  });
 
-// ================================
-// カテゴリーフィルター
-// ================================
-function filterByCategory(category) {
-  currentCategory = category;
-
-  if (category === "全て") {
-    viewItems = [...items];
-  } else {
-    viewItems = items.filter(i => i.category === category);
-  }
-
-  sortAndRender(currentSort);
+  // ✅ 価格帯（固定3種＋全て）
+  const prices = [
+    { value: "all", text: "全価格帯" },
+    { value: "free", text: "無料" },
+    { value: "under500", text: "〜¥500" },
+    { value: "over500", text: "¥500〜" }
+  ];
+  prices.forEach(p => {
+    const opt = document.createElement("option");
+    opt.value = p.value;
+    opt.textContent = p.text;
+    priceSelect.appendChild(opt);
+  });
 }
 
 
