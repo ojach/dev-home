@@ -126,31 +126,38 @@ function applyFilters() {
   if (price === "over500") filtered = filtered.filter(i => i.price >= 500);
 
   // === オススメ ===
-  if (sort === "random") {
-    const pick = (arr, n) => arr.sort(() => Math.random() - 0.5).slice(0, n);
+ if (sort === "random") {
 
-    if (author !== "all") {
-      viewItems = pick(filtered, 10);
-    } else if (cat !== "all") {
-      viewItems = pick(filtered, 10);
-    } else if (price !== "all") {
-      viewItems = pick(filtered, 10);
-    } else if (lastSortMode === "new") {
-      const newest = items.slice().sort((a,b)=>b.date - a.date).slice(0, 10);
-      const randoms = pick(items, 5);
-      viewItems = [...newest, ...randoms];
-    } else if (lastSortMode === "fav") {
-      const popular = items.slice().sort((a,b)=>(b.favCount||0)-(a.favCount||0)).slice(0, 10);
-      const randoms = pick(items, 5);
-      viewItems = [...popular, ...randoms];
-    } else {
-      viewItems = pick(items, 15);
-    }
+  // 本物のランダム化
+  const pick = (arr, n) => shuffle(arr).slice(0, n);
 
-    viewItems = viewItems.slice(0, 30);
-    renderShop();
-    return;
+  if (author !== "all") {
+    viewItems = pick(filtered, 10);
+
+  } else if (cat !== "all") {
+    viewItems = pick(filtered, 10);
+
+  } else if (price !== "all") {
+    viewItems = pick(filtered, 10);
+
+  } else if (lastSortMode === "new") {
+    const newest = items.slice().sort((a,b)=>b.date - a.date).slice(0, 10);
+    const randoms = pick(items, 5);
+    viewItems = [...newest, ...randoms];
+
+  } else if (lastSortMode === "fav") {
+    const popular = items.slice().sort((a,b)=>(b.favCount||0)-(a.favCount||0)).slice(0, 10);
+    const randoms = pick(items, 5);
+    viewItems = [...popular, ...randoms];
+
+  } else {
+    viewItems = pick(items, 15);
   }
+
+  viewItems = viewItems.slice(0, 30);
+  renderShop();
+  return;
+}
 
   // === 新着 ===
   if (sort === "new") {
