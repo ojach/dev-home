@@ -420,7 +420,7 @@ async function start() {
 
   renderRecommend();
    renderDynamicFilters();
-  sortAndRender("new");
+  applyFilters();
 }
 
 document.addEventListener("DOMContentLoaded", start);
