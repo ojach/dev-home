@@ -111,11 +111,13 @@ function applyFilters() {
   const cat = document.getElementById("filter-category").value;
   const author = document.getElementById("filter-author").value;
   const price = document.getElementById("filter-price").value;
-  const sort = document.querySelector(".tab.active").dataset.sort;
 
-  let filtered = Items.slice();
+  const activeTab = document.querySelector(".shop-tab.active");
+  const sort = activeTab ? activeTab.dataset.sort : "new";
 
-  // --- 絞り込み ---
+  let filtered = items.slice();   // ← これだけが正解。他は全部ゴミ。
+
+  // === 絞り込み ===
   if (cat !== "all") filtered = filtered.filter(i => i.category === cat);
   if (author !== "all") filtered = filtered.filter(i => i.author === author);
 
@@ -123,49 +125,49 @@ function applyFilters() {
   if (price === "under500") filtered = filtered.filter(i => i.price <= 500);
   if (price === "over500") filtered = filtered.filter(i => i.price >= 500);
 
-  // --- オススメモード特殊処理 ---
+  // === オススメ ===
   if (sort === "random") {
-    const randomPick = (arr, n) => arr.sort(() => Math.random() - 0.5).slice(0, n);
+    const pick = (arr, n) => arr.sort(() => Math.random() - 0.5).slice(0, n);
 
-    // 他の条件に応じたブレンド処理
     if (author !== "all") {
-      viewItems = randomPick(filtered, 10); // 作者内ランダム
+      viewItems = pick(filtered, 10);
     } else if (cat !== "all") {
-      viewItems = randomPick(filtered, 10); // カテゴリ内ランダム
+      viewItems = pick(filtered, 10);
     } else if (price !== "all") {
-      viewItems = randomPick(filtered, 10); // 価格帯内ランダム
-    } 
-    // 🆕 オススメ＋新着 / 人気
-    else if (lastSortMode === "new") {
-      const newest = allItems.sort((a,b)=>b.date - a.date).slice(0, 10);
-      const randoms = randomPick(allItems, 5);
+      viewItems = pick(filtered, 10);
+    } else if (lastSortMode === "new") {
+      const newest = items.slice().sort((a,b)=>b.date - a.date).slice(0, 10);
+      const randoms = pick(items, 5);
       viewItems = [...newest, ...randoms];
     } else if (lastSortMode === "fav") {
-      const popular = allItems.sort((a,b)=>(b.favCount||0)-(a.favCount||0)).slice(0, 10);
-      const randoms = randomPick(allItems, 5);
+      const popular = items.slice().sort((a,b)=>(b.favCount||0)-(a.favCount||0)).slice(0, 10);
+      const randoms = pick(items, 5);
       viewItems = [...popular, ...randoms];
     } else {
-      // 完全ランダム
-      viewItems = randomPick(allItems, 15);
+      viewItems = pick(items, 15);
     }
 
-    // 表示数制限（安全）
-    if (viewItems.length > 30) viewItems = viewItems.slice(0, 30);
-
+    viewItems = viewItems.slice(0, 30);
     renderShop();
     return;
   }
 
-  // --- 通常ソート ---
-  if (sort === "new") filtered.sort((a,b)=>b.date - a.date);
-  if (sort === "fav") filtered.sort((a,b)=>(b.favCount||0)-(a.favCount||0));
+  // === 新着 ===
+  if (sort === "new") {
+    filtered.sort((a, b) => b.date - a.date);
+  }
+
+  // === 人気 ===
+  if (sort === "fav") {
+    filtered.sort((a, b) => (b.favCount || 0) - (a.favCount || 0));
+  }
 
   viewItems = filtered.slice(0, 30);
   renderShop();
 
-  // 🔄 現在の並びを記憶しておく（オススメ用）
   lastSortMode = sort;
 }
+
 
 
 // ================================
@@ -398,12 +400,13 @@ fetch("https://ojshop-fav.trc-wasps.workers.dev", {
 // クリックイベント（タブ & カテゴリー）
 // ================================
 document.addEventListener("click", e => {
-  if (e.target.classList.contains("tab")) {
-    document.querySelectorAll(".tab").forEach(t => t.classList.remove("active"));
+  if (e.target.classList.contains("shop-tab")) {
+    document.querySelectorAll(".shop-tab").forEach(t => t.classList.remove("active"));
     e.target.classList.add("active");
     applyFilters();
   }
 });
+
 
 
 // ================================
