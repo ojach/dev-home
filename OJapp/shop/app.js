@@ -171,7 +171,7 @@ function applyFilters() {
 
   viewItems = filtered.slice(0, 30);
   renderShop();
-
+renderRecommendMore();
   lastSortMode = sort;
 }
 
@@ -359,7 +359,7 @@ viewItems.forEach(item => {
 // ================================
 // 今日のおすすめ（常時2件・カードクリックで遷移）
 // ================================
-function renderRecommend() {
+function renderRecommendtop() {
   if (items.length < 2) return;
 
   const box = document.getElementById("recommend-box");
@@ -411,6 +411,31 @@ document.addEventListener("click", e => {
   }
 });
 
+//横スクロールおすすめ帯
+function renderRecommendMore() {
+  if (items.length < 5) return;
+
+  const box = document.getElementById("recommend-more");
+  if (!box) return;
+
+  const selected = [...items].sort(() => Math.random() - 0.5).slice(0, 5);
+
+  box.innerHTML = selected.map(item => `
+    <div class="recommend-item" data-id="${item.itemId}">
+      <img src="${item.thumbnail}" class="recommend-thumb">
+      <div class="recommend-title">${item.title}</div>
+      <div class="recommend-author">by ${item.author}</div>
+    </div>
+  `).join("");
+
+  box.querySelectorAll(".recommend-item").forEach(card => {
+    card.addEventListener("click", () => {
+      const id = card.dataset.id;
+      sessionStorage.setItem("ojapp_scroll_position", window.scrollY);
+      location.href = `/OJapp/shop/product/?id=${id}`;
+    });
+  });
+}
 
 
 // ================================
@@ -430,9 +455,10 @@ async function start() {
 
   viewItems = [...items];
 
-  renderRecommend();
+  renderRecommendtop();
    renderDynamicFilters();
   applyFilters();
+  renderRecommendMore();
 }
 
 document.addEventListener("DOMContentLoaded", start);
