@@ -115,7 +115,7 @@ function applyFilters() {
   const activeTab = document.querySelector(".shop-tab.active");
   const sort = activeTab ? activeTab.dataset.sort : "new";
 
-  let filtered = items.slice();   // ← これだけが正解。他は全部ゴミ。
+  let filtered = items.slice();   // ← 正しい。items を壊さない。
 
   // === 絞り込み ===
   if (cat !== "all") filtered = filtered.filter(i => i.category === cat);
@@ -125,54 +125,41 @@ function applyFilters() {
   if (price === "under500") filtered = filtered.filter(i => i.price <= 500);
   if (price === "over500") filtered = filtered.filter(i => i.price >= 500);
 
-  // === オススメ ===
- if (sort === "random") {
+  // =====================================================
+  // 🔥 ソート部分（全部再構築した正しいバージョン）
+  // =====================================================
 
-  // 本物のランダム化
-  const pick = (arr, n) => shuffle(arr).slice(0, n);
-
-  if (author !== "all") {
-    viewItems = pick(filtered, 10);
-
-  } else if (cat !== "all") {
-    viewItems = pick(filtered, 10);
-
-  } else if (price !== "all") {
-    viewItems = pick(filtered, 10);
-
-  } else if (lastSortMode === "new") {
-    const newest = items.slice().sort((a,b)=>b.date - a.date).slice(0, 10);
-    const randoms = pick(items, 5);
-    viewItems = [...newest, ...randoms];
-
-  } else if (lastSortMode === "fav") {
-    const popular = items.slice().sort((a,b)=>(b.favCount||0)-(a.favCount||0)).slice(0, 10);
-    const randoms = pick(items, 5);
-    viewItems = [...popular, ...randoms];
-
-  } else {
-    viewItems = pick(items, 15);
+  // 完全ランダムシャッフル（Fisher–Yates）
+  function shuffle(array) {
+    const arr = array.slice();
+    for (let i = arr.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [arr[i], arr[j]] = [arr[j], arr[i]];
+    }
+    return arr;
   }
 
-  viewItems = viewItems.slice(0, 30);
-  renderShop();
-  return;
-}
+  // === 🎲 おすすめ＝ランダム20件 ===
+  if (sort === "random") {
+    viewItems = shuffle(filtered).slice(0, 20);
+    renderShop();
+    return;
+  }
 
-  // === 新着 ===
+  // === 🆕 新着順 ===
   if (sort === "new") {
     filtered.sort((a, b) => b.date - a.date);
   }
 
-  // === 人気 ===
+  // === ❤️ 人気順 ===
   if (sort === "fav") {
     filtered.sort((a, b) => (b.favCount || 0) - (a.favCount || 0));
   }
 
-  viewItems = filtered.slice(0, 30);
+  // 表示は常に20件
+  viewItems = filtered.slice(0, 20);
+
   renderShop();
-renderRecommendMore();
-  lastSortMode = sort;
 }
 
 
