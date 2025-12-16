@@ -398,8 +398,8 @@ fetch("https://ojshop-fav.trc-wasps.workers.dev", {
 // クリックイベント（タブ & カテゴリー）
 // ================================
 document.addEventListener("click", e => {
-  if (e.target.classList.contains("shop-tab")) {
-    document.querySelectorAll(".shop-tab").forEach(t => t.classList.remove("active"));
+  if (e.target.classList.contains("tab")) {
+    document.querySelectorAll(".tab").forEach(t => t.classList.remove("active"));
     e.target.classList.add("active");
     applyFilters();
   }
