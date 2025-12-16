@@ -360,9 +360,7 @@ viewItems.forEach(item => {
 // 今日のおすすめ（常時2件・カードクリックで遷移）
 // ================================
 function renderRecommend() {
-  if (items.length < 2) return;
-
-  const box = document.getElementById("recommend-box");
+ const box = document.getElementById("recommend-box");
   if (!box) return;
 
   // ★ 2件ランダム選出
@@ -413,9 +411,7 @@ document.addEventListener("click", e => {
 
 //横スクロールおすすめ帯
 function renderRecommendMore() {
-  if (items.length < 5) return;
-
-  const box = document.getElementById("recommend-more");
+ const box = document.getElementById("recommend-more");
   if (!box) return;
 
   const selected = [...items].sort(() => Math.random() - 0.5).slice(0, 5);
