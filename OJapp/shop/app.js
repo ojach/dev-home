@@ -95,24 +95,64 @@ function filterByCategory(category) {
 // ================================
 // ソート
 // ================================
-function sortAndRender(type) {
-  currentSort = type;
+function applyFilters() {
+  const cat = document.getElementById("filter-category").value;
+  const author = document.getElementById("filter-author").value;
+  const price = document.getElementById("filter-price").value;
+  const sort = document.querySelector(".tab.active").dataset.sort;
 
-  if (type === "new") {
-    viewItems.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
-  }
-  if (type === "score") {
-    viewItems.sort((a, b) => Number(b.score) - Number(a.score));
-  }
-  if (type === "author") {
-    viewItems.sort((a, b) => a.author.localeCompare(b.author));
+  let filtered = allItems.slice();
+
+  // --- 絞り込み ---
+  if (cat !== "all") filtered = filtered.filter(i => i.category === cat);
+  if (author !== "all") filtered = filtered.filter(i => i.author === author);
+
+  if (price === "free") filtered = filtered.filter(i => i.price == 0);
+  if (price === "under500") filtered = filtered.filter(i => i.price <= 500);
+  if (price === "over500") filtered = filtered.filter(i => i.price >= 500);
+
+  // --- オススメモード特殊処理 ---
+  if (sort === "random") {
+    const randomPick = (arr, n) => arr.sort(() => Math.random() - 0.5).slice(0, n);
+
+    // 他の条件に応じたブレンド処理
+    if (author !== "all") {
+      viewItems = randomPick(filtered, 10); // 作者内ランダム
+    } else if (cat !== "all") {
+      viewItems = randomPick(filtered, 10); // カテゴリ内ランダム
+    } else if (price !== "all") {
+      viewItems = randomPick(filtered, 10); // 価格帯内ランダム
+    } 
+    // 🆕 オススメ＋新着 / 人気
+    else if (lastSortMode === "new") {
+      const newest = allItems.sort((a,b)=>b.date - a.date).slice(0, 10);
+      const randoms = randomPick(allItems, 5);
+      viewItems = [...newest, ...randoms];
+    } else if (lastSortMode === "fav") {
+      const popular = allItems.sort((a,b)=>(b.favCount||0)-(a.favCount||0)).slice(0, 10);
+      const randoms = randomPick(allItems, 5);
+      viewItems = [...popular, ...randoms];
+    } else {
+      // 完全ランダム
+      viewItems = randomPick(allItems, 15);
+    }
+
+    // 表示数制限（安全）
+    if (viewItems.length > 30) viewItems = viewItems.slice(0, 30);
+
+    renderShop();
+    return;
   }
 
-  document.querySelectorAll(".shop-tab").forEach(tab => {
-    tab.classList.toggle("active", tab.dataset.sort === type);
-  });
+  // --- 通常ソート ---
+  if (sort === "new") filtered.sort((a,b)=>b.date - a.date);
+  if (sort === "fav") filtered.sort((a,b)=>(b.favCount||0)-(a.favCount||0));
 
+  viewItems = filtered.slice(0, 30);
   renderShop();
+
+  // 🔄 現在の並びを記憶しておく（オススメ用）
+  lastSortMode = sort;
 }
 
 
