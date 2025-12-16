@@ -52,54 +52,50 @@ async function loadCSV() {
 // フィルター生成（動的）
 // ================================
 function renderDynamicFilters() {
-  // カテゴリ一覧を収集
   const categories = new Set(["全て"]);
   const authors = new Set(["全て"]);
+  const prices = ["全価格帯", "無料", "〜¥500", "¥500〜"];
 
   items.forEach(i => {
     if (i.category) categories.add(i.category);
     if (i.author) authors.add(i.author);
   });
 
-  const categorySelect = document.getElementById("filter-category");
-  const authorSelect = document.getElementById("filter-author");
-  const priceSelect = document.getElementById("filter-price");
-
-  // 🔄 既存内容リセット
-  categorySelect.innerHTML = "";
-  authorSelect.innerHTML = "";
-  priceSelect.innerHTML = "";
-
-  // ✅ カテゴリー
-  [...categories].forEach(cat => {
-    const opt = document.createElement("option");
-    opt.value = cat === "全て" ? "all" : cat;
-    opt.textContent = cat;
-    if (cat === currentCategory) opt.selected = true;
-    categorySelect.appendChild(opt);
+  renderTabGroup("category-tabs", [...categories], currentCategory, (val)=>{
+    currentCategory = val;
+    applyFilters();
   });
 
-  // ✅ 作者
-  [...authors].forEach(a => {
-    const opt = document.createElement("option");
-    opt.value = a === "全て" ? "all" : a;
-    opt.textContent = a;
-    if (a === currentAuthor) opt.selected = true;
-    authorSelect.appendChild(opt);
+  renderTabGroup("author-tabs", [...authors], currentAuthor, (val)=>{
+    currentAuthor = val;
+    applyFilters();
   });
 
-  // ✅ 価格帯（固定3種＋全て）
-  const prices = [
-    { value: "all", text: "全価格帯" },
-    { value: "free", text: "無料" },
-    { value: "under500", text: "〜¥500" },
-    { value: "over500", text: "¥500〜" }
-  ];
-  prices.forEach(p => {
-    const opt = document.createElement("option");
-    opt.value = p.value;
-    opt.textContent = p.text;
-    priceSelect.appendChild(opt);
+  renderTabGroup("price-tabs", prices, "全価格帯", (val)=>{
+    currentPrice = val;
+    applyFilters();
+  });
+}
+
+function renderTabGroup(elementId, list, currentValue, onChange) {
+  const area = document.getElementById(elementId);
+  area.innerHTML = "";
+
+  list.forEach(name => {
+    const div = document.createElement("div");
+    div.className = "filter-tab";
+    if (name === currentValue) div.classList.add("active");
+    div.textContent = name;
+
+    div.addEventListener("click", () => {
+      document.querySelectorAll(`#${elementId} .filter-tab`)
+        .forEach(t => t.classList.remove("active"));
+
+      div.classList.add("active");
+      onChange(name);
+    });
+
+    area.appendChild(div);
   });
 }
 
