@@ -455,35 +455,32 @@ input:focus {
 /* =========================================
    カテゴリータブ
 ========================================= */
-.shop-filters {
+.filter-row {
   display: flex;
-  gap: 10px;
-  margin: 20px 0 30px;
+  gap: 12px;
+  margin: 12px 0 5px;
+  flex-wrap: wrap;
 }
 
-.shop-filters select {
-  appearance: none;
+.filter-tab {
+  padding: 10px 20px;
   background: #fff;
-  border-radius: 24px;
-  padding: 8px 20px;
-  border: none;
-  font-size: 14px;
-  box-shadow: 0 3px 8px rgba(0,0,0,0.12);
+  border-radius: 30px;
+  font-weight: 600;
+  font-size: 15px;
   cursor: pointer;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.08);
   transition: 0.2s;
 }
 
-.shop-filters select:hover {
-  box-shadow: 0 4px 12px rgba(0,0,0,0.18);
+.filter-tab:hover {
+  transform: translateY(-2px);
 }
 
-.shop-filters select:focus {
-  outline: none;
-  box-shadow: 0 0 0 3px rgba(0,115,255,0.3);
-}
-
-.shop-filters select option {
-  border-radius: 10px;
+.filter-tab.active {
+  background: #3baeff;
+  color: #fff;
+  box-shadow: 0 6px 14px rgba(59,174,255,0.4);
 }
 
 /* =========================================
