@@ -359,7 +359,7 @@ viewItems.forEach(item => {
 // ================================
 // 今日のおすすめ（常時2件・カードクリックで遷移）
 // ================================
-function renderRecommendtop() {
+function renderRecommend() {
   if (items.length < 2) return;
 
   const box = document.getElementById("recommend-box");
@@ -421,14 +421,15 @@ function renderRecommendMore() {
   const selected = [...items].sort(() => Math.random() - 0.5).slice(0, 5);
 
   box.innerHTML = selected.map(item => `
-    <div class="recommend-item" data-id="${item.itemId}">
-      <img src="${item.thumbnail}" class="recommend-thumb">
-      <div class="recommend-title">${item.title}</div>
-      <div class="recommend-author">by ${item.author}</div>
+    <div class="recommend-more-item" data-id="${item.itemId}">
+      <img src="${item.thumbnail}" class="recommend-more-thumb">
+      <div class="recommend-more-title">${item.title}</div>
+      <div class="recommend-more-author">by ${item.author}</div>
     </div>
   `).join("");
 
-  box.querySelectorAll(".recommend-item").forEach(card => {
+  // クリックで商品ページへ
+  box.querySelectorAll(".recommend-more-item").forEach(card => {
     card.addEventListener("click", () => {
       const id = card.dataset.id;
       sessionStorage.setItem("ojapp_scroll_position", window.scrollY);
@@ -436,6 +437,7 @@ function renderRecommendMore() {
     });
   });
 }
+
 
 
 // ================================
@@ -455,7 +457,7 @@ async function start() {
 
   viewItems = [...items];
 
-  renderRecommendtop();
+  renderRecommend();
    renderDynamicFilters();
   applyFilters();
   renderRecommendMore();
