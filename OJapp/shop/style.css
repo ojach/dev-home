@@ -643,24 +643,4 @@ input:focus {
 .item-author .author-link:hover {
   text-decoration: underline;
 }
-.sort-tabs {
-  display: flex;
-  gap: 10px;
-  margin-bottom: 20px;
-}
-
-.tab {
-  padding: 8px 20px;
-  border-radius: 30px;
-  background: #fff;
-  box-shadow: 0 3px 8px rgba(0,0,0,0.08);
-  cursor: pointer;
-  transition: 0.15s;
-}
-
-.tab.active {
-  background: #4da9ff;
-  color: white;
-  box-shadow: 0 4px 10px rgba(77,169,255,0.5);
-}
 
