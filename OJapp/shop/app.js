@@ -21,7 +21,8 @@ const HEADER_MAP = {
 let items = [];      // 全商品
 let viewItems = [];  // 表示商品のフィルタ後リスト
 
-let currentSort = "new";      
+let currentSort = "new"; 
+let currentAuthor = "全て";
 let currentCategory = "全て";
 let lastSortMode = "new";
 
@@ -401,12 +402,6 @@ document.addEventListener("click", e => {
   if (e.target.classList.contains("shop-tab")) {
     sortAndRender(e.target.dataset.sort);
   }
-
-  if (e.target.classList.contains("category-tab")) {
-    document.querySelectorAll(".category-tab").forEach(c => c.classList.remove("active"));
-    e.target.classList.add("active");
-    filterByCategory(e.target.dataset.category);
-  }
 });
 
 
@@ -425,7 +420,7 @@ async function start() {
   viewItems = [...items];
 
   renderRecommend();
-  renderCategoryTabs();
+   renderDynamicFilters();
   sortAndRender("new");
 }
 
