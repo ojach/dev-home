@@ -220,6 +220,11 @@ async function loadFavorites() {
     const res = await fetch("https://ojshop-fav.trc-wasps.workers.dev");
     const data = await res.json();
 
+     // ★★★ items に favCount を書き込む（人気順が働く）
+    data.forEach(fav => {
+      const item = items.find(i => i.itemId == fav.id);
+      if (item) item.favCount = Number(fav.count);
+    });
     // ✅ DBのカウントを反映
     data.forEach(fav => {
       const el = document.getElementById(`fav-${fav.id}`);
