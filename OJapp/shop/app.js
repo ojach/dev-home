@@ -413,12 +413,12 @@ document.addEventListener("click", e => {
 
 //横スクロールおすすめ帯
 function renderRecommendMore() {
-  if (items.length < 5) return;
+  if (items.length < 15) return;
 
   const box = document.getElementById("recommend-more");
   if (!box) return;
 
-  const selected = [...items].sort(() => Math.random() - 0.5).slice(0, 5);
+  const selected = [...items].sort(() => Math.random() - 0.5).slice(0, 15);
 
   box.innerHTML = selected.map(item => `
     <div class="recommend-more-item" data-id="${item.itemId}">
