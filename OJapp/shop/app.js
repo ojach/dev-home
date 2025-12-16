@@ -23,7 +23,7 @@ let viewItems = [];  // 表示商品のフィルタ後リスト
 
 let currentSort = "new";      
 let currentCategory = "全て";
-
+let lastSortMode = "new";
 
 // ================================
 // CSV読み込み
