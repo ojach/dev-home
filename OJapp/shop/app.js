@@ -399,7 +399,9 @@ fetch("https://ojshop-fav.trc-wasps.workers.dev", {
 // ================================
 document.addEventListener("click", e => {
   if (e.target.classList.contains("shop-tab")) {
-    sortAndRender(e.target.dataset.sort);
+    document.querySelectorAll(".shop-tab").forEach(t => t.classList.remove("active"));
+    e.target.classList.add("active");
+    applyFilters();
   }
 });
 
