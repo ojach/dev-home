@@ -388,14 +388,6 @@ function renderRecommend() {
   });
 }
 
-fetch("https://ojshop-fav.trc-wasps.workers.dev", {
-  method: "POST",
-  headers: { "Content-Type": "application/json" },
-  body: JSON.stringify({ id: "1" })
-})
-  .then(r => r.text())
-  .then(console.log);
-
 // ================================
 // クリックイベント（タブ & カテゴリー）
 // ================================
