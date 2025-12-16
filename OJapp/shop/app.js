@@ -113,7 +113,7 @@ function applyFilters() {
   const price = document.getElementById("filter-price").value;
   const sort = document.querySelector(".tab.active").dataset.sort;
 
-  let filtered = allItems.slice();
+  let filtered = Items.slice();
 
   // --- 絞り込み ---
   if (cat !== "all") filtered = filtered.filter(i => i.category === cat);
