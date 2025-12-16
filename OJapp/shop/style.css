@@ -647,13 +647,6 @@ input:focus {
    中段フィルター（旧タブ風UI復元）
    ============================== */
 
-.filter-row {
-  display: flex;
-  gap: 12px;
-  flex-wrap: wrap;
-  justify-content: center;
-  margin: 16px auto 24px;
-}
 
 /* タブ風セレクトボックス */
 .filter-row select {
@@ -682,17 +675,32 @@ input:focus {
   color: #fff;
   box-shadow: 0 6px 14px rgba(0, 120, 255, 0.35);
 }
-
-/* ダークモード対応 */
-html.dark .filter-row select {
-  background: #222;
-  color: #eee;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
+   カテゴリータブ
+========================================= */
+.filter-row {
+  display: flex;
+  gap: 12px;
+  padding: 10px 0 24px;
+  flex-wrap: wrap;
 }
 
-html.dark .filter-row select:focus {
-  background: #3399ff;
+.filter-row {
+  padding: 6px 16px;
+  border-radius: 999px;
+  background: var(--section-bg);
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+  cursor: pointer;
+  font-size: 14px;
+  user-select: none;
+  transition: .15s ease;
+}
+
+.filter-row.active {
+  background: #0f9cf5;
   color: #fff;
-  box-shadow: 0 6px 14px rgba(51, 153, 255, 0.4);
+  box-shadow: 0 3px 10px rgba(15,156,245,0.4);
 }
 
+.dark .filter-row {
+  background: #222;
+}
