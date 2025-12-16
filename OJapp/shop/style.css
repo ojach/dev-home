@@ -688,3 +688,65 @@ input:focus {
   box-shadow: 0 0 0 4px rgba(63,167,255,0.2);
 }
 
+/* タイトル（例：他にもこんな商品があります！） */
+.more-title {
+  margin: 20px 0 10px;
+  font-size: 18px;
+  font-weight: 700;
+}
+
+/* 横スクロール本体 */
+.recommend-more-scroll {
+  display: flex;
+  overflow-x: auto;
+  gap: 12px;
+  padding: 10px 2px 20px;
+  scroll-snap-type: x mandatory;
+}
+
+/* スクロールバーを消す（iPhone/AndroidでもOK） */
+.recommend-more-scroll::-webkit-scrollbar {
+  display: none;
+}
+.recommend-more-scroll {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* 商品カード（小型） */
+.recommend-more-item {
+  flex: 0 0 140px;
+  scroll-snap-align: start;
+  background: var(--card-bg, #fff);
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 3px 10px rgba(0,0,0,0.12);
+  transition: transform .15s ease;
+}
+
+.recommend-more-item:hover {
+  transform: translateY(-3px);
+}
+
+/* サムネ */
+.recommend-more-thumb {
+  width: 100%;
+  height: 100px;
+  object-fit: cover;
+}
+
+/* タイトル */
+.recommend-more-title {
+  font-size: 13px;
+  padding: 6px 8px 0;
+  font-weight: 600;
+  height: 32px;
+  overflow: hidden;
+}
+
+/* 作者名 */
+.recommend-more-author {
+  font-size: 12px;
+  padding: 0 8px 8px;
+  color: #777;
+}
