@@ -39,6 +39,45 @@ fetch("/OJapp/header.html")
 
 <div class="main">
   <!-- ページ固有の内容を書く -->
+  
+
+  <h1>OJapp LIVElabel</h1>
+  <p class="sub">
+    アイコンに <span style="color:#ff3b3b;font-weight:bold;">LIVE</span> を重ねるだけのシンプルツール
+  </p>
+
+  <!-- 画像アップロード -->
+  <div class="card">
+    <label class="btn">
+      アイコン画像を選択
+      <input type="file" id="iconInput" accept="image/*" hidden>
+    </label>
+  </div>
+
+  <!-- プレビュー -->
+  <div class="preview-wrap">
+    <div>
+      <p>通常</p>
+      <canvas id="canvasNormal" width="512" height="512"></canvas>
+    </div>
+    <div>
+      <p>LIVE</p>
+      <canvas id="canvasLive" width="512" height="512"></canvas>
+    </div>
+  </div>
+
+  <!-- 生成 -->
+  <div class="card">
+    <button class="btn primary" id="generateBtn">生成 🔥</button>
+  </div>
+
+  <!-- ダウンロード -->
+  <div class="card">
+    <a id="downloadNormal" class="btn" download="icon_normal.png">通常アイコンDL</a>
+    <a id="downloadLive" class="btn" download="icon_live.png">LIVEアイコンDL</a>
+  </div>
+
+  
 </div>
 
 <div id="footer"></div>
