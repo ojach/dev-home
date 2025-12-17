@@ -1,1 +1,52 @@
+<!-- すべてのページのヘッダーとフッターのコピペ用 -->
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <!-- ここに head-template.html をコピペ -->
+  <!-- ▼ OJapp 共通 HEAD（コピペ用） -->
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+<title>OJapp LIVElabel</title>
+
+<!-- ファビコン -->
+<link rel="icon" type="image/png" sizes="16x16" href="/OJapp/icon/favicon-16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/OJapp/icon/favicon-32.png">
+<link rel="icon" type="image/png" sizes="48x48" href="/OJapp/icon/favicon-48.png">
+
+<!-- iPhone ホームアイコン -->
+<link rel="apple-touch-icon" sizes="180x180" href="/OJapp/icon/icon-180.png">
+
+<!-- PWA（必要なら有効化） -->
+<!-- <link rel="manifest" href="/OJapp/manifest.json"> -->
+
+<meta name="theme-color" content="#2bb7ff">
+
+<!-- 共通CSS -->
+<link rel="stylesheet" href="/OJapp/style.css">
+<!-- ダークモード呼ぶ -->
+<script src="/OJapp/darkmode.js"></script>
+</head>
+
+<body>
+
+<div id="header"></div>
+<script>
+fetch("/OJapp/header.html")
+  .then(r => r.text())
+  .then(h => document.getElementById("header").innerHTML = h);
+</script>
+
+<div class="main">
+  <!-- ページ固有の内容を書く -->
+</div>
+
+<div id="footer"></div>
+<script>
+fetch("/OJapp/footer.html")
+  .then(r => r.text())
+  .then(h => document.getElementById("footer").innerHTML = h);
+</script>
+
+</body>
+</html>
