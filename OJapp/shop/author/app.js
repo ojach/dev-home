@@ -56,19 +56,26 @@ function convertDriveUrl(url) {
 
   const first = url.split(",")[0].trim();
 
+  // Google Drive（open?id=）
   let match = first.match(/id=([^&]+)/);
   if (match) {
     return `https://drive.google.com/uc?export=view&id=${match[1]}`;
   }
 
+  // Google Drive（/d/）
   match = first.match(/\/d\/([^/]+)/);
   if (match) {
     return `https://drive.google.com/uc?export=view&id=${match[1]}`;
   }
 
-  // 👇 raw URLは使わない
+  // 👇 Drive以外のURLはそのまま使う（超重要）
+  if (first.startsWith("http")) {
+    return first;
+  }
+
   return "";
 }
+
 
 
 // ================================
@@ -101,7 +108,9 @@ function renderCards(items) {
   grid.innerHTML = "";
 
   items.forEach(item => {
-const thumb = convertDriveUrl(item.thumbnail) || "/OJapp/shop/noimage.png";
+const converted = convertDriveUrl(item.thumbnail);
+const thumb = converted || "/OJapp/shop/noimage.png";
+
     const card = document.createElement("div");
     card.className = "item-card";
 
