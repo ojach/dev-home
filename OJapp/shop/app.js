@@ -48,30 +48,6 @@ async function loadCSV() {
     })
     .filter(item => item.visible !== "FALSE");
 }
-function convertDriveUrl(url) {
-  if (!url) return "";
-
-  const first = url.split(",")[0].trim();
-
-  // Google Drive（open?id=）
-  let match = first.match(/id=([^&]+)/);
-  if (match) {
-    return `https://drive.google.com/uc?export=view&id=${match[1]}`;
-  }
-
-  // Google Drive（/d/）
-  match = first.match(/\/d\/([^/]+)/);
-  if (match) {
-    return `https://drive.google.com/uc?export=view&id=${match[1]}`;
-  }
-
-  // 👇 Drive以外のURLはそのまま使う（超重要）
-  if (first.startsWith("http")) {
-    return first;
-  }
-
-  return "";
-}
 
 
 
@@ -289,8 +265,8 @@ viewItems.forEach(item => {
   const favKey = `fav_${itemId}`;
   const isFav = localStorage.getItem(favKey);
 
-const converted = convertDriveUrl(item.thumbnail);
-const thumb = converted || "/OJapp/shop/noimage.png";
+const thumb = item.thumbnail || "/OJapp/shop/noimage.png";
+
 
 
   const authorIcon = `/OJapp/shop/author/${item.author}.png`;
@@ -394,8 +370,7 @@ function renderRecommend() {
   const selected = shuffled.slice(0, 2);
 
   box.innerHTML = selected.map(item => {
-   const converted = convertDriveUrl(item.thumbnail);
-const thumb = converted || "/OJapp/shop/noimage.png";
+  const thumb = item.thumbnail || "/OJapp/shop/noimage.png";
 
 
     const authorIcon = `/OJapp/shop/author/${item.author}.png`;
