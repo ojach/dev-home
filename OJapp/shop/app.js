@@ -35,7 +35,11 @@ async function loadCSV() {
   const res = await fetch(CSV_URL);
   const text = await res.text();
 
-  const rows = text.split("\n").map(r => r.split(","));
+ const rows = text
+  .split("\n")
+  .filter(r => r.trim() !== "")
+  .map(r => r.split(","));
+
   const rawHeaders = rows.shift().map(h => h.replace(/"/g, "").trim());
   const headers = rawHeaders.map(h => HEADER_MAP[h] || h);
 
@@ -147,6 +151,7 @@ function applyFilters() {
   
 
   // まだキャッシュが無ければ作る
+  if (sort !== "random") randomCache = null;
   if (sort === "random") {
     if (!randomCache) {
     randomCache = shuffle(filtered).slice(0, 20);
@@ -331,9 +336,11 @@ function renderShop() {
 
   animateCards();
 
-  setTimeout(() => {
-    loadFavorites();
-  }, 300);
+
+
+// start() の最後で1回だけ
+await loadFavorites();
+
 }
 
 // ================================
