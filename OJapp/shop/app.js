@@ -47,7 +47,20 @@ async function loadCSV() {
     })
     .filter(item => item.visible !== "FALSE");
 }
+function convertDriveUrl(url) {
+  if (!url) return "";
 
+  // 複数URLの場合は最初の1つだけ使う
+  const first = url.split(",")[0].trim();
+
+  // open?id=XXXX
+  const match = first.match(/id=([^&]+)/);
+  if (match) {
+    return `https://drive.google.com/uc?id=${match[1]}`;
+  }
+
+  return first; // 念のためそのまま返す
+}
 
 // ================================
 // フィルター生成（動的）
@@ -349,20 +362,7 @@ viewItems.forEach(item => {
 });
   // ✅ お気に入り数を読み込み
   loadFavorites();
-function convertDriveUrl(url) {
-  if (!url) return "";
 
-  // 複数URLの場合は最初の1つだけ使う
-  const first = url.split(",")[0].trim();
-
-  // open?id=XXXX
-  const match = first.match(/id=([^&]+)/);
-  if (match) {
-    return `https://drive.google.com/uc?id=${match[1]}`;
-  }
-
-  return first; // 念のためそのまま返す
-}
 
 // ================================
 // 今日のおすすめ（常時2件・カードクリックで遷移）
