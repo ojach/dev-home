@@ -274,10 +274,11 @@ async function loadFavorites() {
 function renderShop() {
   const grid = document.querySelector(".shop-grid");
   grid.innerHTML = "";
-console.log("RAW thumbnail:", item.thumbnail);
 
 viewItems.forEach(item => {
   // 🩷 IDのキーを安全に拾う
+   console.log("RAW thumbnail:", item.thumbnail);
+    console.log("CONVERTED:", convertDriveUrl(item.thumbnail));
   const itemId = item.itemId || item.id || item.ID;
   const favKey = `fav_${itemId}`;
   const isFav = localStorage.getItem(favKey);
