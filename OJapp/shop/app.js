@@ -382,7 +382,8 @@ function renderRecommend() {
   const selected = shuffled.slice(0, 2);
 
   box.innerHTML = selected.map(item => {
-    const thumb = item.thumbnail || "/OJapp/shop/noimage.png";
+    const thumb = convertDriveUrl(item.thumbnail) || "/OJapp/shop/noimage.png";
+
     const authorIcon = `/OJapp/shop/author/${item.author}.png`;
 
     return `
