@@ -56,19 +56,18 @@ function convertDriveUrl(url) {
 
   const first = url.split(",")[0].trim();
 
-  // open?id=XXXX
   let match = first.match(/id=([^&]+)/);
   if (match) {
     return `https://drive.google.com/uc?export=view&id=${match[1]}`;
   }
 
-  // /d/XXXX/
   match = first.match(/\/d\/([^/]+)/);
   if (match) {
     return `https://drive.google.com/uc?export=view&id=${match[1]}`;
   }
 
-  return first;
+  // 👇 raw URLは使わない
+  return "";
 }
 
 
