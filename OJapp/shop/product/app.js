@@ -58,8 +58,6 @@ function getAuthorIcon(name) {
 // =====================================
 function renderProduct(item) {
   const box = document.getElementById("productBox");
-
-const converted = convertDriveUrl(item.thumbnail);
 const thumb = item.thumbnail || "/OJapp/shop/noimage.png";
 
 
