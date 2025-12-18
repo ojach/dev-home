@@ -6,7 +6,7 @@ const CSV_URL =
 const HEADER_MAP = {
   "タイムスタンプ": "timestamp",
   "BOOTH商品URL": "boothUrl",
-  "サムネ画像URL": "thumbnail",
+  "サムネ画像": "thumbnail",
   "タイトル": "title",
   "作者名": "author",
   "カテゴリー": "category",
@@ -56,7 +56,7 @@ function getAuthorIcon(name) {
 function renderProduct(item) {
   const box = document.getElementById("productBox");
 
-  const thumb = item.thumbnail || "/OJapp/shop/noimage.png";
+const thumb = convertDriveUrl(item.thumbnail) || "/OJapp/shop/noimage.png";
   const icon = getAuthorIcon(item.author);
 
   box.innerHTML = `
@@ -81,7 +81,20 @@ function renderProduct(item) {
     </a>
   `;
 }
+function convertDriveUrl(url) {
+  if (!url) return "";
 
+  // 複数URLの場合は最初の1つだけ使う
+  const first = url.split(",")[0].trim();
+
+  // open?id=XXXX
+  const match = first.match(/id=([^&]+)/);
+  if (match) {
+    return `https://drive.google.com/uc?id=${match[1]}`;
+  }
+
+  return first; // 念のためそのまま返す
+}
 // =====================================
 // 戻る機能（元の位置まで戻る）
 // =====================================
