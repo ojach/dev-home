@@ -49,19 +49,26 @@ function convertDriveUrl(url) {
 
   const first = url.split(",")[0].trim();
 
+  // Google Drive（open?id=）
   let match = first.match(/id=([^&]+)/);
   if (match) {
     return `https://drive.google.com/uc?export=view&id=${match[1]}`;
   }
 
+  // Google Drive（/d/）
   match = first.match(/\/d\/([^/]+)/);
   if (match) {
     return `https://drive.google.com/uc?export=view&id=${match[1]}`;
   }
 
-  // 👇 raw URLは使わない
+  // 👇 Drive以外のURLはそのまま使う（超重要）
+  if (first.startsWith("http")) {
+    return first;
+  }
+
   return "";
 }
+
 
 // =====================================
 // 作者アイコンの取得
@@ -76,8 +83,9 @@ function getAuthorIcon(name) {
 function renderProduct(item) {
   const box = document.getElementById("productBox");
 
-const thumb =
-  convertDriveUrl(item.thumbnail) || "/OJapp/shop/noimage.png";
+const converted = convertDriveUrl(item.thumbnail);
+const thumb = converted || "/OJapp/shop/noimage.png";
+
 
   const icon = getAuthorIcon(item.author);
 
