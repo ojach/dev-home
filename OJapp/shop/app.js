@@ -151,7 +151,6 @@ function applyFilters() {
   
 
   // まだキャッシュが無ければ作る
-  if (sort !== "random") randomCache = null;
   if (sort === "random") {
     if (!randomCache) {
     randomCache = shuffle(filtered).slice(0, 20);
