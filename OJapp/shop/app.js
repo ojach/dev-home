@@ -25,6 +25,7 @@ let currentAuthor = "全て";
 let currentCategory = "全て";
 let lastSortMode = "new";
 let randomCache = null;
+console.log("thumb:", convertDriveUrl(item.thumbnail));
 
 // ================================
 // CSV読み込み
