@@ -4,6 +4,7 @@
 // ================================
 const CSV_URL =
   "https://docs.google.com/spreadsheets/d/e/2PACX-1vRckMXYTdFw-2sSEmeqVTCXymb3F_NwrNdztP01BrZfH1n2WCORVwZuop7IxfG_KHGYqqlCuc3sBUee/pub?gid=1229129034&single=true&output=csv";
+const FAV_VERSION = "v2";
 
 const HEADER_MAP = {
   "タイムスタンプ": "timestamp",
@@ -224,24 +225,25 @@ async function loadFavorites() {
     const res = await fetch("https://ojshop-fav.trc-wasps.workers.dev");
     const data = await res.json();
 
-     // ★★★ items に favCount を書き込む（人気順が働く）
+    // DBの favCount を items に反映（人気順用）
     data.forEach(fav => {
-      const item = items.find(i => i.itemId == fav.id);
+      const item = items.find(i => i.product_id === fav.id);
       if (item) item.favCount = Number(fav.count);
     });
-    // ✅ DBのカウントを反映
+
+    // 表示中の fav 数を更新
     data.forEach(fav => {
       const el = document.getElementById(`fav-${fav.id}`);
       if (el) el.textContent = fav.count;
     });
 
-    // ✅ ローカルで押したハートを再描画
+    // localStorage（v2）を元にハート再描画
     document.querySelectorAll(".fav-btn").forEach(btn => {
       const id = btn.dataset.id;
-      const favKey = `fav_${id}`;
+      const favKey = `fav_${FAV_VERSION}_${id}`;
       if (localStorage.getItem(favKey)) {
-        btn.style.color = "#ff4b7d";
         btn.textContent = "❤️";
+        btn.style.color = "#ff4b7d";
       }
     });
   } catch (err) {
@@ -257,79 +259,54 @@ function renderShop() {
   const grid = document.querySelector(".shop-grid");
   grid.innerHTML = "";
 
-viewItems.forEach(item => {
-  // 🩷 IDのキーを安全に拾う
-  const itemId = item.itemId || item.id || item.ID;
-  const favKey = `fav_${itemId}`;
-  const isFav = localStorage.getItem(favKey);
+  viewItems.forEach(item => {
+    const productId = item.product_id;
+    const favKey = `fav_${FAV_VERSION}_${productId}`;
+    const isFav = localStorage.getItem(favKey);
 
-const thumb = item.thumbnail || "/OJapp/shop/noimage.png";
+    const thumb = item.thumbnail || "/OJapp/shop/noimage.png";
+    const authorIcon = `/OJapp/shop/author/${item.author}.png`;
 
+    const card = document.createElement("div");
+    card.className = "item-card";
 
+    card.innerHTML = `
+      <div class="item-thumb-box">
+        <img src="${thumb}" class="item-thumb">
+        <img src="${authorIcon}" class="author-icon"
+             onclick="location.href='/OJapp/shop/author/?name=${encodeURIComponent(item.author)}'">
+      </div>
 
-  const authorIcon = `/OJapp/shop/author/${item.author}.png`;
+      <div class="item-title">${item.title}</div>
+      <div class="item-price-line">
+        <span class="item-price">¥${item.price}</span>
+        <span class="fav-btn" data-id="${productId}"
+              style="color:${isFav ? '#ff4b7d' : '#999'}">
+          ${isFav ? "❤️" : "♡"}
+        </span>
+        <span class="fav-count" id="fav-${productId}">0</span>
+      </div>
 
-  const card = document.createElement("div");
-  card.className = "item-card";
+      <div class="item-author">
+        by <a href="/OJapp/shop/author/?name=${encodeURIComponent(item.author)}"
+              class="author-link">${item.author}</a>
+      </div>
+    `;
 
-  card.innerHTML = `
-    <div class="item-thumb-box">
-      <img src="${thumb}" class="item-thumb">
-      <img src="${authorIcon}" class="author-icon"
-           onclick="location.href='/OJapp/shop/author/?name=${encodeURIComponent(item.author)}'">
-    </div>
-
-    <div class="item-title">${item.title}</div>
-    <div class="item-price-line">
-      <span class="item-price">¥${item.price}</span>
-      <span class="fav-btn" data-id="${itemId}" style="color:${isFav ? '#ff4b7d' : '#999'}">
-        ${isFav ? "❤️" : "♡"}
-      </span>
-      <span class="fav-count" id="fav-${itemId}">0</span>
-    </div>
-
-    <div class="item-author">
-      by <a href="/OJapp/shop/author/?name=${encodeURIComponent(item.author)}"
-            class="author-link">${item.author}</a>
-    </div>
-  `;
-
-  // ✅ 商品クリックで商品ページへ（ハート除外）
-  card.addEventListener("click", (e) => {
-    if (e.target.classList.contains("fav-btn")) return;
-    sessionStorage.setItem("ojapp_scroll_position", window.scrollY);
-    location.href = `/OJapp/shop/product/?id=${itemId}`;
-  });
-
-  grid.appendChild(card);
-});
-
-
-  // ✅ カードのフェードイン
-  animateCards();
-
-  // ✅ 少し待ってからお気に入りデータを反映
-  setTimeout(() => {
-    console.log("🩷 loadFavorites 実行中");
-    loadFavorites().then(() => {
-      console.log("✅ お気に入り反映完了");
+    // 商品クリック（fav除外）
+    card.addEventListener("click", e => {
+      if (e.target.classList.contains("fav-btn")) return;
+      sessionStorage.setItem("ojapp_scroll_position", window.scrollY);
+      location.href = `/OJapp/shop/product/?id=${productId}`;
     });
-  }, 500);
-}
 
-  // ✅ お気に入りボタン登録
-  const favButtons = document.querySelectorAll(".fav-btn");
-  favButtons.forEach(btn => {
-    btn.addEventListener("click", async (e) => {
+    // favクリック
+    card.querySelector(".fav-btn").addEventListener("click", async e => {
       e.stopPropagation();
       const id = e.target.dataset.id;
-      const favKey = `fav_${id}`;
+      const key = `fav_${FAV_VERSION}_${id}`;
 
-      // ✅ すでに押したことあるならスキップ
-      if (localStorage.getItem(favKey)) {
-        alert("もうお気に入り済みです❤️");
-        return;
-      }
+      if (localStorage.getItem(key)) return;
 
       try {
         const res = await fetch("https://ojshop-fav.trc-wasps.workers.dev", {
@@ -341,26 +318,29 @@ const thumb = item.thumbnail || "/OJapp/shop/noimage.png";
         const data = await res.json();
         document.getElementById(`fav-${id}`).textContent = data.count;
 
-        // ✅ 押した記録を保存
-        localStorage.setItem(favKey, "true");
-
-        // ✅ ハート見た目変更
-        e.target.classList.add("active");
+        localStorage.setItem(key, "true");
         e.target.textContent = "❤️";
+        e.target.style.color = "#ff4b7d";
       } catch (err) {
         console.error("お気に入り失敗:", err);
       }
     });
-});
-  // ✅ お気に入り数を読み込み
-  loadFavorites();
 
+    grid.appendChild(card);
+  });
+
+  animateCards();
+
+  setTimeout(() => {
+    loadFavorites();
+  }, 300);
+}
 
 // ================================
 // 今日のおすすめ（常時2件・カードクリックで遷移）
 // ================================
 function renderRecommend() {
- const box = document.getElementById("recommend-box");
+  const box = document.getElementById("recommend-box");
   if (!box) return;
 
   // ★ 2件ランダム選出
@@ -368,13 +348,11 @@ function renderRecommend() {
   const selected = shuffled.slice(0, 2);
 
   box.innerHTML = selected.map(item => {
-  const thumb = item.thumbnail || "/OJapp/shop/noimage.png";
-
-
+    const thumb = item.thumbnail || "/OJapp/shop/noimage.png";
     const authorIcon = `/OJapp/shop/author/${item.author}.png`;
 
     return `
-      <div class="recommend-item" data-id="${item.itemId}">
+      <div class="recommend-item" data-id="${item.product_id}">
         <div class="item-thumb-box">
           <img src="${thumb}" class="recommend-thumb">
           <img src="${authorIcon}" class="author-icon">
@@ -390,7 +368,7 @@ function renderRecommend() {
     `;
   }).join("");
 
-  // ✅ 各カードクリックで商品ページへ
+  // クリックで商品ページへ
   box.querySelectorAll(".recommend-item").forEach(card => {
     card.addEventListener("click", () => {
       const id = card.dataset.id;
@@ -420,7 +398,7 @@ function renderRecommendMore() {
   const selected = [...items].sort(() => Math.random() - 0.5).slice(0, 5);
 
   box.innerHTML = selected.map(item => `
-    <div class="recommend-more-item" data-id="${item.itemId}">
+    <div class="recommend-more-item" data-id="${item.product_id}">
       <img src="${item.thumbnail}" class="recommend-more-thumb">
       <div class="recommend-more-title">${item.title}</div>
       <div class="recommend-more-author">by ${item.author}</div>
@@ -446,13 +424,12 @@ async function start() {
   items = await loadCSV();
 
   // ★ itemId を自動生成（1,2,3,...）
-  items = items.map((item, index) => ({
-    ...item,
-   itemId: String(index + 1),
-    date: new Date(item.timestamp),     // ★ ここが最重要
-    price: Number(item.price || 0),
-    favCount: Number(item.favCount || 0)
-  }));
+items = items.map(item => ({
+  ...item,
+  date: new Date(item.timestamp),
+  price: Number(item.price || 0),
+  favCount: Number(item.favCount || 0)
+}));
 
   viewItems = [...items];
 
