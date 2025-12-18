@@ -16,20 +16,7 @@ const HEADER_MAP = {
 };
 
 
-function convertDriveUrl(url) {
-  if (!url) return "";
 
-  // 複数URLの場合は最初の1つだけ使う
-  const first = url.split(",")[0].trim();
-
-  // open?id=XXXX
-  const match = first.match(/id=([^&]+)/);
-  if (match) {
-    return `https://drive.google.com/uc?id=${match[1]}`;
-  }
-
-  return first; // 念のためそのまま返す
-}
 // =====================================
 // URL から id を取得
 // =====================================
@@ -57,7 +44,20 @@ async function loadCSV() {
     })
     .filter(item => item.visible !== "FALSE");
 }
+function convertDriveUrl(url) {
+  if (!url) return "";
 
+  // 複数URLの場合は最初の1つだけ使う
+  const first = url.split(",")[0].trim();
+
+  // open?id=XXXX
+  const match = first.match(/id=([^&]+)/);
+  if (match) {
+    return `https://drive.google.com/uc?id=${match[1]}`;
+  }
+
+  return first; // 念のためそのまま返す
+}
 // =====================================
 // 作者アイコンの取得
 // =====================================
