@@ -53,20 +53,20 @@ function convertDriveUrl(url) {
 
   const first = url.split(",")[0].trim();
 
-  // open?id=XXXX
   let match = first.match(/id=([^&]+)/);
   if (match) {
     return `https://drive.google.com/uc?export=view&id=${match[1]}`;
   }
 
-  // /d/XXXX/
   match = first.match(/\/d\/([^/]+)/);
   if (match) {
     return `https://drive.google.com/uc?export=view&id=${match[1]}`;
   }
 
-  return first;
+  // 👇 raw URLは使わない
+  return "";
 }
+
 
 
 // ================================
@@ -283,7 +283,9 @@ viewItems.forEach(item => {
   const favKey = `fav_${itemId}`;
   const isFav = localStorage.getItem(favKey);
 
-  const thumb = convertDriveUrl(item.thumbnail) || "/OJapp/shop/noimage.png";
+  const thumb =
+  convertDriveUrl(item.thumbnail) || "/OJapp/shop/noimage.png";
+
   const authorIcon = `/OJapp/shop/author/${item.author}.png`;
 
   const card = document.createElement("div");
@@ -385,7 +387,9 @@ function renderRecommend() {
   const selected = shuffled.slice(0, 2);
 
   box.innerHTML = selected.map(item => {
-    const thumb = convertDriveUrl(item.thumbnail) || "/OJapp/shop/noimage.png";
+    const thumb =
+  convertDriveUrl(item.thumbnail) || "/OJapp/shop/noimage.png";
+
 
     const authorIcon = `/OJapp/shop/author/${item.author}.png`;
 
