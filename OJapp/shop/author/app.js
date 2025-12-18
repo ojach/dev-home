@@ -51,30 +51,6 @@ async function loadCSV() {
   console.log("CSV読込結果:", data.length, "件");
   return data.filter(item => !item.visible || item.visible.toUpperCase() !== "FALSE");
 }
-function convertDriveUrl(url) {
-  if (!url) return "";
-
-  const first = url.split(",")[0].trim();
-
-  // Google Drive（open?id=）
-  let match = first.match(/id=([^&]+)/);
-  if (match) {
-    return `https://drive.google.com/uc?export=view&id=${match[1]}`;
-  }
-
-  // Google Drive（/d/）
-  match = first.match(/\/d\/([^/]+)/);
-  if (match) {
-    return `https://drive.google.com/uc?export=view&id=${match[1]}`;
-  }
-
-  // 👇 Drive以外のURLはそのまま使う（超重要）
-  if (first.startsWith("http")) {
-    return first;
-  }
-
-  return "";
-}
 
 
 
@@ -108,8 +84,7 @@ function renderCards(items) {
   grid.innerHTML = "";
 
   items.forEach(item => {
-const converted = convertDriveUrl(item.thumbnail);
-const thumb = converted || "/OJapp/shop/noimage.png";
+const thumb = item.thumbnail || "/OJapp/shop/noimage.png";
 
     const card = document.createElement("div");
     card.className = "item-card";
