@@ -25,7 +25,7 @@ let currentAuthor = "全て";
 let currentCategory = "全て";
 let lastSortMode = "new";
 let randomCache = null;
-console.log("thumb:", convertDriveUrl(item.thumbnail));
+
 
 // ================================
 // CSV読み込み
@@ -274,6 +274,7 @@ async function loadFavorites() {
 function renderShop() {
   const grid = document.querySelector(".shop-grid");
   grid.innerHTML = "";
+console.log("RAW thumbnail:", item.thumbnail);
 
 viewItems.forEach(item => {
   // 🩷 IDのキーを安全に拾う
