@@ -288,20 +288,7 @@ viewItems.forEach(item => {
             class="author-link">${item.author}</a>
     </div>
   `;
-function convertDriveUrl(url) {
-  if (!url) return "";
 
-  // 複数URLの場合は最初の1つだけ使う
-  const first = url.split(",")[0].trim();
-
-  // open?id=XXXX
-  const match = first.match(/id=([^&]+)/);
-  if (match) {
-    return `https://drive.google.com/uc?id=${match[1]}`;
-  }
-
-  return first; // 念のためそのまま返す
-}
   // ✅ 商品クリックで商品ページへ（ハート除外）
   card.addEventListener("click", (e) => {
     if (e.target.classList.contains("fav-btn")) return;
@@ -362,7 +349,20 @@ function convertDriveUrl(url) {
 });
   // ✅ お気に入り数を読み込み
   loadFavorites();
+function convertDriveUrl(url) {
+  if (!url) return "";
 
+  // 複数URLの場合は最初の1つだけ使う
+  const first = url.split(",")[0].trim();
+
+  // open?id=XXXX
+  const match = first.match(/id=([^&]+)/);
+  if (match) {
+    return `https://drive.google.com/uc?id=${match[1]}`;
+  }
+
+  return first; // 念のためそのまま返す
+}
 
 // ================================
 // 今日のおすすめ（常時2件・カードクリックで遷移）
