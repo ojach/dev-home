@@ -1,0 +1,2 @@
+/*
+Content-Security-Policy: img-src 'self' data: https://placehold.co https://github.ojach.com https://drive.google.com https://drive.usercontent.google.com;
