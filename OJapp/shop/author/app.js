@@ -22,20 +22,7 @@ let allItems = [];
 let authorName = "";
 
 
-function convertDriveUrl(url) {
-  if (!url) return "";
 
-  // 複数URLの場合は最初の1つだけ使う
-  const first = url.split(",")[0].trim();
-
-  // open?id=XXXX
-  const match = first.match(/id=([^&]+)/);
-  if (match) {
-    return `https://drive.google.com/uc?id=${match[1]}`;
-  }
-
-  return first; // 念のためそのまま返す
-}
 // ================================
 // 作者名取得
 // ================================
@@ -64,7 +51,20 @@ async function loadCSV() {
   console.log("CSV読込結果:", data.length, "件");
   return data.filter(item => !item.visible || item.visible.toUpperCase() !== "FALSE");
 }
+function convertDriveUrl(url) {
+  if (!url) return "";
 
+  // 複数URLの場合は最初の1つだけ使う
+  const first = url.split(",")[0].trim();
+
+  // open?id=XXXX
+  const match = first.match(/id=([^&]+)/);
+  if (match) {
+    return `https://drive.google.com/uc?id=${match[1]}`;
+  }
+
+  return first; // 念のためそのまま返す
+}
 
 // ================================
 // 作者ヘッダー描画
