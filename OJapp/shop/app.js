@@ -8,7 +8,7 @@ const CSV_URL =
 const HEADER_MAP = {
   "タイムスタンプ": "timestamp",
   "BOOTH商品URL": "boothUrl",
-  "サムネ画像URL": "thumbnail",
+  "サムネ画像": "thumbnail",
   "タイトル": "title",
   "作者名": "author",
   "カテゴリー": "category",
@@ -261,7 +261,7 @@ viewItems.forEach(item => {
   const favKey = `fav_${itemId}`;
   const isFav = localStorage.getItem(favKey);
 
-  const thumb = item.thumbnail || "/OJapp/shop/noimage.png";
+  const thumb = convertDriveUrl(item.thumbnail) || "/OJapp/shop/noimage.png";
   const authorIcon = `/OJapp/shop/author/${item.author}.png`;
 
   const card = document.createElement("div");
@@ -288,7 +288,20 @@ viewItems.forEach(item => {
             class="author-link">${item.author}</a>
     </div>
   `;
+function convertDriveUrl(url) {
+  if (!url) return "";
 
+  // 複数URLの場合は最初の1つだけ使う
+  const first = url.split(",")[0].trim();
+
+  // open?id=XXXX
+  const match = first.match(/id=([^&]+)/);
+  if (match) {
+    return `https://drive.google.com/uc?id=${match[1]}`;
+  }
+
+  return first; // 念のためそのまま返す
+}
   // ✅ 商品クリックで商品ページへ（ハート除外）
   card.addEventListener("click", (e) => {
     if (e.target.classList.contains("fav-btn")) return;
