@@ -15,6 +15,21 @@ const HEADER_MAP = {
   "価格": "price"
 };
 
+
+function convertDriveUrl(url) {
+  if (!url) return "";
+
+  // 複数URLの場合は最初の1つだけ使う
+  const first = url.split(",")[0].trim();
+
+  // open?id=XXXX
+  const match = first.match(/id=([^&]+)/);
+  if (match) {
+    return `https://drive.google.com/uc?id=${match[1]}`;
+  }
+
+  return first; // 念のためそのまま返す
+}
 // =====================================
 // URL から id を取得
 // =====================================
@@ -81,20 +96,7 @@ const thumb = convertDriveUrl(item.thumbnail) || "/OJapp/shop/noimage.png";
     </a>
   `;
 }
-function convertDriveUrl(url) {
-  if (!url) return "";
 
-  // 複数URLの場合は最初の1つだけ使う
-  const first = url.split(",")[0].trim();
-
-  // open?id=XXXX
-  const match = first.match(/id=([^&]+)/);
-  if (match) {
-    return `https://drive.google.com/uc?id=${match[1]}`;
-  }
-
-  return first; // 念のためそのまま返す
-}
 // =====================================
 // 戻る機能（元の位置まで戻る）
 // =====================================
