@@ -167,6 +167,15 @@
 
 
 <script>
+//passwordでデザイナー名自動
+  document.addEventListener("DOMContentLoaded", () => {
+  const designer = localStorage.getItem("ojshop-admin-designer");
+  if (designer) {
+    const authorInput = document.querySelector('input[name="author"]');
+    if (authorInput) authorInput.value = designer;
+  }
+});
+  
 // ============================
 // サムネプレビュー
 // ============================
