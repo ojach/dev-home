@@ -12,13 +12,15 @@ let viewItems = [];
 let currentSort = "new"; 
 let randomCache = null;
 
+const API_BASE = "https://ojshop-fav.trc-wasps.workers.dev";
 
 
 // ============================================
 // D1から商品一覧取得
 // ============================================
 async function loadItems() {
-  const res = await fetch("/shop/api/items");
+  const res = await fetch(`${API_BASE}/shop/api/items`);
+
   if (!res.ok) throw new Error("items fetch failed");
   return await res.json();
 }
@@ -173,7 +175,7 @@ function animateCards() {
 // ============================================
 async function loadFavorites() {
   try {
-    const res = await fetch("https://ojshop-fav.trc-wasps.workers.dev");
+    const res = await fetch(`${API_BASE}/shop/api/items`);
     const data = await res.json();
 
     // items に favCount を反映
@@ -253,7 +255,7 @@ function renderShop() {
 
       if (localStorage.getItem(key)) return;
 
-      const res = await fetch("https://ojshop-fav.trc-wasps.workers.dev", {
+      const res = await fetch(`${API_BASE}/shop/api/items`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ id })
