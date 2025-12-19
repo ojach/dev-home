@@ -384,7 +384,7 @@ async function start() {
   renderRecommendMore();
   await loadFavorites();
 }
-
+document.addEventListener("DOMContentLoaded", start);
 // ================================
 // ダークモードスイッチ
 // ================================
