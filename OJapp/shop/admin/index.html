@@ -88,6 +88,40 @@
 </head>
 
 <body>
+  <script>
+(() => {
+  const KEY = "ojshop-admin-designer"; // ログイン情報保存キー
+
+  // すでにログイン済みならスキップ
+  if (localStorage.getItem(KEY)) return;
+
+  const input = prompt(
+    "デザイナー専用ページです。\nパスワードを入力してください："
+  );
+
+  if (!input) {
+    alert("キャンセルされました");
+    location.href = "/OJapp/shop/";
+    return;
+  }
+
+  // 最後の3桁が 778 かチェック
+  if (!input.endsWith("778")) {
+    alert("パスワードが違います。");
+    location.href = "/OJapp/shop/";
+    return;
+  }
+
+  // デザイナー名を切り出す
+  const designer = input.slice(0, -3); // 末尾3文字を除外
+
+  // 保存
+  localStorage.setItem(KEY, designer);
+
+  alert("ログイン成功！ようこそ " + designer + " さん");
+})();
+</script>
+
   <h1>🛒 OJapp Shop Admin</h1>
 
   <div class="form-box">
