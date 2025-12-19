@@ -16,6 +16,7 @@ const HEADER_MAP = {
   "スコア": "score",
   "visible": "visible",
   "価格": "price"
+  "product_id": "product_id",
 };
 
 let items = [];      // 全商品
