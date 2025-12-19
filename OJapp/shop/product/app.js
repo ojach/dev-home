@@ -10,9 +10,8 @@ const HEADER_MAP = {
   "タイトル": "title",
   "作者名": "author",
   "カテゴリー": "category",
-  "スコア": "score",
-  "visible": "visible",
   "価格": "price",
+  "visible": "visible",
   "product_id": "product_id",
 };
 
