@@ -2,22 +2,6 @@
 // ================================
 // 設定
 // ================================
-const CSV_URL =
-  "https://docs.google.com/spreadsheets/d/e/2PACX-1vRckMXYTdFw-2sSEmeqVTCXymb3F_NwrNdztP01BrZfH1n2WCORVwZuop7IxfG_KHGYqqlCuc3sBUee/pub?gid=1229129034&single=true&output=csv";
-const FAV_VERSION = "v2";
-
-const HEADER_MAP = {
-  "タイムスタンプ": "timestamp",
-  "BOOTH商品URL": "boothUrl",
-  "サムネ画像": "thumbnail",
-  "タイトル": "title",
-  "作者名": "author",
-  "カテゴリー": "category",
-  "スコア": "score",
-  "価格": "price",
-  "visible": "visible",
-  "product_id": "product_id",
-};
 
 let items = [];      // 全商品
 let viewItems = [];  // 表示商品のフィルタ後リスト
@@ -29,30 +13,10 @@ let lastSortMode = "new";
 let randomCache = null;
 
 
-// ================================
-// CSV読み込み
-// ================================
-async function loadCSV() {
-  const res = await fetch(CSV_URL);
-  const text = await res.text();
-
- const rows = text
-  .split("\n")
-  .filter(r => r.trim() !== "")
-  .map(r => r.split(","));
-
-  const rawHeaders = rows.shift().map(h => h.replace(/"/g, "").trim());
-  const headers = rawHeaders.map(h => HEADER_MAP[h] || h);
-
-  return rows
-    .map(cols => {
-      const obj = {};
-      cols.forEach((val, i) => {
-        obj[headers[i]] = val.replace(/"/g, "").trim();
-      });
-      return obj;
-    })
-    .filter(item => item.visible !== "FALSE");
+async function loadItems() {
+  const res = await fetch("/shop/api/items");
+  if (!res.ok) throw new Error("items fetch failed");
+  return await res.json();
 }
 
 
@@ -438,28 +402,16 @@ function renderRecommendMore() {
 // 初期起動（itemId 自動生成版）
 // ================================
 async function start() {
-  items = await loadCSV();
-
-  // ★ itemId を自動生成（1,2,3,...）
-items = items.map(item => ({
-  ...item,
-  date: new Date(item.timestamp),
-  price: Number(item.price || 0),
-  favCount: Number(item.favCount || 0)
-}));
+  items = await loadItems();   // ← ここだけ
 
   viewItems = [...items];
 
   renderRecommend();
-   renderDynamicFilters();
+  renderDynamicFilters();
   applyFilters();
   renderRecommendMore();
-
   await loadFavorites();
 }
-
-document.addEventListener("DOMContentLoaded", start);
-
 
 // ================================
 // ダークモードスイッチ
