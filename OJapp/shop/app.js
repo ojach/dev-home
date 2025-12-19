@@ -402,7 +402,14 @@ function renderRecommendMore() {
 // 初期起動（itemId 自動生成版）
 // ================================
 async function start() {
-  items = await loadItems();   // ← ここだけ
+  items = await loadItems();
+
+  // 数値系だけ整形（CSV時代の名残）
+  items = items.map(item => ({
+    ...item,
+    price: Number(item.price || 0),
+    favCount: Number(item.favCount || 0),
+  }));
 
   viewItems = [...items];
 
