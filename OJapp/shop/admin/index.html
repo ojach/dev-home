@@ -1,0 +1,31 @@
+<form id="itemForm">
+  <input type="text" name="title" placeholder="タイトル" required>
+  <input type="text" name="author" placeholder="作者名" required>
+  <input type="text" name="category" placeholder="カテゴリー" required>
+  <input type="number" name="price" placeholder="価格" required>
+
+  <label>
+    <input type="checkbox" name="visible" checked>
+    公開する
+  </label>
+
+  <input type="file" name="thumbnail" accept="image/*" required>
+
+  <button type="submit">登録</button>
+</form>
+
+<script>
+document.getElementById("itemForm").addEventListener("submit", async e => {
+  e.preventDefault();
+  const form = e.target;
+  const data = new FormData(form);
+
+  await fetch("/shop/api/item", {
+    method: "POST",
+    body: data
+  });
+
+  alert("登録完了");
+  form.reset();
+});
+</script>
