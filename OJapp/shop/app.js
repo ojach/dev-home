@@ -2,7 +2,7 @@
 // ================================
 // 設定
 // ================================
-
+const FAV_VERSION = "v2";
 let items = [];      // 全商品
 let viewItems = [];  // 表示商品のフィルタ後リスト
 
@@ -13,141 +13,125 @@ let lastSortMode = "new";
 let randomCache = null;
 
 
+// ================================
+// D1から商品一覧を取得
+// ================================
 async function loadItems() {
   const res = await fetch("/shop/api/items");
   if (!res.ok) throw new Error("items fetch failed");
-  return await res.json();
+  return await res.json();   // ← D1 JSON
 }
 
 
 
 // ================================
-// フィルター生成（動的）
+// フィルター生成
 // ================================
 function renderDynamicFilters() {
-  // カテゴリ一覧を収集
-  const categories = new Set(["全て"]);
-  const authors = new Set(["全て"]);
+  const categories = new Set(["all"]);
+  const authors = new Set(["all"]);
 
   items.forEach(i => {
     if (i.category) categories.add(i.category);
     if (i.author) authors.add(i.author);
   });
 
-  const categorySelect = document.getElementById("filter-category");
-  const authorSelect = document.getElementById("filter-author");
-  const priceSelect = document.getElementById("filter-price");
+  // DOM
+  const category = document.getElementById("filter-category");
+  const author = document.getElementById("filter-author");
+  const price = document.getElementById("filter-price");
 
-  // 🔄 既存内容リセット
-  categorySelect.innerHTML = "";
-  authorSelect.innerHTML = "";
-  priceSelect.innerHTML = "";
+  category.innerHTML = "";
+  author.innerHTML = "";
+  price.innerHTML = "";
 
-  // ✅ カテゴリー
-  [...categories].forEach(cat => {
+  // カテゴリー
+  [...categories].forEach(c => {
     const opt = document.createElement("option");
-    opt.value = cat === "全て" ? "all" : cat;
-    opt.textContent = cat;
-    if (cat === currentCategory) opt.selected = true;
-    categorySelect.appendChild(opt);
+    opt.value = c;
+    opt.textContent = c === "all" ? "全て" : c;
+    category.appendChild(opt);
   });
 
-  // ✅ 作者
+  // 作者
   [...authors].forEach(a => {
     const opt = document.createElement("option");
-    opt.value = a === "全て" ? "all" : a;
-    opt.textContent = a;
-    if (a === currentAuthor) opt.selected = true;
-    authorSelect.appendChild(opt);
+    opt.value = a;
+    opt.textContent = a === "all" ? "全て" : a;
+    author.appendChild(opt);
   });
 
-  // ✅ 価格帯（固定3種＋全て）
-  const prices = [
-    { value: "all", text: "全価格帯" },
-    { value: "free", text: "無料" },
-    { value: "under500", text: "〜¥500" },
-    { value: "over500", text: "¥500〜" }
-  ];
-  prices.forEach(p => {
+  // 価格帯
+  [
+    ["all", "全価格帯"],
+    ["free", "無料"],
+    ["under500", "〜¥500"],
+    ["over500", "¥500〜"],
+  ].forEach(([v, t]) => {
     const opt = document.createElement("option");
-    opt.value = p.value;
-    opt.textContent = p.text;
-    priceSelect.appendChild(opt);
+    opt.value = v;
+    opt.textContent = t;
+    price.appendChild(opt);
   });
 }
 
-
 // ================================
-// ソート
+// 絞り込み＋ソート
 // ================================
 function applyFilters() {
   const cat = document.getElementById("filter-category").value;
   const author = document.getElementById("filter-author").value;
   const price = document.getElementById("filter-price").value;
-
   const activeTab = document.querySelector(".shop-tab.active");
   const sort = activeTab ? activeTab.dataset.sort : "new";
 
-  let filtered = items.slice();   // ← 正しい。items を壊さない。
+  let filtered = items.slice();
 
-  // === 絞り込み ===
-  if (cat !== "all") filtered = filtered.filter(i => i.category === cat);
+  if (cat !== "all")    filtered = filtered.filter(i => i.category === cat);
   if (author !== "all") filtered = filtered.filter(i => i.author === author);
 
-  if (price === "free") filtered = filtered.filter(i => i.price == 0);
-  if (price === "under500") filtered = filtered.filter(i => i.price <= 500);
-  if (price === "over500") filtered = filtered.filter(i => i.price >= 500);
+  if (price === "free")      filtered = filtered.filter(i => i.price == 0);
+  if (price === "under500")  filtered = filtered.filter(i => i.price <= 500);
+  if (price === "over500")   filtered = filtered.filter(i => i.price >= 500);
 
-  // =====================================================
-  // 🔥 ソート部分（全部再構築した正しいバージョン）
-  // =====================================================
-
-  // 完全ランダムシャッフル（Fisher–Yates）
-  function shuffle(array) {
-    const arr = array.slice();
-    for (let i = arr.length - 1; i > 0; i--) {
+  // ランダム
+  function shuffle(arr) {
+    const a = arr.slice();
+    for (let i = a.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1));
-      [arr[i], arr[j]] = [arr[j], arr[i]];
+      [a[i], a[j]] = [a[j], a[i]];
     }
-    return arr;
+    return a;
   }
 
-// sort が random 以外ならキャッシュ破棄
-if (sort !== "random") {
-  randomCache = null;
-}
+  // random以外ならキャッシュ消える
+  if (sort !== "random") randomCache = null;
 
-// === 🎲 おすすめ＝ランダム20件 ===
-if (sort === "random") {
-   // 🛡 Safari保険：0件ガード
-  if (!filtered.length) {
-    viewItems = [];
+  if (sort === "random") {
+    if (!filtered.length) {
+      viewItems = [];
+      renderShop();
+      return;
+    }
+    if (!randomCache) {
+      randomCache = shuffle(filtered).slice(0, 20);
+    }
+    viewItems = randomCache;
     renderShop();
     return;
   }
 
-  if (!randomCache) {
-    randomCache = shuffle(filtered).slice(0, 20);
-  }
-
-  viewItems = randomCache;
-  renderShop();
-  return;
-}
-
-  // === 🆕 新着順 ===
+  // 新着順（created_at）
   if (sort === "new") {
-    filtered.sort((a, b) => b.date - a.date);
+    filtered.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
   }
 
-  // === ❤️ 人気順 ===
+  // 人気順（favCount）
   if (sort === "fav") {
     filtered.sort((a, b) => (b.favCount || 0) - (a.favCount || 0));
   }
 
-  // 表示は常に20件
   viewItems = filtered.slice(0, 20);
-
   renderShop();
 }
 
@@ -196,125 +180,113 @@ function animateCards() {
 
 
 // ================================
-// DBからお気に入り数を取得して反映
+// お気に入りのロード
 // ================================
 async function loadFavorites() {
   try {
     const res = await fetch("https://ojshop-fav.trc-wasps.workers.dev");
     const data = await res.json();
 
-    // DBの favCount を items に反映（人気順用）
-    data.forEach(fav => {
-      const item = items.find(i => i.product_id === fav.id);
-      if (item) item.favCount = Number(fav.count);
+    // items に favCount 反映
+    data.forEach(f => {
+      const item = items.find(i => i.product_id === f.id);
+      if (item) item.favCount = Number(f.count || 0);
     });
 
-    // 表示中の fav 数を更新
-    data.forEach(fav => {
-  const el = document.getElementById(`fav-${fav.id}`);
-  const btn = document.querySelector(`.fav-btn[data-id="${fav.id}"]`);
+    // 表示中の数値も更新
+    data.forEach(f => {
+      const el = document.getElementById(`fav-${f.id}`);
+      if (el) el.textContent = f.count;
+    });
 
-  if (el) el.textContent = fav.count;
-  if (btn && fav.count > 0) {
-    btn.textContent = "❤️";
-    btn.style.color = "#ff4b7d";
-  }
-});
-
-    // localStorage（v2）を元にハート再描画
+    // ローカルの♡を復元
     document.querySelectorAll(".fav-btn").forEach(btn => {
       const id = btn.dataset.id;
-      const favKey = `fav_${FAV_VERSION}_${id}`;
-      if (localStorage.getItem(favKey)) {
+      const key = `fav_${FAV_VERSION}_${id}`;
+      if (localStorage.getItem(key)) {
         btn.textContent = "❤️";
         btn.style.color = "#ff4b7d";
       }
     });
-  } catch (err) {
-    console.error("お気に入り数の取得失敗:", err);
+
+  } catch (e) {
+    console.error("fav load error", e);
   }
 }
 
 
+
+
 // ================================
-// 商品グリッドの描画
+// 商品一覧描画
 // ================================
 function renderShop() {
-  const isFav = false; // 初期はDB基準にしない
   const grid = document.querySelector(".shop-grid");
   grid.innerHTML = "";
 
   viewItems.forEach(item => {
-    const productId = item.product_id;
-    const favKey = `fav_${FAV_VERSION}_${productId}`;
-    const isFav = localStorage.getItem(favKey);
-
-    const thumb = item.thumbnail || "/OJapp/shop/noimage.png";
-    const authorIcon = `/OJapp/shop/author/${item.author}.png`;
+    const id = item.product_id;
+    const key = `fav_${FAV_VERSION}_${id}`;
+    const isFav = localStorage.getItem(key);
 
     const card = document.createElement("div");
     card.className = "item-card";
 
+    const thumb = item.thumbnail || "/OJapp/shop/noimage.png";
+    const authorIcon = `/OJapp/shop/author/${item.author}.png`;
+
     card.innerHTML = `
       <div class="item-thumb-box">
         <img src="${thumb}" class="item-thumb">
-        <img src="${authorIcon}" class="author-icon"
-             onclick="location.href='/OJapp/shop/author/?name=${encodeURIComponent(item.author)}'">
+        <img src="${authorIcon}" class="author-icon">
       </div>
 
       <div class="item-title">${item.title}</div>
+
       <div class="item-price-line">
         <span class="item-price">¥${item.price}</span>
-       <span class="fav-btn" data-id="${productId}" style="color:#999">♡</span>
-<span class="fav-count" id="fav-${productId}">0</span>
-
-      <div class="item-author">
-        by <a href="/OJapp/shop/author/?name=${encodeURIComponent(item.author)}"
-              class="author-link">${item.author}</a>
+        <span class="fav-btn" data-id="${id}" style="color:${isFav ? "#ff4b7d" : "#999"}">
+          ${isFav ? "❤️" : "♡"}
+        </span>
+        <span class="fav-count" id="fav-${id}">0</span>
       </div>
+
+      <div class="item-author">by ${item.author}</div>
     `;
 
-    // 商品クリック（fav除外）
+    // カードクリック
     card.addEventListener("click", e => {
       if (e.target.classList.contains("fav-btn")) return;
       sessionStorage.setItem("ojapp_scroll_position", window.scrollY);
-      location.href = `/OJapp/shop/product/?id=${productId}`;
+      location.href = `/OJapp/shop/product/?id=${id}`;
     });
 
-    // favクリック
+    // ♡クリック
     card.querySelector(".fav-btn").addEventListener("click", async e => {
       e.stopPropagation();
-      const id = e.target.dataset.id;
       const key = `fav_${FAV_VERSION}_${id}`;
 
+      // 二度押し禁止
       if (localStorage.getItem(key)) return;
 
-      try {
-        const res = await fetch("https://ojshop-fav.trc-wasps.workers.dev", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ id })
-        });
+      const res = await fetch("https://ojshop-fav.trc-wasps.workers.dev", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id })
+      });
 
-        const data = await res.json();
-        document.getElementById(`fav-${id}`).textContent = data.count;
+      const data = await res.json();
+      document.getElementById(`fav-${id}`).textContent = data.count;
+      localStorage.setItem(key, "true");
 
-        localStorage.setItem(key, "true");
-        e.target.textContent = "❤️";
-        e.target.style.color = "#ff4b7d";
-      } catch (err) {
-        console.error("お気に入り失敗:", err);
-      }
+      e.target.textContent = "❤️";
+      e.target.style.color = "#ff4b7d";
     });
 
     grid.appendChild(card);
   });
 
-  animateCards();
-
-
-
-
+  loadFavorites();
 }
 
 // ================================
@@ -399,26 +371,16 @@ function renderRecommendMore() {
 
 
 // ================================
-// 初期起動（itemId 自動生成版）
+// 初期起動
 // ================================
 async function start() {
-  items = await loadItems();
+  items = await loadItems();     // ← D1から商品一覧取得
 
-  // 数値系だけ整形（CSV時代の名残）
-  items = items.map(item => ({
-    ...item,
-    price: Number(item.price || 0),
-    favCount: Number(item.favCount || 0),
-  }));
-
-  viewItems = [...items];
-
-  renderRecommend();
   renderDynamicFilters();
   applyFilters();
-  renderRecommendMore();
-  await loadFavorites();
 }
+
+document.addEventListener("DOMContentLoaded", start);
 
 // ================================
 // ダークモードスイッチ
