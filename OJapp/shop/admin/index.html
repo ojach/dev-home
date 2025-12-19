@@ -1,31 +1,191 @@
-<form id="itemForm">
-  <input type="text" name="title" placeholder="タイトル" required>
-  <input type="text" name="author" placeholder="作者名" required>
-  <input type="text" name="category" placeholder="カテゴリー" required>
-  <input type="number" name="price" placeholder="価格" required>
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>OJapp Shop Admin</title>
 
-  <label>
-    <input type="checkbox" name="visible" checked>
-    公開する
-  </label>
+<style>
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
+    background: #f7f9fc;
+    padding: 20px;
+  }
 
-  <input type="file" name="thumbnail" accept="image/*" required>
+  h1 {
+    text-align: center;
+    margin-bottom: 20px;
+    font-size: 24px;
+    font-weight: 700;
+  }
 
-  <button type="submit">登録</button>
-</form>
+  .form-box {
+    background: #ffffff;
+    border-radius: 16px;
+    padding: 20px;
+    max-width: 440px;
+    margin: 0 auto;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.08);
+  }
+
+  .input-group {
+    margin-bottom: 16px;
+  }
+
+  .input-group label {
+    font-size: 14px;
+    font-weight: 600;
+    display: block;
+    margin-bottom: 6px;
+  }
+
+  .input-group input,
+  .input-group select {
+    width: 100%;
+    padding: 12px 14px;
+    border-radius: 12px;
+    border: 1px solid #dde3ea;
+    background: #fdfdfd;
+    font-size: 15px;
+  }
+
+  .thumb-preview {
+    width: 100%;
+    aspect-ratio: 1/1;
+    border-radius: 16px;
+    object-fit: cover;
+    border: 1px solid #e5e5e5;
+    margin-bottom: 12px;
+    display: none;
+  }
+
+  .submit-btn {
+    width: 100%;
+    background: linear-gradient(135deg, #2bb7ff, #4d8cff);
+    color: white;
+    border: none;
+    padding: 14px;
+    border-radius: 12px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    margin-top: 10px;
+    transition: 0.2s;
+  }
+
+  .submit-btn:active {
+    opacity: 0.7;
+  }
+
+  .result-box {
+    text-align: center;
+    margin-top: 20px;
+    font-size: 15px;
+    color: #333;
+    display: none;
+  }
+</style>
+</head>
+
+<body>
+  <h1>🛒 OJapp Shop Admin</h1>
+
+  <div class="form-box">
+    <img id="preview" class="thumb-preview">
+
+    <div class="input-group">
+      <label>サムネ画像</label>
+      <input type="file" id="thumb" accept="image/*">
+    </div>
+
+    <div class="input-group">
+      <label>タイトル</label>
+      <input type="text" id="title">
+    </div>
+
+    <div class="input-group">
+      <label>作者名</label>
+      <input type="text" id="author">
+    </div>
+
+    <div class="input-group">
+      <label>カテゴリー</label>
+      <input type="text" id="category">
+    </div>
+
+    <div class="input-group">
+      <label>価格（数字のみ）</label>
+      <input type="number" id="price">
+    </div>
+
+    <div class="input-group">
+      <label>公開する</label>
+      <select id="visible">
+        <option value="1">公開</option>
+        <option value="0">非公開</option>
+      </select>
+    </div>
+
+    <button class="submit-btn" id="submit">商品を登録する</button>
+
+    <div class="result-box" id="result"></div>
+  </div>
+
 
 <script>
-document.getElementById("itemForm").addEventListener("submit", async e => {
-  e.preventDefault();
-  const form = e.target;
-  const data = new FormData(form);
+// ============================
+// サムネプレビュー
+// ============================
+document.getElementById("thumb").addEventListener("change", e => {
+  const file = e.target.files[0];
+  if (!file) return;
 
-  await fetch("/shop/api/item", {
+  const preview = document.getElementById("preview");
+  preview.src = URL.createObjectURL(file);
+  preview.style.display = "block";
+});
+
+// ============================
+// 登録
+// ============================
+document.getElementById("submit").addEventListener("click", async () => {
+  const file = document.getElementById("thumb").files[0];
+  const title = document.getElementById("title").value;
+  const author = document.getElementById("author").value;
+  const category = document.getElementById("category").value;
+  const price = document.getElementById("price").value;
+  const visible = document.getElementById("visible").value;
+
+  if (!file || !title || !author) {
+    alert("画像・タイトル・作者名は必須です！");
+    return;
+  }
+
+  const fd = new FormData();
+  fd.append("thumbnail", file);
+  fd.append("title", title);
+  fd.append("author", author);
+  fd.append("category", category);
+  fd.append("price", price);
+  fd.append("visible", visible);
+
+  const res = await fetch("/shop/admin/app", {  // ← Workers ルートに合わせる
     method: "POST",
-    body: data
+    body: fd
   });
 
-  alert("登録完了");
-  form.reset();
+  const json = await res.json();
+  document.getElementById("result").style.display = "block";
+
+  if (json.ok) {
+    document.getElementById("result").innerHTML =
+      `登録完了！<br>product_id：<b>${json.product_id}</b>`;
+  } else {
+    document.getElementById("result").innerHTML =
+      "エラーが発生しました。";
+  }
 });
 </script>
+
+</body>
+</html>
