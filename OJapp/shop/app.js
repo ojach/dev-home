@@ -374,13 +374,16 @@ function renderRecommendMore() {
 // 初期起動
 // ================================
 async function start() {
-  items = await loadItems();     // ← D1から商品一覧取得
+  const res = await fetch("/shop/api/items");
+  items = await res.json();  // ← CSVじゃなく API を読む！
 
+  viewItems = [...items];
+  renderRecommend();
   renderDynamicFilters();
   applyFilters();
+  renderRecommendMore();
+  await loadFavorites();
 }
-
-document.addEventListener("DOMContentLoaded", start);
 
 // ================================
 // ダークモードスイッチ
