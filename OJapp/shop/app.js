@@ -301,12 +301,8 @@ function renderShop() {
       <div class="item-title">${item.title}</div>
       <div class="item-price-line">
         <span class="item-price">¥${item.price}</span>
-        <span class="fav-btn" data-id="${productId}"
-              style="color:${isFav ? '#ff4b7d' : '#999'}">
-          ${isFav ? "❤️" : "♡"}
-        </span>
-        <span class="fav-count" id="fav-${productId}">0</span>
-      </div>
+       <span class="fav-btn" data-id="${productId}" style="color:#999">♡</span>
+<span class="fav-count" id="fav-${productId}">0</span>
 
       <div class="item-author">
         by <a href="/OJapp/shop/author/?name=${encodeURIComponent(item.author)}"
