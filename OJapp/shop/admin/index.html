@@ -261,11 +261,13 @@ document.getElementById("submit").addEventListener("click", async () => {
 document.addEventListener("DOMContentLoaded", () => {
   const designer = localStorage.getItem("ojshop-admin-designer");
   if (designer) {
+    // 末尾が s ならそのまま "s’" にして自然に
+    const suffix = designer.endsWith("s") ? "’" : "'s";
+
     document.getElementById("page-title").textContent =
-      `OJapp Shop - ${designer}`;
+      `${designer}${suffix} OJapp Shop`;
   }
 });
-
 </script>
 
 </body>
