@@ -98,6 +98,15 @@
 .logout-btn:hover {
   background: #ff2f68;
 }
+.login-designer {
+  font-size: 15px;
+  margin: 10px 0 20px;
+  padding: 8px 12px;
+  background: #f5f5f5;
+  border-left: 4px solid #ff4b7d;
+  color: #333;
+  border-radius: 6px;
+}
 
 </style>
 </head>
@@ -136,6 +145,7 @@
   alert("ログイン成功！ようこそ " + designer + " さん");
 })();
 </script>
+<div id="login-designer" class="login-designer"></div>
 
   <h1>🛒 OJapp Shop Admin</h1>
 
@@ -256,6 +266,14 @@ document.getElementById("submit").addEventListener("click", async () => {
       location.reload(); // 再読み込みでログイン画面へ
     }
   });
+});
+  document.addEventListener("DOMContentLoaded", () => {
+  const designer = localStorage.getItem("ojshop-admin-designer");
+  const box = document.getElementById("login-designer");
+
+  if (designer && box) {
+    box.textContent = `ログイン中：${designer}`;
+  }
 });
 </script>
 
