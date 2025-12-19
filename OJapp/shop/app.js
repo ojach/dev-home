@@ -247,9 +247,15 @@ async function loadFavorites() {
 
     // 表示中の fav 数を更新
     data.forEach(fav => {
-      const el = document.getElementById(`fav-${fav.id}`);
-      if (el) el.textContent = fav.count;
-    });
+  const el = document.getElementById(`fav-${fav.id}`);
+  const btn = document.querySelector(`.fav-btn[data-id="${fav.id}"]`);
+
+  if (el) el.textContent = fav.count;
+  if (btn && fav.count > 0) {
+    btn.textContent = "❤️";
+    btn.style.color = "#ff4b7d";
+  }
+});
 
     // localStorage（v2）を元にハート再描画
     document.querySelectorAll(".fav-btn").forEach(btn => {
@@ -270,6 +276,7 @@ async function loadFavorites() {
 // 商品グリッドの描画
 // ================================
 function renderShop() {
+  const isFav = false; // 初期はDB基準にしない
   const grid = document.querySelector(".shop-grid");
   grid.innerHTML = "";
 
