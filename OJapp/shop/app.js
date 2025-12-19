@@ -347,8 +347,6 @@ function renderShop() {
 
 
 
-// start() の最後で1回だけ
-await loadFavorites();
 
 }
 
@@ -453,6 +451,8 @@ items = items.map(item => ({
    renderDynamicFilters();
   applyFilters();
   renderRecommendMore();
+
+  await loadFavorites();
 }
 
 document.addEventListener("DOMContentLoaded", start);
