@@ -147,19 +147,28 @@ function applyFilters() {
     return arr;
   }
 
-  // === 🎲 おすすめ＝ランダム20件 ===
-  
+// sort が random 以外ならキャッシュ破棄
+if (sort !== "random") {
+  randomCache = null;
+}
 
-  // まだキャッシュが無ければ作る
-  if (sort === "random") {
-    if (!randomCache) {
+// === 🎲 おすすめ＝ランダム20件 ===
+if (sort === "random") {
+   // 🛡 Safari保険：0件ガード
+  if (!filtered.length) {
+    viewItems = [];
+    renderShop();
+    return;
+  }
+
+  if (!randomCache) {
     randomCache = shuffle(filtered).slice(0, 20);
   }
 
   viewItems = randomCache;
   renderShop();
   return;
-  }
+}
 
   // === 🆕 新着順 ===
   if (sort === "new") {
