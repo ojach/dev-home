@@ -33,14 +33,27 @@ async function loadCSV() {
   const res = await fetch(CSV_URL);
   const txt = await res.text();
 
-  const rows = txt.split("\n").map(r => r.split(","));
+  // 行分割（空行除外）
+  const rows = txt
+    .split("\n")
+    .filter(r => r.trim() !== "")
+    .map(r => r.split(","));
+
+  // ヘッダー処理
   const rawHeaders = rows.shift().map(h => h.replace(/"/g, "").trim());
   const headers = rawHeaders.map(h => HEADER_MAP[h] || h);
 
   return rows
     .map(cols => {
+      // ★ Google CSV対策：足りない列を空で埋める
+      while (cols.length < headers.length) {
+        cols.push("");
+      }
+
       const obj = {};
-      cols.forEach((v, i) => obj[headers[i]] = v.replace(/"/g, "").trim());
+      headers.forEach((key, i) => {
+        obj[key] = (cols[i] || "").replace(/"/g, "").trim();
+      });
       return obj;
     })
     .filter(item => item.visible !== "FALSE");
