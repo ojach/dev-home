@@ -148,7 +148,15 @@
 <div id="login-designer" class="login-designer"></div>
 
   <h1>🛒 OJapp Shop Admin</h1>
-
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  const designer = localStorage.getItem("ojshop-admin-designer");
+  if (designer) {
+    document.getElementById("page-title").textContent =
+      `OJapp Shop - ${designer}`;
+  }
+});
+</script>
   <div class="form-box">
     <img id="preview" class="thumb-preview">
 
