@@ -15,7 +15,7 @@ const HEADER_MAP = {
   "カテゴリー": "category",
   "スコア": "score",
   "visible": "visible",
-  "価格": "price"
+  "価格": "price",
   "product_id": "product_id",
 };
 
