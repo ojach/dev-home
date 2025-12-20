@@ -161,3 +161,32 @@ function escapeHTML(str) {
     '"':"&quot;", "'":"&#39;"
   }[m]));
 }
+async function createLetter() {
+
+  const data = {
+    layout: layoutSel.value,
+    bgColor: bgColorInput.value,
+    font: fontSel.value,
+    fontSize: fontSizeSel.value,
+    writing: writingSel.value,
+    text: textArea.value
+  };
+
+  const fd = new FormData();
+  fd.append("json", JSON.stringify(data));
+
+  // 画像（任意）
+  if (imageInput.files[0]) {
+    fd.append("image", imageInput.files[0]);
+  }
+
+  const res = await fetch("https://your-worker-url/api/oneletter/create", {
+    method: "POST",
+    body: fd
+  });
+
+  const j = await res.json();
+
+  // 完成URLへジャンプ
+  location.href = j.url;
+}
