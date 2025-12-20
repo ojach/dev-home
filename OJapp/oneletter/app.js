@@ -1,6 +1,6 @@
 // ★Routeを切ってるので、本番は ojach.com に投げるのが一番ラク
-const API_ENDPOINT =
-  "https://ojapp-oneletter.trc-wasps.workers.dev/oneletter/api/create";
+const API_ENDPOINT = "https://ojach.com/oneletter/api/create";
+
 
 
 const imageInput = document.getElementById("imageInput");
