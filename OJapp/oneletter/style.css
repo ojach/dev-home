@@ -1,74 +1,158 @@
+/* 全体基本 */
 html, body {
   margin: 0;
   padding: 0;
-  width: 100%;
-  height: 100%;
-  background: #000;
-  color: #fff;
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+  background: #fafafa;
+  font-family: system-ui, -apple-system, sans-serif;
 }
 
-#letter {
+.mode-section {
+  display: none;
+  padding: 20px;
+}
+
+.title {
+  font-size: 26px;
+  margin-bottom: 20px;
+}
+
+
+/* フォーム */
+.block {
+  margin-bottom: 20px;
+}
+
+.label {
+  display: block;
+  font-size: 14px;
+  margin-bottom: 4px;
+}
+
+textarea {
+  width: 100%;
+  height: 80px;
+}
+
+.btn-create {
+  width: 100%;
+  padding: 12px;
+  font-size: 16px;
+  margin-top: 20px;
+  background:#222;
+  color:#fff;
+  border:0;
+  border-radius:8px;
+}
+
+
+/* ▼ プレビュー領域 */
+.preview {
+  width: 100%;
+  height: 400px;
+  background: #ddd;
+  overflow: hidden;
+  margin: 20px 0;
+  border-radius: 10px;
+}
+
+#previewCanvas, #letterView {
   width: 100%;
   height: 100%;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  padding: 24px;
+}
+
+
+/* ▼ レイアウト：上部画像＋文字 */
+.layout-top {
+  width: 100%;
+  height: 100%;
+  padding: 10px;
   box-sizing: border-box;
 }
-
-#letterImage {
-  max-width: 100%;
-  max-height: 70%;
-  object-fit: contain;
-}
-
-#letterText {
-  margin-top: 20px;
-  font-size: 15px;
-  line-height: 1.6;
-  text-align: center;
-  opacity: 0.9;
-}
-html, body {
-  margin: 0;
-  padding: 0;
+.layout-top .top-img {
   width: 100%;
-  height: 100%;
-  background: #000;
-  overflow: hidden;
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+  object-fit: cover;
+  margin-bottom: 10px;
 }
 
-#letter {
+/* ▼ レイアウト：背景画像＋オーバーレイ */
+.layout-overlay {
   position: relative;
   width: 100%;
   height: 100%;
 }
-
-#letterImage {
+.overlay-img {
   position: absolute;
   inset: 0;
   width: 100%;
   height: 100%;
-  object-fit: cover; /* ← 全画面派の要 */
+  object-fit: cover;
 }
-
-#letterText {
+.overlay.text {
   position: absolute;
-  bottom: 12%;
+  bottom: 20px;
   left: 50%;
   transform: translateX(-50%);
-  margin: 0;
-  padding: 0 24px;
+  color:#fff;
+  text-shadow:0 2px 8px rgba(0,0,0,0.6);
+}
 
-  color: #fff;
-  font-size: 15px;
-  line-height: 1.7;
+/* ▼ レイアウト：文字のみ */
+.layout-text {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+}
+
+/* ▼ レイアウト：絵日記（額縁） */
+.layout-diary {
+  width: 100%;
+  height: 100%;
+  padding: 10px;
+  box-sizing: border-box;
+  background: var(--bg, #ffffff);
+}
+
+.diary-frame {
+  width: 100%;
+  background: #f8f4e8;
+  border: 4px solid #d4c4a3;
+  padding: 10px;
+  box-shadow: 0 3px 10px rgba(0,0,0,0.25);
+  margin-bottom: 20px;
+}
+.diary-frame img {
+  width: 100%;
+  border: 2px solid #fff;
+}
+
+/* ▼ 日記テキスト */
+.tategaki {
+  writing-mode: vertical-rl;
+  text-orientation: upright;
+}
+
+/* ▼ 初回オーバーレイ */
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.85);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color:#fff;
+}
+.overlay.hidden {
+  display: none;
+}
+.overlay-content {
   text-align: center;
-
-  text-shadow: 0 2px 8px rgba(0,0,0,0.6);
-  opacity: 0.95;
+}
+.logo {
+  font-size: 28px;
+  margin-bottom: 10px;
+}
+.countdown {
+  font-size: 30px;
+  margin-top: 20px;
 }
