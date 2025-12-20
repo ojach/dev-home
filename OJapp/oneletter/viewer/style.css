@@ -1,1 +1,101 @@
+body {
+  margin: 0;
+  padding: 0;
+  background: #000;
+  color: #fff;
+  font-family: sans-serif;
+  text-align: center;
+}
 
+.letter-view {
+  padding: 20px;
+  margin-top: 40px;
+  min-height: 100vh;
+}
+
+/* 画像上＋文字 */
+.layout-top img.img-top {
+  width: 80%;
+  max-width: 350px;
+  margin-bottom: 20px;
+}
+
+/* 画像オーバーレイ */
+.layout-overlay {
+  position: relative;
+}
+.layout-overlay img.img-overlay {
+  width: 100%;
+  opacity: 0.85;
+}
+.layout-overlay .letter-text.overlay {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+/* テキストのみ */
+.layout-text {
+  padding: 40px;
+}
+
+/* 絵日記フレーム */
+.layout-diary {
+  padding: 20px;
+}
+.layout-diary .frame {
+  border: 6px solid #fff;
+  padding: 10px;
+  margin-bottom: 20px;
+}
+.layout-diary .frame img {
+  width: 100%;
+}
+
+/* 全文共通 */
+.letter-text {
+  white-space: pre-wrap;
+  line-height: 1.8;
+}
+
+/* 縦書き */
+.tategaki {
+  writing-mode: vertical-rl;
+  text-orientation: upright;
+}
+
+/* オーバーレイ */
+.overlay.hidden {
+  display: none;
+}
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.85);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+
+.overlay .title {
+  font-size: 26px;
+  margin-bottom: 10px;
+}
+
+.overlay .sub {
+  font-size: 15px;
+  margin-bottom: 20px;
+  opacity: 0.8;
+}
+
+.overlay .count {
+  font-size: 40px;
+  margin-bottom: 10px;
+}
+
+.overlay .small {
+  font-size: 12px;
+  opacity: 0.6;
+}
