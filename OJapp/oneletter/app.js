@@ -1,130 +1,106 @@
-// One Letter app.js v1.0
-// 手紙データを POST → URL を受け取るだけの超シンプル版
+// ★Routeを切ってるので、本番は ojach.com に投げるのが一番ラク
+const API_ENDPOINT = "https://ojach.com/oneletter/api/create";
 
-const API_ENDPOINT = "https://ojapp-oneletter.trc-wasps.workers.dev/api/create";
+const imageInput = document.getElementById("imageInput");
+const preview = document.getElementById("preview");
+const textInput = document.getElementById("letterText");
+const titleInput = document.getElementById("letterTitle");
+const createBtn = document.getElementById("createBtn");
+const count = document.getElementById("count");
+const resultArea = document.getElementById("resultArea");
 
-document.addEventListener("DOMContentLoaded", () => {
+let imageBlob = null;
 
-  const imgInput = document.getElementById("iconInput");
-  const preview = document.getElementById("preview");
-  const textInput = document.getElementById("appName");
-  const createBtn = document.getElementById("createBtn");
-
-  let imageBase64 = "";   // base64保持
-
-  // ===============================
-  // 画像アップロード → base64化
-  // ===============================
-  imgInput.addEventListener("change", () => {
-    const file = imgInput.files[0];
-    if (!file) return;
-
-    const reader = new FileReader();
-    reader.onload = e => {
-      imageBase64 = e.target.result; // 画像の base64
-      preview.src = imageBase64;
-    };
-    reader.readAsDataURL(file);
-  });
-
-  // ===============================
-  // URL 表示カード
-  // ===============================
-  function showCopyBox(url) {
-    const area = document.getElementById("resultArea");
-
-    area.innerHTML = `
-      <div style="
-        background: linear-gradient(135deg, #2bb7ff, #0077ff);
-        padding: 18px;
-        border-radius: 16px;
-        color: #fff;
-        font-weight: bold;
-        text-align: center;
-        box-shadow: 0 6px 20px rgba(0, 140, 255, 0.35);
-      ">
-        <div style="font-size:16px; margin-bottom:6px;">✨ あなたの One Letter ✨</div>
-        <div style="
-          font-size:14px;
-          word-break: break-all;
-          background: rgba(255,255,255,0.2);
-          padding: 8px;
-          border-radius: 10px;
-        ">${url}</div>
-
-        <button id="copyBtn" style="
-          margin-top: 12px;
-          padding: 8px 16px;
-          background: #ffffff;
-          color: #0077ff;
-          border: none;
-          border-radius: 10px;
-          font-weight: bold;
-          cursor: pointer;
-        ">📋 コピー</button>
-      </div>
-    `;
-
-    document.getElementById("copyBtn").onclick = () => {
-      navigator.clipboard.writeText(url);
-      alert("コピーしたで✌");
-    };
-  }
-
-  // ===============================
-  // 作成ボタン
-  // ===============================
-  createBtn.addEventListener("click", async () => {
-
-    const text = textInput.value.trim();
-
-    if (!text) {
-      alert("本文を書いてな🔥");
-      return;
-    }
-
-    try {
-      // Worker に送る JSON
-      const payload = {
-        text,
-        image_base64: imageBase64,
-        layout: "text",          // とりあえず textのみ
-        bgColor: "#000000",      // とりあえず黒背景
-        font: "serif",
-        fontSize: 22,
-        writing: "horizontal"
-      };
-
-      const res = await fetch(API_ENDPOINT, {
-        method: "POST",
-        headers: { "Content-Type":"application/json" },
-        body: JSON.stringify(payload)
-      });
-
-      const result = await res.json();
-
-      if (result.status === "ok") {
-        const accessUrl = `https://ojach.com/oneletter/${result.id}`;
-        showCopyBox(accessUrl);
-      } else {
-        alert("保存に失敗した💥");
-      }
-
-    } catch (e) {
-      console.error(e);
-      alert("通信エラー💥");
-    }
-
-  });
-
+textInput.addEventListener("input", () => {
+  count.textContent = textInput.value.length;
+  validate();
 });
 
-// ===============================
-// ダークモード
-// ===============================
-function toggleTheme() {
-  document.documentElement.classList.toggle("dark");
-  const sw = document.querySelector(".switch");
-  sw.textContent = document.documentElement.classList.contains("dark") ? "🌙" : "🤩";
+imageInput.addEventListener("change", () => {
+  const file = imageInput.files[0];
+  if (!file) return;
+
+  const img = new Image();
+  const reader = new FileReader();
+  reader.onload = e => (img.src = e.target.result);
+  reader.readAsDataURL(file);
+
+  img.onload = () => {
+    // 中央トリム＋512出力
+    const side = Math.min(img.width, img.height);
+    const sx = (img.width - side) / 2;
+    const sy = (img.height - side) / 2;
+
+    const canvas = document.createElement("canvas");
+    canvas.width = canvas.height = 512;
+    const ctx = canvas.getContext("2d");
+    ctx.drawImage(img, sx, sy, side, side, 0, 0, 512, 512);
+
+    canvas.toBlob(blob => {
+      imageBlob = blob;
+      preview.src = URL.createObjectURL(blob);
+      validate();
+    }, "image/png");
+  };
+});
+
+function validate() {
+  createBtn.disabled = !(imageBlob && textInput.value.trim().length > 0);
 }
-}); 
+
+createBtn.addEventListener("click", async () => {
+  const text = textInput.value.trim();
+  const title = titleInput.value.trim();
+
+  const fr = new FileReader();
+  fr.onload = async () => {
+    createBtn.disabled = true;
+    createBtn.textContent = "作成中…";
+
+    try {
+      const res = await fetch(API_ENDPOINT, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          image_base64: fr.result,
+          text,
+          title
+        })
+      });
+
+      const json = await res.json();
+      if (json.status === "ok") {
+        showResult(json.access_url);
+      } else {
+        alert("作成に失敗しました");
+      }
+    } catch (e) {
+      alert("通信エラー");
+      console.error(e);
+    } finally {
+      createBtn.textContent = "One Letter を作る";
+      validate();
+    }
+  };
+
+  fr.readAsDataURL(imageBlob);
+});
+
+function showResult(url) {
+  resultArea.innerHTML = `
+    <div class="result">
+      <div class="label">✨ One Letter 完成 ✨</div>
+      <div class="url">${url}</div>
+      <div class="row">
+        <button id="copyBtn">📋 コピー</button>
+        <a class="openBtn" href="${url}" target="_blank" rel="noopener">開く</a>
+      </div>
+    </div>
+  `;
+  resultArea.scrollIntoView({ behavior: "smooth" });
+
+  document.getElementById("copyBtn").onclick = async () => {
+    await navigator.clipboard.writeText(url);
+    alert("コピーしました");
+  };
+}
