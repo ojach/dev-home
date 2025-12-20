@@ -1,146 +1,119 @@
-// ==========================
-// One Letter  app.js（Creator専用 完成版）
-// ==========================
+const API_ENDPOINT = "https://ojapp-oneletter.trc-wasps.workers.dev/api/create";
 
-// GitHub版：常に creator モード固定
-const creator = document.getElementById("creator");
-const previewCanvas = document.getElementById("previewCanvas");
-const firstOverlay = document.getElementById("firstOverlay");
-
-// 入力 DOM
-const layoutSel = document.getElementById("layout");
-const bgColorInput = document.getElementById("bgColor");
-const fontSel = document.getElementById("font");
-const fontSizeSel = document.getElementById("fontSize");
-const writingSel = document.getElementById("writing");
-const textArea = document.getElementById("text");
 const imageInput = document.getElementById("imageInput");
+const preview = document.getElementById("preview");
+const textInput = document.getElementById("letterText");
+const titleInput = document.getElementById("letterTitle");
+const createBtn = document.getElementById("createBtn");
+const count = document.getElementById("count");
+const resultArea = document.getElementById("resultArea");
 
-let previewImageURL = null;
+let imageBlob = null;
 
-// ===============
-// Creator モード
-// ===============
-creator.style.display = "block";
-firstOverlay.style.display = "none";
+/* ==========================
+   文字数カウント
+========================== */
+textInput.addEventListener("input", () => {
+  count.textContent = textInput.value.length;
+  validate();
+});
 
-updatePreview();
-
-layoutSel.addEventListener("change", updatePreview);
-bgColorInput.addEventListener("input", updatePreview);
-fontSel.addEventListener("change", updatePreview);
-fontSizeSel.addEventListener("change", updatePreview);
-writingSel.addEventListener("change", updatePreview);
-textArea.addEventListener("input", updatePreview);
-imageInput.addEventListener("change", readImage);
-
-
-// --------------------------
-// プレビュー：画像読み込み
-// --------------------------
-function readImage(e) {
-  const file = e.target.files[0];
+/* ==========================
+   画像処理（中央トリム＋縮小）
+========================== */
+imageInput.addEventListener("change", () => {
+  const file = imageInput.files[0];
   if (!file) return;
 
-  previewImageURL = URL.createObjectURL(file);
-  updatePreview();
+  const img = new Image();
+  const reader = new FileReader();
+
+  reader.onload = e => img.src = e.target.result;
+  reader.readAsDataURL(file);
+
+  img.onload = () => {
+    const size = Math.min(img.width, img.height);
+    const canvas = document.createElement("canvas");
+    canvas.width = canvas.height = 512;
+
+    const ctx = canvas.getContext("2d");
+    ctx.drawImage(
+      img,
+      (img.width - size) / 2,
+      (img.height - size) / 2,
+      size, size,
+      0, 0,
+      512, 512
+    );
+
+    canvas.toBlob(blob => {
+      imageBlob = blob;
+      preview.src = URL.createObjectURL(blob);
+      validate();
+    }, "image/png");
+  };
+});
+
+/* ==========================
+   バリデーション
+========================== */
+function validate() {
+  createBtn.disabled = !(
+    imageBlob &&
+    textInput.value.trim().length > 0
+  );
 }
 
+/* ==========================
+   作成処理
+========================== */
+createBtn.addEventListener("click", async () => {
 
-// --------------------------
-// プレビュー描画（全レイアウト対応）
-// --------------------------
-function updatePreview() {
-  const layout = layoutSel.value;
-  const bg = bgColorInput.value;
-  const font = fontSel.value;
-  const writing = writingSel.value;
-  const text = escapeHTML(textArea.value);
+  const reader = new FileReader();
+  reader.onload = async () => {
 
-  let px = "18px";
-  if (fontSizeSel.value === "small") px = "14px";
-  else if (fontSizeSel.value === "large") px = "24px";
+    try {
+      const res = await fetch(API_ENDPOINT, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          image_base64: reader.result,
+          text: textInput.value.trim(),
+          title: titleInput.value.trim()
+        })
+      });
 
-  const tate = (writing === "vertical") ? "tategaki" : "";
+      const json = await res.json();
 
-  let html = "";
+      if (json.status === "ok") {
+        showResult(json.access_url);
+      } else {
+        alert("作成に失敗しました");
+      }
 
-  if (layout === "top") {
-    html = `
-      <div class="layout-top" style="background:${bg}">
-        ${previewImageURL ? `<img src="${previewImageURL}" class="top-img">` : ""}
-        <p class="text ${font}" style="font-size:${px};">${text}</p>
-      </div>`;
-  }
-
-  else if (layout === "overlay") {
-    html = `
-      <div class="layout-overlay">
-        ${previewImageURL ? `<img src="${previewImageURL}" class="overlay-img">` : ""}
-        <p class="text overlay ${font}" style="font-size:${px};">${text}</p>
-      </div>`;
-  }
-
-  else if (layout === "text") {
-    html = `
-      <div class="layout-text" style="background:${bg}">
-        <p class="text ${font} ${tate}" style="font-size:${px};">${text}</p>
-      </div>`;
-  }
-
-  else if (layout === "diary") {
-    html = `
-      <div class="layout-diary" style="--bg:${bg}">
-        <div class="diary-frame">${previewImageURL ? `<img src="${previewImageURL}">` : ""}</div>
-        <p class="text ${font} ${tate}" style="font-size:${px};">${text}</p>
-      </div>`;
-  }
-
-  previewCanvas.innerHTML = html;
-}
-
-
-// --------------------------
-// HTMLエスケープ
-// --------------------------
-function escapeHTML(str) {
-  return str.replace(/[&<>"']/g, m => ({
-    '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;'
-  }[m]));
-}
-
-
-// =============================
-// 手紙の作成  →  Workers へ送信
-// =============================
-async function createLetter() {
-
-  const data = {
-    layout: layoutSel.value,
-    bgColor: bgColorInput.value,
-    font: fontSel.value,
-    fontSize: fontSizeSel.value,
-    writing: writingSel.value,
-    text: textArea.value
+    } catch (e) {
+      alert("通信エラー");
+      console.error(e);
+    }
   };
 
-  const fd = new FormData();
-  fd.append("json", JSON.stringify(data));
+  reader.readAsDataURL(imageBlob);
+});
 
-  if (imageInput.files[0]) {
-    fd.append("image", imageInput.files[0]);
-  }
+/* ==========================
+   結果表示
+========================== */
+function showResult(url) {
+  resultArea.innerHTML = `
+    <div class="result">
+      <div class="label">✨ One Letter 完成 ✨</div>
+      <div class="url">${url}</div>
+      <button id="copyBtn">📋 コピー</button>
+    </div>
+  `;
 
-  // ★ あなたの Workers URL に修正！
-  const API = "https://ojapp-oneletter.trc-wasps.workers.dev";
-
-  const res = await fetch(`${API}/api/oneletter/create`, {
-    method: "POST",
-    body: fd
-  });
-
-  const j = await res.json();
-
-  // Workers が返す Pages viewer のURLへ移動
-  location.href = j.url;
+  document.getElementById("copyBtn").onclick = () => {
+    navigator.clipboard.writeText(url);
+    alert("コピーしました");
+  };
 }
