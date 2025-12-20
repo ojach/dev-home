@@ -1,29 +1,51 @@
-const API_ENDPOINT = "https://ojapp-oneletter.trc-wasps.workers.dev/api/create";
+// app.js ver.1.1.3 最新
+// 更新日: 2025/12/13
+// ===============================
+// API
+// ===============================
+const API_ENDPOINT = "https://ojapp-auth.trc-wasps.workers.dev/api/create";
 
-const imageInput = document.getElementById("imageInput");
-const preview = document.getElementById("preview");
-const textInput = document.getElementById("letterText");
-const titleInput = document.getElementById("letterTitle");
+document.addEventListener("DOMContentLoaded", () => {
+
+
+  const urlInput = document.getElementById("appURL");
 const createBtn = document.getElementById("createBtn");
-const count = document.getElementById("count");
-const resultArea = document.getElementById("resultArea");
 
-let imageBlob = null;
+// ===============================
+// 共通UI
+// ===============================
+function toggleA() {
+  const box = document.getElementById("assistantBox");
+  box.style.display = (box.style.display === "none") ? "block" : "none";
+}
 
-/* ==========================
-   文字数カウント
-========================== */
-textInput.addEventListener("input", () => {
-  count.textContent = textInput.value.length;
-  validate();
-});
+function showMessage(text, time = 6000) {
+  const box = document.getElementById("assistantBox");
+  box.textContent = text;
+  box.style.display = "block";
 
-/* ==========================
-   画像処理（中央トリム＋縮小）
-========================== */
-imageInput.addEventListener("change", () => {
-  const file = imageInput.files[0];
+  clearTimeout(box._timer);
+  box._timer = setTimeout(() => {
+    box.style.display = "none";
+  }, time);
+}
+
+// ===============================
+// アイコン処理（高品質版）
+// ===============================
+const iconInput = document.getElementById("iconInput");
+const previewImg = document.getElementById("preview");
+let resizedIconBlob = null;
+
+iconInput.addEventListener("change", () => {
+  const file = iconInput.files[0];
   if (!file) return;
+
+ /* if (file.size > 2 * 1024 * 1024) {
+    showMessage("❌ 画像ファイルが大きすぎます（2MBまで）");
+    iconInput.value = "";
+    return;
+  }*/
 
   const img = new Image();
   const reader = new FileReader();
@@ -32,88 +54,166 @@ imageInput.addEventListener("change", () => {
   reader.readAsDataURL(file);
 
   img.onload = () => {
-    const size = Math.min(img.width, img.height);
-    const canvas = document.createElement("canvas");
-    canvas.width = canvas.height = 512;
+    const w = img.naturalWidth;
+    const h = img.naturalHeight;
 
-    const ctx = canvas.getContext("2d");
-    ctx.drawImage(
-      img,
-      (img.width - size) / 2,
-      (img.height - size) / 2,
-      size, size,
-      0, 0,
-      512, 512
-    );
+    if (w <= 100 || h <= 100) {
+      showMessage("❌ 画像サイズが小さすぎます（100×100px以上）");
+      iconInput.value = "";
+      return;
+    }
 
+    if (w !== h) {
+      showMessage("⚠️中央でカットされて正方形でアイコンに変わります");
+    } else {
+      showMessage("✅ アイコン画像を確認しました");
+    }
+const size = Math.min(w, h, 256);
+const cropSize = Math.min(w, h);
+
+const sx = (w - cropSize) / 2;
+const sy = (h - cropSize) / 2;
+
+const canvas = document.createElement("canvas");
+canvas.width = size;
+canvas.height = size;
+
+const ctx = canvas.getContext("2d");
+ctx.drawImage(
+  img,
+  sx, sy,           // 元画像の切り抜き開始位置（中央）
+  cropSize, cropSize, // 元画像から切り取るサイズ
+  0, 0,             // canvas 上の描画位置
+  size, size        // 出力サイズ（256×256）
+);
     canvas.toBlob(blob => {
-      imageBlob = blob;
-      preview.src = URL.createObjectURL(blob);
-      validate();
+      resizedIconBlob = blob;
+      previewImg.src = URL.createObjectURL(blob);
     }, "image/png");
   };
 });
 
-/* ==========================
-   バリデーション
-========================== */
-function validate() {
-  createBtn.disabled = !(
-    imageBlob &&
-    textInput.value.trim().length > 0
-  );
-}
+// ===============================
+// URLチェック（HTTPSのみ許可）
+// ===============================
+urlInput.addEventListener("input", () => {
+  const url = urlInput.value.trim();
 
-/* ==========================
-   作成処理
-========================== */
-createBtn.addEventListener("click", async () => {
+  // 空欄ならボタン無効
+  if (!url) {
+    createBtn.disabled = true;
+    return;
+  }
 
-  const reader = new FileReader();
-  reader.onload = async () => {
+  // https:// で始まらない → エラー
+  if (!url.startsWith("https://")) {
+    createBtn.disabled = true;
+    showMessage("❌ URLは https:// で始まる必要があります");
+    return;
+  }
 
-    try {
-      const res = await fetch(API_ENDPOINT, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          image_base64: reader.result,
-          text: textInput.value.trim(),
-          title: titleInput.value.trim()
-        })
-      });
-
-      const json = await res.json();
-
-      if (json.status === "ok") {
-        showResult(json.access_url);
-      } else {
-        alert("作成に失敗しました");
-      }
-
-    } catch (e) {
-      alert("通信エラー");
-      console.error(e);
-    }
-  };
-
-  reader.readAsDataURL(imageBlob);
+  // OK
+  createBtn.disabled = false;
 });
 
-/* ==========================
-   結果表示
-========================== */
-function showResult(url) {
-  resultArea.innerHTML = `
-    <div class="result">
-      <div class="label">✨ One Letter 完成 ✨</div>
-      <div class="url">${url}</div>
-      <button id="copyBtn">📋 コピー</button>
+
+// ===============================
+// 結果カード（青く光る OJapp カード）
+// ===============================
+function showCopyBox(url) {
+  const area = document.getElementById("resultArea");
+  if (!area) return;
+
+  area.innerHTML = `
+    <div style="
+      background: linear-gradient(135deg, #2bb7ff, #0077ff);
+      padding: 18px;
+      border-radius: 16px;
+      color: #fff;
+      font-weight: bold;
+      text-align: center;
+      box-shadow: 0 6px 20px rgba(0, 140, 255, 0.35);
+      animation: fadeIn 0.4s ease;
+    ">
+      <div style="font-size:16px; margin-bottom:6px;">✨ 発行された OJapp ✨</div>
+      <div id="copyTarget" style="
+        font-size:14px;
+        word-break: break-all;
+        background: rgba(255,255,255,0.2);
+        padding: 8px;
+        border-radius: 10px;
+      ">${url}</div>
+
+      <button id="copyBtn" style="
+        margin-top: 12px;
+        padding: 8px 16px;
+        background: #ffffff;
+        color: #0077ff;
+        border: none;
+        border-radius: 10px;
+        font-weight: bold;
+        cursor: pointer;
+      ">📋 コピー</button>
     </div>
   `;
 
   document.getElementById("copyBtn").onclick = () => {
     navigator.clipboard.writeText(url);
-    alert("コピーしました");
+    alert("コピーしたで✌");
   };
 }
+
+// ===============================
+// Create App（本処理）
+// ===============================
+createBtn.addEventListener("click", async () => {
+
+  const name = document.getElementById("appName").value.trim();
+  const url  = document.getElementById("appURL").value.trim();
+
+  if (!resizedIconBlob || !name || !url) {
+    alert("アイコン・名前・URLを全部入れてな🔥");
+    return;
+  }
+
+  const reader = new FileReader();
+  reader.onload = async () => {
+    try {
+
+      const res = await fetch(API_ENDPOINT, {
+        method: "POST",
+        headers: { "Content-Type":"application/json" },
+        body: JSON.stringify({
+          name,
+          app_url: url,
+          icon_base64: reader.result
+        })
+      });
+
+      const result = await res.json();
+
+      if (result.status === "ok") {
+        const accessUrl = result.access_url;
+        showCopyBox(accessUrl);
+      } else {
+        alert("保存失敗💥 時間をおいて試して！");
+      }
+
+    } catch (e) {
+      alert("通信エラー💥");
+      console.error(e);
+    }
+  };
+
+  reader.readAsDataURL(resizedIconBlob);
+});
+
+// ===============================
+// ダークモード
+// ===============================
+function toggleTheme() {
+  document.documentElement.classList.toggle("dark");
+  const sw = document.querySelector(".switch");
+  sw.textContent = document.documentElement.classList.contains("dark") ? "🌙" : "🤩";
+}
+}); 
