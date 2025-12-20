@@ -4,86 +4,35 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>OJapp One Letter</title>
-
-<meta name="description" content="写真1枚と文章だけで作る、1ページの手紙。URLひとつで想いを届けよう。">
-<meta property="og:title" content="OJapp One Letter">
-<meta property="og:description" content="写真＋文章を1ページに凝縮したWebレター">
-<meta property="og:type" content="website">
-
-  <link rel="icon" type="image/png" sizes="16x16" href="/OJapp/icon/favicon-16.png?v=1">
-  <link rel="icon" type="image/png" sizes="32x32" href="/OJapp/icon/favicon-32.png?v=1">
-  <link rel="icon" type="image/png" sizes="64x64" href="/OJapp/icon/favicon-64.png?v=1">
-  <link rel="apple-touch-icon" sizes="180x180" href="/OJapp/icon/icon-180.png?v=1">
-
-<meta name="theme-color" content="#2bb7ff">
 <link rel="stylesheet" href="style.css">
-<script src="/OJapp/darkmode.js"></script>
-  
 </head>
-
 <body>
-
-<!-- ▼ 会員登録用保留 -->
-
-<div id="header"></div>
-<script>
-fetch("/OJapp/header.html").then(r=>r.text()).then(h=>header.innerHTML=h)
-</script>
-
 <div class="main">
-<h1>One Letter</h1>
-<h2>あなたが作った　たった1枚の手紙</h2>
+  <h1>OJapp One Letter</h1>
+  <p class="lead">写真1枚と文章だけ。URLで渡せる小さな手紙。</p>
 
-
- 
-<!-- Step1 -->
-<div class="section">
-  <div class="section-title">Step1：画像</div>
-  <input type="file" id="iconInput">
-  <div class="icon-box"><img id="preview"></div>
-<div id="assistantBox" class="msg-box"></div>
-</div>
-
-<!-- Step2 -->
-<div class="section">
-  <div class="section-title">Step2：手紙の本文</div>
-  <input type="text" id="appName" placeholder="OJapp!!!">
-</div>
-
-  <div class="center" style="margin-bottom:10px;">
-  <button id="createBtn" class="btn pulse">Create App 🎉</button>
-  <div class="arrow">▼</div>
-</div>
-
-     <!-- ★ 生成結果URLを表示するエリア -->
-  <div id="resultArea" style="margin-top:10px;"></div>
+  <div class="section">
+    <div class="section-title">Step1：写真</div>
+    <input type="file" id="imageInput" accept="image/*">
+    <div class="preview"><img id="preview"></div>
   </div>
+
+  <div class="section">
+    <div class="section-title">Step2：文章</div>
+    <textarea id="letterText" maxlength="200" placeholder="伝えたいことを書く"></textarea>
+    <div class="count"><span id="count">0</span>/200</div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">Step3：差出人（任意）</div>
+    <input type="text" id="letterTitle" placeholder="from ...">
+  </div>
+
+  <button id="createBtn" class="btn" disabled>One Letter を作る</button>
+
+  <div id="resultArea"></div>
 </div>
 
-
-
-
-<!-- ▼ LINK AREA ▼ -->
-<div class="center" style="margin-top:20px;"><a href="/OJapp/split/" class="guide-link">画像分割ツール｜OJapp splitter</a></div>
-<div class="center" style="margin-top:20px;"><a href="/OJapp/safety/" class="guide-link">安全性ガイドライン</a></div>
-<div class="center" style="margin-top:12px;"><a href="/OJapp/guide/" class="guide-link">使い方ガイド</a></div>
-<div class="center" style="margin-top:12px;"><a href="/OJapp/faq/" class="guide-link">よくある質問</a></div>
-<div class="center" style="margin-top:12px;"><a href="/OJapp/changelog/" class="guide-link">更新履歴</a></div>
-<div class="center" style="margin-top:12px;"><a href="https://discord.gg/KZjN5uSBHu" class="guide-link">公式Discord</a></div>
-<div class="center" style="margin-top:12px;"><a href="/OJapp/support" class="guide-link">開発支援</a></div>
-<div class="center" style="margin-top:12px;"><a href="https://github.com/ojach/OJapp" class="guide-link">開発者向け GitHub</a></div>
-<div class="center" style="margin-top:12px;"><a href="/OJapp/web-to-app/" class="guide-link">web to app</a></div>  
-</div><!-- /main -->
-<!-- FOOTER -->
-<div id="footer"></div>
-<script>
-fetch("/OJapp/footer.html").then(r=>r.text()).then(h=>footer.innerHTML=h)
-</script>
-
-
-
-<!-- ◆ app.jsに機能を集約、indexは読み込みのみ！ -->
 <script type="module" src="app.js"></script>
-
 </body>
 </html>
