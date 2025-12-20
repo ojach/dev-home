@@ -1,101 +1,57 @@
-body {
+/* ===============================
+   One Letter Viewer Style
+   =============================== */
+
+html, body {
   margin: 0;
   padding: 0;
-  background: #000;
-  color: #fff;
-  font-family: sans-serif;
-  text-align: center;
+  background: #fafafa;
+  font-family: -apple-system, BlinkMacSystemFont,
+    "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+  color: #222;
 }
 
-.letter-view {
-  padding: 20px;
-  margin-top: 40px;
-  min-height: 100vh;
+/* 全体ラッパー */
+#letter {
+  max-width: 520px;
+  margin: 0 auto;
+  padding: 28px 20px 40px;
 }
 
-/* 画像上＋文字 */
-.layout-top img.img-top {
-  width: 80%;
-  max-width: 350px;
-  margin-bottom: 20px;
-}
-
-/* 画像オーバーレイ */
-.layout-overlay {
-  position: relative;
-}
-.layout-overlay img.img-overlay {
+/* 画像 */
+#letter img {
   width: 100%;
-  opacity: 0.85;
-}
-.layout-overlay .letter-text.overlay {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
+  height: auto;
+  border-radius: 18px;
+  box-shadow: 0 12px 28px rgba(0,0,0,.15);
+  margin-bottom: 26px;
 }
 
-/* テキストのみ */
-.layout-text {
-  padding: 40px;
-}
-
-/* 絵日記フレーム */
-.layout-diary {
-  padding: 20px;
-}
-.layout-diary .frame {
-  border: 6px solid #fff;
-  padding: 10px;
-  margin-bottom: 20px;
-}
-.layout-diary .frame img {
-  width: 100%;
-}
-
-/* 全文共通 */
-.letter-text {
+/* 本文 */
+#letter p {
+  font-size: 17px;
+  line-height: 1.9;
+  letter-spacing: 0.02em;
+  margin: 0;
   white-space: pre-wrap;
-  line-height: 1.8;
 }
 
-/* 縦書き */
-.tategaki {
-  writing-mode: vertical-rl;
-  text-orientation: upright;
+/* 差出人 */
+.sign {
+  margin-top: 28px;
+  text-align: right;
+  font-size: 14px;
+  color: #666;
 }
 
-/* オーバーレイ */
-.overlay.hidden {
-  display: none;
-}
-.overlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(0,0,0,0.85);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  flex-direction: column;
+/* スマホ微調整 */
+@media (max-width: 480px) {
+  #letter {
+    padding-top: 22px;
+  }
+
+  #letter p {
+    font-size: 16px;
+  }
 }
 
-.overlay .title {
-  font-size: 26px;
-  margin-bottom: 10px;
-}
-
-.overlay .sub {
-  font-size: 15px;
-  margin-bottom: 20px;
-  opacity: 0.8;
-}
-
-.overlay .count {
-  font-size: 40px;
-  margin-bottom: 10px;
-}
-
-.overlay .small {
-  font-size: 12px;
-  opacity: 0.6;
-}
