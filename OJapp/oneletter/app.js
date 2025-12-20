@@ -1,22 +1,30 @@
 // ==========================
-// One Letter  app.js (土台)
+// One Letter  app.js (リアルタイム版)
 // ==========================
 
-// URL から ID を取得（/oneletter/XXXXX）
 const path = location.pathname.split("/");
 const id = path[2] || null;
 
-// DOMキャッシュ
+// DOM
 const creator = document.getElementById("creator");
 const viewer  = document.getElementById("viewer");
-const letterView = document.getElementById("letterView");
+const previewCanvas = document.getElementById("previewCanvas");
 const firstOverlay = document.getElementById("firstOverlay");
+
+// 入力要素
+const layoutSel = document.getElementById("layout");
+const bgColorInput = document.getElementById("bgColor");
+const fontSel = document.getElementById("font");
+const fontSizeSel = document.getElementById("fontSize");
+const textArea = document.getElementById("text");
+const imageInput = document.getElementById("imageInput");
+
+// キャッシュ
+let previewImageURL = null;
 
 
 // --------------------------
 // モード分岐
-//   IDなし → 作成モード
-//   IDあり → 表示モード
 // --------------------------
 if (!id) {
   enterCreateMode();
@@ -34,11 +42,22 @@ function enterCreateMode() {
   firstOverlay.style.display = "none";
 
   console.log("[OneLetter] Create Mode");
+
+  // 初期プレビュー
+  updatePreview();
+
+  // 変更監視
+  layoutSel.addEventListener("change", updatePreview);
+  bgColorInput.addEventListener("input", updatePreview);
+  fontSel.addEventListener("change", updatePreview);
+  fontSizeSel.addEventListener("change", updatePreview);
+  textArea.addEventListener("input", updatePreview);
+  imageInput.addEventListener("change", handleImage);
 }
 
 
 // --------------------------
-// 表示モード
+// 表示モード（後で workers 連携）
 // --------------------------
 function enterViewMode(letterId) {
   creator.style.display = "none";
@@ -46,44 +65,98 @@ function enterViewMode(letterId) {
 
   console.log("[OneLetter] View Mode: ", letterId);
 
-  // 本来は workers.js に fetch して手紙を取得するけど、
-  // 今はまだ土台なので仮の表示だけ入れておく
   showTemporaryLetter();
-
-  // 初回オーバーレイ（後でロジック入れる）
   showFirstOverlay(letterId);
 }
 
 
 // --------------------------
-// 仮：表示モードのダミー表示
-// （後で workers から取得して差し替える）
+// プレビュー：画像読み込み
 // --------------------------
-function showTemporaryLetter() {
-  letterView.innerHTML = `
-    <div style="
-      width:100%;
-      height:100vh;
-      display:flex;
-      justify-content:center;
-      align-items:center;
-      background:#111;
-      color:#fff;
-      font-size:18px;">
-      手紙を読み込んでいます…
-    </div>
-  `;
+function handleImage(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+
+  previewImageURL = URL.createObjectURL(file);
+  updatePreview();
 }
 
 
 // --------------------------
-// 初回オーバーレイ（仮）
-// 本番では 30秒カウント＋<create with OJapp> 等入れる
+// ▼ プレビュー描画（最重要）
 // --------------------------
+function updatePreview() {
+  const layout = layoutSel.value;
+  const bgColor = bgColorInput.value;
+  const font = fontSel.value;
+  const fontSize = fontSizeSel.value;
+  const text = textArea.value;
+
+  // フォントサイズ適正化
+  let px = "18px";
+  if (fontSize === "small") px = "14px";
+  else if (fontSize === "large") px = "24px";
+
+  // HTML生成
+  let html = "";
+
+  // レイアウト分岐
+  if (layout === "top") {
+    html = `
+      <div class="layout-top" style="background:${bgColor}">
+        ${previewImageURL ? `<img src="${previewImageURL}" class="top-img">` : ''}
+        <p class="text ${font}" style="font-size:${px};">${escapeHTML(text)}</p>
+      </div>
+    `;
+  }
+
+  else if (layout === "overlay") {
+    html = `
+      <div class="layout-overlay">
+        ${previewImageURL ? `<img src="${previewImageURL}" class="overlay-img">` : ''}
+        <p class="text overlay ${font}" style="font-size:${px};">${escapeHTML(text)}</p>
+      </div>
+    `;
+  }
+
+  else if (layout === "text") {
+    html = `
+      <div class="layout-text" style="background:${bgColor}">
+        <p class="text only ${font}" style="font-size:${px};">${escapeHTML(text)}</p>
+      </div>
+    `;
+  }
+
+  previewCanvas.innerHTML = html;
+}
+
+
+// --------------------------
+// HTMLサニタイズ（XSS防止）
+// --------------------------
+function escapeHTML(str){
+  return str.replace(/[&<>"']/g, m => ({
+    "&":"&amp;", "<":"&lt;", ">":"&gt;",
+    '"':"&quot;", "'":"&#39;"
+  }[m]));
+}
+
+
+// --------------------------
+// ダミー（後で workers へ）
+// --------------------------
+function showTemporaryLetter() {
+  viewer.innerHTML = `
+    <div style="
+      width:100%;height:100vh;
+      display:flex;justify-content:center;align-items:center;
+      background:#111;color:#fff;">
+      読み込み中…
+    </div>`;
+}
+
 function showFirstOverlay(letterId) {
   const key = "oneletter_opened_" + letterId;
-
-  // 初回のみ表示
   if (!localStorage.getItem(key)) {
     firstOverlay.classList.remove("hidden");
     localStorage.setItem(key, "1");
