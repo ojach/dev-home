@@ -1,109 +1,102 @@
 // =======================================
-// oneletter/viewer/app.js v1.0
-// 手紙データを取得して1ページ表示するだけ
+// One Letter viewer/app.js v1.0
+// DB から読み込んだ 1枚の手紙を表示するだけ
 // =======================================
 
-(async function () {
+(function () {
 
-  // URL から ID を取得
-  const segments = location.pathname.split("/").filter(s => s !== "");
-  const id = segments[segments.length - 1];
+  const data = window.__LETTER__;
+  if (!data) {
+    console.error("LETTER data missing");
+    document.body.innerHTML = "<h2 style='padding:20px;'>データが読み込めませんでした。</h2>";
+    return;
+  }
 
-  const API = "https://ojapp-oneletter.trc-wasps.workers.dev";
+  const {
+    text = "",
+    bgColor = "#ffffff",
+    font = "serif",
+    fontSize = 20,
+    writing = "horizontal",   // "horizontal" | "vertical"
+    imageURL = "",
+    layout = "text"           // "text" | "image-top" | "image-bottom"
+  } = data;
 
   const root = document.getElementById("root");
-  root.innerHTML = "読み込み中…";
 
-  try {
-    // JSON 取得
-    const res = await fetch(`${API}/api/oneletter/${id}`);
-    if (!res.ok) {
-      root.innerHTML = "手紙が見つかりません。";
-      return;
-    }
+  // ================================
+  // レイアウト作成
+  // ================================
+  let html = `
+    <div id="letter-container" style="
+      background:${bgColor};
+      color:#fff;
+      min-height:100vh;
+      padding:20px;
+      box-sizing:border-box;
+      font-family:${font};
+      font-size:${fontSize}px;
+      writing-mode:${writing === "vertical" ? "vertical-rl" : "horizontal-tb"};
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      line-height:1.8;
+    ">
+  `;
 
-    const d = await res.json();
-
-    // 描画開始
-    renderLetter(d);
-
-  } catch (e) {
-    console.error(e);
-    root.innerHTML = "読み込みに失敗しました。";
+  // ===== 画像を上に置くレイアウト =====
+  if (layout === "image-top" && imageURL) {
+    html += `
+      <img src="${imageURL}" style="
+        width: 100%;
+        max-width: 600px;
+        border-radius: 14px;
+        margin-bottom: 20px;
+      ">
+    `;
   }
 
+  // ===== 本文 =====
+  html += `
+    <div style="
+      white-space:pre-wrap;
+      text-align:${writing === "vertical" ? "right" : "left"};
+      max-width:600px;
+      width:100%;
+    ">
+      ${escapeHTML(text)}
+    </div>
+  `;
 
-  // --- 手紙レンダリング ---
-  function renderLetter(d) {
-
-    const writing = d.writing === "vertical" ? "tategaki" : "";
-
-    let html = "";
-
-    // レイアウト別に分岐
-    if (d.layout === "top") {
-      html = `
-        <div class="layout-top" style="background:${d.bgColor}">
-          ${d.imageURL ? `<img src="${d.imageURL}" class="img-top">` : ""}
-          <p class="letter-text ${writing}" 
-             style="font-size:${d.fontSize}px; font-family:${d.font};">
-            ${escapeHTML(d.text)}
-          </p>
-        </div>
-      `;
-    }
-
-    if (d.layout === "overlay") {
-      html = `
-        <div class="layout-overlay">
-          ${d.imageURL ? `<img src="${d.imageURL}" class="img-overlay">` : ""}
-          <p class="letter-text overlay ${writing}" 
-             style="font-size:${d.fontSize}px; font-family:${d.font};">
-            ${escapeHTML(d.text)}
-          </p>
-        </div>
-      `;
-    }
-
-    if (d.layout === "text") {
-      html = `
-        <div class="layout-text" style="background:${d.bgColor}">
-          <p class="letter-text ${writing}" 
-             style="font-size:${d.fontSize}px; font-family:${d.font};">
-            ${escapeHTML(d.text)}
-          </p>
-        </div>
-      `;
-    }
-
-    if (d.layout === "diary") {
-      html = `
-        <div class="layout-diary" style="background:${d.bgColor}">
-          <div class="frame">
-            ${d.imageURL ? `<img src="${d.imageURL}">` : ""}
-          </div>
-          <p class="letter-text ${writing}" 
-             style="font-size:${d.fontSize}px; font-family:${d.font};">
-            ${escapeHTML(d.text)}
-          </p>
-        </div>
-      `;
-    }
-
-    root.innerHTML = html;
+  // ===== 画像を下に置くレイアウト =====
+  if (layout === "image-bottom" && imageURL) {
+    html += `
+      <img src="${imageURL}" style="
+        width: 100%;
+        max-width: 600px;
+        border-radius: 14px;
+        margin-top: 20px;
+      ">
+    `;
   }
 
+  html += `</div>`; // letter-container
 
-  // --- HTMLエスケープ ---
+  root.innerHTML = html;
+
+  // ================================
+  // HTMLエスケープ
+  // ================================
   function escapeHTML(str) {
-    return str.replace(/[&<>"']/g, m => ({
-      "&": "&amp;",
-      "<": "&lt;",
-      ">": "&gt;",
-      "\"": "&quot;",
-      "'": "&#39;"
-    })[m]);
+    return str.replace(/[&<>"']/g, function(m) {
+      return ({
+        "&":"&amp;",
+        "<":"&lt;",
+        ">":"&gt;",
+        "\"":"&quot;",
+        "'":"&#39;"
+      })[m];
+    });
   }
 
 })();
-
