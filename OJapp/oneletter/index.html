@@ -1,24 +1,99 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
+
   <title>One Letter</title>
 
-  <!-- OGP / 最小 -->
-  <meta property="og:title" content="One Letter" />
-  <meta property="og:description" content="ひとつだけの手紙" />
-  <meta name="robots" content="noindex" />
+  <!-- OGP 最小 -->
+  <meta property="og:title" content="One Letter">
+  <meta property="og:description" content="ひとつだけの手紙">
+  <meta name="robots" content="noindex">
 
-  <link rel="stylesheet" href="./style.css" />
+  <link rel="stylesheet" href="./style.css">
+  <script defer src="./app.js"></script>
 </head>
 <body>
 
-  <main id="letter">
-    <img id="letterImage" alt="" />
-    <p id="letterText"></p>
-  </main>
+  <!-- ▼ 作成モード：ユーザー入力UI（/oneletter/） -->
+  <div id="creator" class="mode-section">
+    <h1 class="title">One Letter</h1>
 
-  <script src="./app.js"></script>
+    <!-- レイアウトプリセット -->
+    <div class="block">
+      <label class="label">レイアウト</label>
+      <select id="layout">
+        <option value="top">上部画像＋文字</option>
+        <option value="overlay">背景画像＋文字オーバーレイ</option>
+        <option value="text">文字のみ</option>
+      </select>
+    </div>
+
+    <!-- 背景色 -->
+    <div class="block">
+      <label class="label">背景色</label>
+      <input type="color" id="bgColor" value="#000000">
+    </div>
+
+    <!-- フォント -->
+    <div class="block">
+      <label class="label">フォント</label>
+      <select id="font">
+        <option value="serif">Serif</option>
+        <option value="sans">Sans</option>
+        <option value="mono">Mono</option>
+      </select>
+    </div>
+
+    <!-- フォントサイズ -->
+    <div class="block">
+      <label class="label">文字サイズ</label>
+      <select id="fontSize">
+        <option value="small">小</option>
+        <option value="medium" selected>中</option>
+        <option value="large">大</option>
+      </select>
+    </div>
+
+    <!-- 画像1枚 -->
+    <div class="block">
+      <label class="label">画像（任意）</label>
+      <input type="file" id="imageInput" accept="image/*">
+    </div>
+
+    <!-- テキスト -->
+    <div class="block">
+      <label class="label">文章（100字まで）</label>
+      <textarea id="text" maxlength="100" placeholder="ここに言葉を入れる"></textarea>
+    </div>
+
+    <!-- プレビュー -->
+    <div id="preview" class="preview">
+      <!-- app.js で中身を書き換え -->
+      <div id="previewCanvas"></div>
+    </div>
+
+    <!-- 生成ボタン -->
+    <button id="createBtn" class="btn-create">この手紙を作る</button>
+  </div>
+
+  <!-- ▼ 表示モード：完成表示（/oneletter/XXXX） -->
+  <div id="viewer" class="mode-section">
+    <div id="letterView"></div>
+  </div>
+
+  <!-- ▼ 初回オーバーレイ（作った人も贈られた人も共通） -->
+  <div id="firstOverlay" class="overlay hidden">
+    <div class="overlay-content">
+      <div class="logo">One Letter</div>
+      <p class="description">
+        これは、あなたが作った<br>
+        ひとつだけの手紙です。
+      </p>
+      <div class="countdown">30</div>
+    </div>
+  </div>
+
 </body>
 </html>
