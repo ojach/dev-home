@@ -5,7 +5,7 @@ const API = "https://ojapp-oneletter.trc-wasps.workers.dev";
 
 // 手紙のIDをURLから取得
 const segments = location.pathname.split("/").filter(s => s !== "");
-const id = segments[segments.length - 1];
+const id = window.ONELETTER_ID;
 
 
 const letterView = document.getElementById("letterView");
