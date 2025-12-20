@@ -3,10 +3,8 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1.0">
-
   <title>One Letter</title>
 
-  <!-- OGP 最小 -->
   <meta property="og:title" content="One Letter">
   <meta property="og:description" content="ひとつだけの手紙">
   <meta name="robots" content="noindex">
@@ -16,8 +14,9 @@
 </head>
 <body>
 
-  <!-- ▼ 作成モード：ユーザー入力UI（/oneletter/） -->
+  <!-- ▼ 作成モード（IDなし /oneletter/） -->
   <div id="creator" class="mode-section">
+
     <h1 class="title">One Letter</h1>
 
     <!-- レイアウトプリセット -->
@@ -25,15 +24,16 @@
       <label class="label">レイアウト</label>
       <select id="layout">
         <option value="top">上部画像＋文字</option>
-        <option value="overlay">背景画像＋文字オーバーレイ</option>
+        <option value="overlay">背景画像＋オーバーレイ</option>
         <option value="text">文字のみ</option>
+        <option value="diary">絵日記（額縁＋縦書き対応）</option>
       </select>
     </div>
 
     <!-- 背景色 -->
     <div class="block">
       <label class="label">背景色</label>
-      <input type="color" id="bgColor" value="#000000">
+      <input type="color" id="bgColor" value="#ffffff">
     </div>
 
     <!-- フォント -->
@@ -43,6 +43,15 @@
         <option value="serif">Serif</option>
         <option value="sans">Sans</option>
         <option value="mono">Mono</option>
+      </select>
+    </div>
+
+    <!-- 文字方向 -->
+    <div class="block">
+      <label class="label">文字方向</label>
+      <select id="writing">
+        <option value="horizontal">横書き</option>
+        <option value="vertical">縦書き（日記風）</option>
       </select>
     </div>
 
@@ -56,7 +65,7 @@
       </select>
     </div>
 
-    <!-- 画像1枚 -->
+    <!-- 画像 -->
     <div class="block">
       <label class="label">画像（任意）</label>
       <input type="file" id="imageInput" accept="image/*">
@@ -68,22 +77,25 @@
       <textarea id="text" maxlength="100" placeholder="ここに言葉を入れる"></textarea>
     </div>
 
-    <!-- プレビュー -->
+    <!-- ▼ プレビュー -->
     <div id="preview" class="preview">
-      <!-- app.js で中身を書き換え -->
       <div id="previewCanvas"></div>
     </div>
 
-    <!-- 生成ボタン -->
+    <!-- ▼ 生成ボタン -->
     <button id="createBtn" class="btn-create">この手紙を作る</button>
   </div>
 
-  <!-- ▼ 表示モード：完成表示（/oneletter/XXXX） -->
+
+
+  <!-- ▼ 完成表示モード（/oneletter/XXXX） -->
   <div id="viewer" class="mode-section">
     <div id="letterView"></div>
   </div>
 
-  <!-- ▼ 初回オーバーレイ（作った人も贈られた人も共通） -->
+
+
+  <!-- ▼ 初回30秒オーバーレイ -->
   <div id="firstOverlay" class="overlay hidden">
     <div class="overlay-content">
       <div class="logo">One Letter</div>
