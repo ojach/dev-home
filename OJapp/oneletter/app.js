@@ -1,5 +1,5 @@
 // ==========================
-// One Letter  app.js (リアルタイム版)
+// One Letter  app.js 完成版
 // ==========================
 
 const path = location.pathname.split("/");
@@ -9,28 +9,26 @@ const id = path[2] || null;
 const creator = document.getElementById("creator");
 const viewer  = document.getElementById("viewer");
 const previewCanvas = document.getElementById("previewCanvas");
+const letterView = document.getElementById("letterView");
 const firstOverlay = document.getElementById("firstOverlay");
 
-// 入力要素
+// 入力
 const layoutSel = document.getElementById("layout");
 const bgColorInput = document.getElementById("bgColor");
 const fontSel = document.getElementById("font");
 const fontSizeSel = document.getElementById("fontSize");
+const writingSel = document.getElementById("writing");
 const textArea = document.getElementById("text");
 const imageInput = document.getElementById("imageInput");
 
-// キャッシュ
 let previewImageURL = null;
 
 
 // --------------------------
 // モード分岐
 // --------------------------
-if (!id) {
-  enterCreateMode();
-} else {
-  enterViewMode(id);
-}
+if (!id) enterCreateMode();
+else     enterViewMode(id);
 
 
 // --------------------------
@@ -39,33 +37,35 @@ if (!id) {
 function enterCreateMode() {
   creator.style.display = "block";
   viewer.style.display  = "none";
-  firstOverlay.style.display = "none";
 
-  console.log("[OneLetter] Create Mode");
-
-  // 初期プレビュー
   updatePreview();
 
-  // 変更監視
   layoutSel.addEventListener("change", updatePreview);
   bgColorInput.addEventListener("input", updatePreview);
   fontSel.addEventListener("change", updatePreview);
   fontSizeSel.addEventListener("change", updatePreview);
+  writingSel.addEventListener("change", updatePreview);
   textArea.addEventListener("input", updatePreview);
-  imageInput.addEventListener("change", handleImage);
+  imageInput.addEventListener("change", readImage);
 }
 
 
 // --------------------------
-// 表示モード（後で workers 連携）
+// 表示モード（後でworkersに繋ぐだけ）
 // --------------------------
 function enterViewMode(letterId) {
   creator.style.display = "none";
   viewer.style.display  = "block";
 
-  console.log("[OneLetter] View Mode: ", letterId);
+  letterView.innerHTML = `
+    <div style="
+      width:100%;height:100vh;
+      display:flex;justify-content:center;align-items:center;
+      background:#111;color:#fff;">
+      読み込み中…
+    </div>
+  `;
 
-  showTemporaryLetter();
   showFirstOverlay(letterId);
 }
 
@@ -73,56 +73,69 @@ function enterViewMode(letterId) {
 // --------------------------
 // プレビュー：画像読み込み
 // --------------------------
-function handleImage(e) {
+function readImage(e) {
   const file = e.target.files[0];
   if (!file) return;
-
   previewImageURL = URL.createObjectURL(file);
   updatePreview();
 }
 
 
 // --------------------------
-// ▼ プレビュー描画（最重要）
+// ▼ プレビュー描画（全レイアウト対応）
 // --------------------------
 function updatePreview() {
   const layout = layoutSel.value;
-  const bgColor = bgColorInput.value;
+  const bg = bgColorInput.value;
   const font = fontSel.value;
-  const fontSize = fontSizeSel.value;
-  const text = textArea.value;
+  const writing = writingSel.value;
+  const text = escapeHTML(textArea.value);
 
-  // フォントサイズ適正化
   let px = "18px";
-  if (fontSize === "small") px = "14px";
-  else if (fontSize === "large") px = "24px";
+  if (fontSizeSel.value === "small") px = "14px";
+  else if (fontSizeSel.value === "large") px = "24px";
 
-  // HTML生成
+  const tate = (writing === "vertical") ? "tategaki" : "";
+
   let html = "";
 
-  // レイアウト分岐
+  // ---- 上部画像＋文字 ----
   if (layout === "top") {
     html = `
-      <div class="layout-top" style="background:${bgColor}">
-        ${previewImageURL ? `<img src="${previewImageURL}" class="top-img">` : ''}
-        <p class="text ${font}" style="font-size:${px};">${escapeHTML(text)}</p>
+      <div class="layout-top" style="background:${bg}">
+        ${previewImageURL ? `<img src="${previewImageURL}" class="top-img">` : ""}
+        <p class="text ${font}" style="font-size:${px};">${text}</p>
       </div>
     `;
   }
 
+  // ---- 背景画像＋オーバーレイ ----
   else if (layout === "overlay") {
     html = `
       <div class="layout-overlay">
-        ${previewImageURL ? `<img src="${previewImageURL}" class="overlay-img">` : ''}
-        <p class="text overlay ${font}" style="font-size:${px};">${escapeHTML(text)}</p>
+        ${previewImageURL ? `<img src="${previewImageURL}" class="overlay-img">` : ""}
+        <p class="text overlay ${font}" style="font-size:${px};">${text}</p>
       </div>
     `;
   }
 
+  // ---- 文字のみ ----
   else if (layout === "text") {
     html = `
-      <div class="layout-text" style="background:${bgColor}">
-        <p class="text only ${font}" style="font-size:${px};">${escapeHTML(text)}</p>
+      <div class="layout-text" style="background:${bg}">
+        <p class="text ${font} ${tate}" style="font-size:${px};">${text}</p>
+      </div>
+    `;
+  }
+
+  // ---- 絵日記（額縁＋縦書き対応）----
+  else if (layout === "diary") {
+    html = `
+      <div class="layout-diary" style="--bg:${bg}">
+        <div class="diary-frame">
+          ${previewImageURL ? `<img src="${previewImageURL}">` : ""}
+        </div>
+        <p class="text ${font} ${tate}" style="font-size:${px};">${text}</p>
       </div>
     `;
   }
@@ -132,33 +145,19 @@ function updatePreview() {
 
 
 // --------------------------
-// HTMLサニタイズ（XSS防止）
-// --------------------------
-function escapeHTML(str){
-  return str.replace(/[&<>"']/g, m => ({
-    "&":"&amp;", "<":"&lt;", ">":"&gt;",
-    '"':"&quot;", "'":"&#39;"
-  }[m]));
-}
-
-
-// --------------------------
-// ダミー（後で workers へ）
-// --------------------------
-function showTemporaryLetter() {
-  viewer.innerHTML = `
-    <div style="
-      width:100%;height:100vh;
-      display:flex;justify-content:center;align-items:center;
-      background:#111;color:#fff;">
-      読み込み中…
-    </div>`;
-}
-
 function showFirstOverlay(letterId) {
   const key = "oneletter_opened_" + letterId;
   if (!localStorage.getItem(key)) {
     firstOverlay.classList.remove("hidden");
     localStorage.setItem(key, "1");
   }
+}
+
+
+// --------------------------
+function escapeHTML(str) {
+  return str.replace(/[&<>"']/g, m => ({
+    "&":"&amp;", "<":"&lt;", ">":"&gt;",
+    '"':"&quot;", "'":"&#39;"
+  }[m]));
 }
