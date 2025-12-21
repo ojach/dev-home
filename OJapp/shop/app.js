@@ -219,7 +219,7 @@ async function renderShop() {
       list.appendChild(card);
     });
 
-}
+
 
     // ===============================
     // 商品クリック → 詳細へ
