@@ -7,8 +7,8 @@ document.getElementById("submit").addEventListener("click", async () => {
   const price = document.getElementById("price").value;
   const visible = document.getElementById("visible").value;
 
-  if (!file || !title || !author) {
-    alert("画像・タイトル・作者名は必須です！");
+  if (!file || !title) {
+    alert("画像・タイトルは必須です！");
     return;
   }
 
