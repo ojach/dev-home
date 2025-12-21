@@ -149,37 +149,20 @@ function animateCards() {
 // ============================================
 // お気に入りロード
 // ============================================
-async function loadFavorites() {
-  try {
-    const res = await fetch(`${API_BASE}/shop/api/items`);
-    const data = await res.json();
+function loadFavorites() {
 
-    // items に favCount を反映
-    data.forEach(f => {
-      const item = items.find(i => i.product_id === f.id);
-      if (item) item.favCount = Number(f.count || 0);
-    });
+  // 各商品の♡状態を復元
+  document.querySelectorAll(".fav-btn").forEach(btn => {
+    const id = btn.dataset.id;
+    const key = `fav_${FAV_VERSION}_${id}`;
 
-    // 表示中の数値を更新
-    data.forEach(f => {
-      const el = document.getElementById(`fav-${f.id}`);
-      if (el) el.textContent = f.count;
-    });
-
-    // ローカル保存された♡を反映
-    document.querySelectorAll(".fav-btn").forEach(btn => {
-      const id = btn.dataset.id;
-      const key = `fav_${FAV_VERSION}_${id}`;
-      if (localStorage.getItem(key)) {
-        btn.textContent = "❤️";
-        btn.style.color = "#ff4b7d";
-      }
-    });
-
-  } catch (e) {
-    console.error("fav load error", e);
-  }
+    if (localStorage.getItem(key)) {
+      btn.textContent = "❤️";
+      btn.style.color = "#ff4b7d";
+    }
+  });
 }
+
 
 
 
@@ -217,32 +200,33 @@ function renderShop() {
       <div class="item-author">by ${item.author}</div>
     `;
 
-    // 商品クリック
-    card.addEventListener("click", e => {
-      if (e.target.classList.contains("fav-btn")) return;
-      sessionStorage.setItem("ojapp_scroll_position", window.scrollY);
-      location.href = `/OJapp/shop/product/?id=${id}`;
-    });
-
-    // ♡ クリック
     card.querySelector(".fav-btn").addEventListener("click", async e => {
-      e.stopPropagation();
-      const key = `fav_${FAV_VERSION}_${id}`;
+  e.stopPropagation();
+  const key = `fav_${FAV_VERSION}_${id}`;
 
-      if (localStorage.getItem(key)) return;
+  // 連続押し禁止
+  if (localStorage.getItem(key)) return;
 
-      const res = await fetch(`${API_BASE}/shop/api/items`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ id })
-      });
+  // お気に入りAPIへPOST
+  const res = await fetch("https://ojshop-fav.trc-wasps.workers.dev/", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ id })
+  });
 
-      const data = await res.json();
-      document.getElementById(`fav-${id}`).textContent = data.count;
-      localStorage.setItem(key, "true");
-      e.target.textContent = "❤️";
-      e.target.style.color = "#ff4b7d";
-    });
+  const data = await res.json();
+
+  // ハート数を反映
+  document.getElementById(`fav-${id}`).textContent = data.count;
+
+  // ローカル保存（押した記録）
+  localStorage.setItem(key, "true");
+
+  // ボタンを赤く
+  e.target.textContent = "❤️";
+  e.target.style.color = "#ff4b7d";
+});
+
 
     grid.appendChild(card);
   });
@@ -281,9 +265,12 @@ async function renderRecommend() {
   box.querySelectorAll(".recommend-item").forEach(card => {
     card.addEventListener("click", () => {
       const id = card.dataset.id;
-      location.href = `/OJapp/shop/product/?id=${id
+      location.href = `/OJapp/shop/product/?id=${id}`;
+    });
+  });
+}
 
-
+renderRecommend();
 
 // ============================================
 // 横スクロールおすすめ
