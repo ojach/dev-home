@@ -1,7 +1,7 @@
-// ★Routeを切ってるので、本番は ojach.com に投げるのが一番ラク
+// ========== 設定 ==========
 const API_ENDPOINT = "https://ojach.com/oneletter/api/create";
 
-// === DOM取得 ===
+// ========== DOM ==========
 const imageInput = document.getElementById("imageInput");
 const preview = document.getElementById("preview");
 const textInput = document.getElementById("letterText");
@@ -11,32 +11,25 @@ const createBtn = document.getElementById("createBtn");
 const count = document.getElementById("count");
 const resultArea = document.getElementById("resultArea");
 
-// === リアルタイムプレビュー DOM ===
+// ▼ 全オプション
+const optTemplate = document.querySelectorAll('input[name="template"]');
+const optFont = document.querySelectorAll('input[name="font"]');
+const optWriting = document.querySelectorAll('input[name="writing"]');
+const optSize = document.querySelectorAll('input[name="size"]');
+const bgInput = document.getElementById("bg");
+
+// ▼ リアルタイムプレビュー要素
 const liveImage = document.getElementById("liveImage");
 const liveText  = document.getElementById("liveText");
 const liveFrom  = document.getElementById("liveFrom");
+const liveWrap  = document.getElementById("liveWrap");
 
-// === その他 ===
 let imageBlob = null;
 
 
-// ======================================================
-// 文字入力イベント
-// ======================================================
-textInput.addEventListener("input", () => {
-  count.textContent = textInput.value.length;
-  liveText.textContent = textInput.value;  // ← リアルタイム反映
-  validate();
-});
-
-fromInput.addEventListener("input", () => {
-  liveFrom.textContent = fromInput.value ? `— ${fromInput.value}` : "";
-});
-
-
-// ======================================================
-// 画像選択 → 中央トリム＆512pxに変換
-// ======================================================
+// ==============================
+// 画像処理（中央トリム512）
+// ==============================
 imageInput.addEventListener("change", () => {
   const file = imageInput.files[0];
   if (!file) return;
@@ -59,10 +52,10 @@ imageInput.addEventListener("change", () => {
     canvas.toBlob(blob => {
       imageBlob = blob;
 
-      // プレビュー
+      // アップロードプレビュー
       preview.src = URL.createObjectURL(blob);
 
-      // リアルタイムプレビュー
+      // リアルタイム反映
       liveImage.src = URL.createObjectURL(blob);
       liveImage.style.display = "block";
 
@@ -72,31 +65,73 @@ imageInput.addEventListener("change", () => {
 });
 
 
-// ======================================================
-// UI設定の取得
-// ======================================================
-function getSetting(name) {
-  const el = document.querySelector(`[name="${name}"]:checked`);
+// ==============================
+// 入力イベント（リアルタイム反映）
+// ==============================
+textInput.addEventListener("input", () => {
+  count.textContent = textInput.value.length;
+  liveText.textContent = textInput.value;
+  validate();
+});
+
+titleInput.addEventListener("input", () => updateLive());
+fromInput.addEventListener("input", () => updateLive());
+
+// 全オプション変更時に更新
+[optTemplate, optFont, optWriting, optSize].forEach(list => {
+  list.forEach(el => el.addEventListener("change", updateLive));
+});
+
+bgInput.addEventListener("input", updateLive);
+
+
+// ==============================
+// UI設定取得
+// ==============================
+function getRadio(name) {
+  const el = document.querySelector(`input[name="${name}"]:checked`);
   return el ? el.value : null;
 }
 
-function getValue(id) {
-  const el = document.getElementById(id);
-  return el ? el.value : null;
+function updateLive() {
+  // テンプレ変更
+  const tpl = getRadio("template");
+  liveWrap.setAttribute("data-template", tpl);
+
+  // フォント
+  const font = getRadio("font");
+  liveWrap.style.fontFamily = font;
+
+  // 背景色
+  liveWrap.style.background = bgInput.value;
+
+  // 縦横
+  const writing = getRadio("writing");
+  liveText.style.writingMode = writing === "vertical" ? "vertical-rl" : "horizontal-tb";
+  liveText.style.textOrientation = writing === "vertical" ? "upright" : "mixed";
+
+  // サイズ
+  const size = getRadio("size");
+  liveText.style.fontSize =
+    size === "large" ? "22px" :
+    size === "small" ? "14px" : "18px";
+
+  // 差出人
+  liveFrom.textContent = fromInput.value ? `— ${fromInput.value}` : "";
 }
 
 
-// ======================================================
-// 作成ボタンの有効化
-// ======================================================
+// ==============================
+// バリデーション
+// ==============================
 function validate() {
   createBtn.disabled = !(imageBlob && textInput.value.trim().length > 0);
 }
 
 
-// ======================================================
-// OneLetter 作成本処理（POST）
-// ======================================================
+// ==============================
+// 作成処理
+// ==============================
 createBtn.addEventListener("click", async () => {
   const text = textInput.value.trim();
   const title = titleInput.value.trim();
@@ -104,23 +139,22 @@ createBtn.addEventListener("click", async () => {
 
   const fr = new FileReader();
   fr.onload = async () => {
-
     createBtn.disabled = true;
     createBtn.textContent = "作成中…";
 
     try {
       const payload = {
         image_base64: fr.result,
-        text: text,
-        title: title,
-        from: from,
+        text,
+        title,
+        from,
 
-        // === 追加設定 ===
-        template: getSetting("template"),
-        font: getSetting("font"),
-        bg: getValue("bg"),
-        writing: getSetting("writing"),
-        size: getSetting("size"),
+        // === 追加設定（サーバー側へ） ===
+        template: getRadio("template"),
+        font: getRadio("font"),
+        bg: bgInput.value,
+        writing: getRadio("writing"),
+        size: getRadio("size"),
       };
 
       const res = await fetch(API_ENDPOINT, {
@@ -151,9 +185,9 @@ createBtn.addEventListener("click", async () => {
 });
 
 
-// ======================================================
-// 結果表示
-// ======================================================
+// ==============================
+// 完成URL表示
+// ==============================
 function showResult(url) {
   resultArea.innerHTML = `
     <div class="result">
@@ -165,6 +199,7 @@ function showResult(url) {
       </div>
     </div>
   `;
+
   resultArea.scrollIntoView({ behavior: "smooth" });
 
   document.getElementById("copyBtn").onclick = async () => {
