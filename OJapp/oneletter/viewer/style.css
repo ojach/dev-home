@@ -40,3 +40,73 @@ html,body{
   #letter{padding-top:20px}
   #letter p{font-size:16px}
 }
+:root{
+  --bg:#fafafa;
+  --text:#222;
+  --overlay-bg:0.25;
+  --radius:18px;
+}
+
+body{
+  margin:0;
+  background:var(--bg);
+  color:var(--text);
+  font-family: var(--font);
+}
+
+body.font-sans{ --font: -apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif; }
+body.font-serif{ --font: "Hiragino Mincho ProN","Yu Mincho","Noto Serif JP",serif; }
+body.font-round{ --font: "Hiragino Maru Gothic ProN","M PLUS Rounded 1c","Rounded Mplus 1c",sans-serif; }
+
+body.size-s #text{ font-size:14px; }
+body.size-m #text{ font-size:17px; }
+body.size-l #text{ font-size:20px; }
+
+body.writing-v #text{
+  writing-mode: vertical-rl;
+  text-orientation: mixed;
+  line-height: 1.8;
+}
+
+/* 共通レイアウト */
+#wrap{ max-width:520px; margin:0 auto; padding:26px 20px 48px; }
+#img{ width:100%; border-radius:var(--radius); box-shadow:0 12px 28px rgba(0,0,0,.15); }
+#text{ line-height:2.0; letter-spacing:.02em; }
+
+/* テンプレ1：画像＋文字（現状） */
+body.tpl-img_text #img{ margin-bottom:22px; display:block; }
+body.tpl-img_text #text{ }
+
+/* テンプレ2：全体画像＋文字オーバーレイ */
+body.tpl-img_overlay #wrap{ max-width:900px; padding:0; }
+body.tpl-img_overlay #stage{
+  position:relative;
+  min-height:100vh;
+  display:flex;
+  align-items:stretch;
+}
+body.tpl-img_overlay #img{
+  position:absolute;
+  inset:0;
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  border-radius:0;
+  box-shadow:none;
+}
+body.tpl-img_overlay #overlay{
+  position:relative;
+  width:min(520px, calc(100% - 40px));
+  margin:0 auto;
+  padding:28px 20px;
+  background: rgba(255,255,255,var(--overlay-bg));
+  border-radius:22px;
+  backdrop-filter: blur(6px);
+}
+body.tpl-img_overlay[style*="--overlay-pos:top"] #stage{ align-items:flex-start; padding-top:26px; }
+body.tpl-img_overlay[style*="--overlay-pos:center"] #stage{ align-items:center; }
+body.tpl-img_overlay[style*="--overlay-pos:bottom"] #stage{ align-items:flex-end; padding-bottom:26px; }
+
+/* テンプレ3：文字のみ */
+body.tpl-text_only #img{ display:none; }
+body.tpl-text_only #wrap{ padding-top:40px; }
