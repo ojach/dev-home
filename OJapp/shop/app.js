@@ -218,7 +218,7 @@ async function renderShop() {
 
       list.appendChild(card);
     });
-}
+
 
 
     // ===============================
