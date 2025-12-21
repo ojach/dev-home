@@ -46,6 +46,17 @@ imageInput.addEventListener("change", () => {
   };
 });
 
+// ==== UI値取得 ====
+function getSetting(name) {
+  const el = document.querySelector(`[name="${name}"]:checked`);
+  return el ? el.value : null;
+}
+
+function getValue(id) {
+  const el = document.getElementById(id);
+  return el ? el.value : null;
+}
+
 function validate() {
   createBtn.disabled = !(imageBlob && textInput.value.trim().length > 0);
 }
@@ -67,6 +78,13 @@ createBtn.addEventListener("click", async () => {
           image_base64: fr.result,
           text,
           title
+
+            // === 追加項目 ===
+    template: getSetting("template"),
+    font: getSetting("font"),
+    bg: getValue("bg"),
+    writing: getSetting("writing"),
+    size: getSetting("size"),
         })
       });
 
