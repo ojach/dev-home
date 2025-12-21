@@ -275,39 +275,39 @@ async function renderShop() {
 // ============================================
 // 推しアイコン 2件（author_key対応版）
 // ============================================
-function renderRecommend(items) {
-  const box = document.getElementById("recommend-box");
-  if (!box) return;
+function renderRecommend() {
 
   const API_BASE = "https://ojshop-fav.trc-wasps.workers.dev";
 
-  // ランダム2件
-  const selected = [...items].sort(() => Math.random() - 0.5).slice(0, 2);
+  const res = await fetch(`${API_BASE}/shop/items`);
+  const items = await res.json();
 
-  box.innerHTML = selected.map(item => {
+  // visible=1 の中から、適当に 2 件だけ採用（後で選定ルール変えられる）
+  const recommendItems = items
+    .filter(item => item.visible === 1)
+    .slice(0, 2); // ← ここが「2件」
 
-    // 作者アイコンURL
-    const authorIcon = item.author_key
-      ? `${API_BASE}/shop/r2/authors/${item.author_key}.png`
-      : "/OJapp/shop/noimage_user.png";
+  const list = document.getElementById("recommend-list");
+  list.innerHTML = "";
 
-    return `
-      <div class="recommend-item" data-id="${item.product_id}">
-        <img src="${item.thumbnail}" class="recommend-thumb">
+  recommendItems.forEach(item => {
+    const thumbURL = item.thumbnail
+      ? `${API_BASE}/shop/r2/${item.thumbnail}`
+      : "/OJapp/shop/noimage.png";
 
-        <div class="recommend-author-block">
-          <img src="${authorIcon}" class="recommend-author-icon">
-          <div class="recommend-author-name">by ${item.author}</div>
-        </div>
-      </div>
+    const card = document.createElement("div");
+    card.className = "recommend-card";
+
+    card.innerHTML = `
+      <img src="${thumbURL}" class="recommend-thumb">
+      <div class="rec-title">${item.title}</div>
     `;
-  }).join("");
 
-  box.querySelectorAll(".recommend-item").forEach(card => {
     card.addEventListener("click", () => {
-      const id = card.dataset.id;
-      location.href = `/OJapp/shop/product/?id=${id}`;
+      location.href = `/OJapp/shop/product/?id=${item.product_id}`;
     });
+
+    list.appendChild(card);
   });
 }
 
@@ -318,32 +318,52 @@ renderRecommend();
 // 横スクロールおすすめ
 // ============================================
 async function loadScrollRows() {
-
   const API = "https://ojshop-fav.trc-wasps.workers.dev";
 
+  // ===============================
   // 人気（閲覧数順）
+  // ===============================
   const popularRes = await fetch(`${API}/shop/api/items?sort=views`);
   const popular = await popularRes.json();
 
   document.getElementById("scroll-popular").innerHTML =
-    popular.map(item => `
-      <div class="scroll-item" onclick="location.href='/OJapp/shop/product/?id=${item.product_id}'">
-        <img src="${item.thumbnail}" class="scroll-thumb">
-        <div class="scroll-title-text">${item.title}</div>
-      </div>
-    `).join("");
+    popular.map(item => {
 
+      const thumb = item.thumbnail
+        ? `${API}/shop/r2/${item.thumbnail}`
+        : "/OJapp/shop/noimage.png";
+
+      return `
+        <div class="scroll-item"
+             onclick="location.href='/OJapp/shop/product/?id=${item.product_id}'">
+          <img src="${thumb}" class="scroll-thumb">
+          <div class="scroll-title-text">${item.title}</div>
+        </div>
+      `;
+    }).join("");
+
+
+  // ===============================
   // おすすめ（ランダム）
+  // ===============================
   const recRes = await fetch(`${API}/shop/api/items?sort=recommended`);
   const rec = await recRes.json();
 
   document.getElementById("scroll-recommend").innerHTML =
-    rec.map(item => `
-      <div class="scroll-item" onclick="location.href='/OJapp/shop/product/?id=${item.product_id}'">
-        <img src="${item.thumbnail}" class="scroll-thumb">
-        <div class="scroll-title-text">${item.title}</div>
-      </div>
-    `).join("");
+    rec.map(item => {
+
+      const thumb = item.thumbnail
+        ? `${API}/shop/r2/${item.thumbnail}`
+        : "/OJapp/shop/noimage.png";
+
+      return `
+        <div class="scroll-item"
+             onclick="location.href='/OJapp/shop/product/?id=${item.product_id}'">
+          <img src="${thumb}" class="scroll-thumb">
+          <div class="scroll-title-text">${item.title}</div>
+        </div>
+      `;
+    }).join("");
 }
 
 loadScrollRows();
@@ -360,7 +380,8 @@ async function start() {
   renderRecommend();
   renderDynamicFilters();
   applyFilters();
-  await loadFavorites();       // ← 1回だけでOK
+  await loadFavorites(); 
+   renderShop();
 }
 
 document.addEventListener("DOMContentLoaded", start);
