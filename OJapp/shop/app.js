@@ -179,7 +179,8 @@ function renderShop() {
     const isFav = localStorage.getItem(key);
 
     const thumb = item.thumbnail || "/OJapp/shop/noimage.png";
-    const icon = `/OJapp/shop/author/${item.author}.png`;
+  const icon = `${API_BASE}/shop/r2/authors/${item.author_key}.png`;
+
 
     const card = document.createElement("div");
     card.className = "item-card";
