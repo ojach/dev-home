@@ -70,44 +70,43 @@ createBtn.addEventListener("click", async () => {
     createBtn.disabled = true;
     createBtn.textContent = "作成中…";
 
-    try {
-     const payload = {
-  image_base64: fr.result,
-  text: text,
-  title: title,
+  try {
+  const payload = {
+    image_base64: fr.result,
+    text: text,
+    title: title,
 
-  // === 追加設定 ===
-  template: getSetting("template"),
-  font: getSetting("font"),
-  bg: getValue("bg"),
-  writing: getSetting("writing"),
-  size: getSetting("size"),
-};
-
-const res = await fetch(API_ENDPOINT, {
-  method: "POST",
-  headers: { "Content-Type": "application/json" },
-  body: JSON.stringify(payload)
-});
-      });
-
-      const json = await res.json();
-      if (json.status === "ok") {
-        showResult(json.access_url);
-      } else {
-        alert("作成に失敗しました");
-      }
-    } catch (e) {
-      alert("通信エラー");
-      console.error(e);
-    } finally {
-      createBtn.textContent = "One Letter を作る";
-      validate();
-    }
+    // === 追加設定 ===
+    template: getSetting("template"),
+    font: getSetting("font"),
+    bg: getValue("bg"),
+    writing: getSetting("writing"),
+    size: getSetting("size"),
   };
 
-  fr.readAsDataURL(imageBlob);
-});
+  const res = await fetch(API_ENDPOINT, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload)
+  });
+
+  const json = await res.json();
+
+  if (json.status === "ok") {
+    showResult(json.access_url);
+  } else {
+    alert("作成に失敗しました");
+  }
+
+} catch (e) {
+  alert("通信エラー");
+  console.error(e);
+
+} finally {
+  createBtn.textContent = "One Letter を作る";
+  validate();
+}
+
 
 function showResult(url) {
   resultArea.innerHTML = `
