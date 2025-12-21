@@ -1,8 +1,6 @@
 // ★Routeを切ってるので、本番は ojach.com に投げるのが一番ラク
 const API_ENDPOINT = "https://ojach.com/oneletter/api/create";
 
-
-
 const imageInput = document.getElementById("imageInput");
 const preview = document.getElementById("preview");
 const textInput = document.getElementById("letterText");
@@ -28,7 +26,6 @@ imageInput.addEventListener("change", () => {
   reader.readAsDataURL(file);
 
   img.onload = () => {
-    // 中央トリム＋512出力
     const side = Math.min(img.width, img.height);
     const sx = (img.width - side) / 2;
     const sy = (img.height - side) / 2;
@@ -61,53 +58,7 @@ function validate() {
   createBtn.disabled = !(imageBlob && textInput.value.trim().length > 0);
 }
 
-createBtn.addEventListener("click", async () => {
-  const text = textInput.value.trim();
-  const title = titleInput.value.trim();
-
-  const fr = new FileReader();
-  fr.onload = async () => {
-    createBtn.disabled = true;
-    createBtn.textContent = "作成中…";
-
-  try {
-  const payload = {
-    image_base64: fr.result,
-    text: text,
-    title: title,
-
-    // === 追加設定 ===
-    template: getSetting("template"),
-    font: getSetting("font"),
-    bg: getValue("bg"),
-    writing: getSetting("writing"),
-    size: getSetting("size"),
-  };
-
-  const res = await fetch(API_ENDPOINT, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(payload)
-  });
-
-  const json = await res.json();
-
-  if (json.status === "ok") {
-    showResult(json.access_url);
-  } else {
-    alert("作成に失敗しました");
-  }
-
-} catch (e) {
-  alert("通信エラー");
-  console.error(e);
-
-} finally {
-  createBtn.textContent = "One Letter を作る";
-  validate();
-}
-
-
+// ==== ★ Show Result（外に出してOK） ====
 function showResult(url) {
   resultArea.innerHTML = `
     <div class="result">
@@ -126,4 +77,59 @@ function showResult(url) {
     alert("コピーしました");
   };
 }
-  }
+
+// =======================
+// ★ Createボタンクリック
+// =======================
+createBtn.addEventListener("click", async () => {
+  const text = textInput.value.trim();
+  const title = titleInput.value.trim();
+
+  const fr = new FileReader();
+  fr.onload = async () => {
+
+    createBtn.disabled = true;
+    createBtn.textContent = "作成中…";
+
+    try {
+      const payload = {
+        image_base64: fr.result,
+        text: text,
+        title: title,
+
+        // === 追加設定 ===
+        template: getSetting("template"),
+        font: getSetting("font"),
+        bg: getValue("bg"),
+        writing: getSetting("writing"),
+        size: getSetting("size"),
+      };
+
+      const res = await fetch(API_ENDPOINT, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
+      });
+
+      const json = await res.json();
+
+      if (json.status === "ok") {
+        showResult(json.access_url);
+      } else {
+        alert("作成に失敗しました");
+      }
+
+    } catch (e) {
+      alert("通信エラー");
+      console.error(e);
+
+    } finally {
+      createBtn.textContent = "One Letter を作る";
+      validate();
+    }
+
+  }; // ← fr.onload の閉じ
+
+  fr.readAsDataURL(imageBlob);
+
+}); // ← createBtn の閉じ
