@@ -8,6 +8,10 @@ const titleInput = document.getElementById("letterTitle");
 const createBtn = document.getElementById("createBtn");
 const count = document.getElementById("count");
 const resultArea = document.getElementById("resultArea");
+// ==== リアルタイムプレビュー DOM ====
+const liveImage = document.getElementById("liveImage");
+const liveText = document.getElementById("liveText");
+const liveFrom = document.getElementById("liveFrom");
 
 let imageBlob = null;
 
