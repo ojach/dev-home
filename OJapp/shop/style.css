@@ -751,3 +751,51 @@ input:focus {
   color: #777;
 }
 
+.scroll-section {
+  margin: 28px 0;
+}
+
+.scroll-title {
+  font-size: 18px;
+  font-weight: 700;
+  margin: 0 0 8px 4px;
+}
+
+.scroll-wrap {
+  display: flex;
+  overflow-x: auto;
+  gap: 12px;
+  padding: 4px;
+  scroll-snap-type: x mandatory;
+}
+
+.scroll-wrap::-webkit-scrollbar {
+  display: none;
+}
+
+.scroll-item {
+  min-width: 140px;
+  flex-shrink: 0;
+  background: #fff;
+  border-radius: 12px;
+  overflow: hidden;
+  scroll-snap-align: start;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+  transition: transform 0.15s;
+}
+
+.scroll-item:active {
+  transform: scale(0.95);
+}
+
+.scroll-thumb {
+  width: 100%;
+  height: 100px;
+  object-fit: cover;
+}
+
+.scroll-title-text {
+  padding: 8px;
+  font-size: 14px;
+  font-weight: 600;
+}
