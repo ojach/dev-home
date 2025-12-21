@@ -304,29 +304,36 @@ function renderRecommend() {
 
 
 // ============================================
-// 横スクロールおすすめ（5件）
+// 横スクロールおすすめ
 // ============================================
-function renderRecommendMore() {
-  const box = document.getElementById("recommend-more");
-  if (!box) return;
+async function loadScrollRows() {
 
-  const selected = [...items].sort(() => Math.random() - 0.5).slice(0, 5);
+  // 人気（閲覧数順）
+  const popularRes = await fetch("/shop/api/items?sort=views");
+  const popular = await popularRes.json();
 
-  box.innerHTML = selected.map(i => `
-    <div class="recommend-more-item" data-id="${i.product_id}">
-      <img src="${i.thumbnail}" class="recommend-more-thumb">
-      <div class="recommend-more-title">${i.title}</div>
-      <div class="recommend-more-author">by ${i.author}</div>
+  const popWrap = document.getElementById("scroll-popular");
+  popWrap.innerHTML = popular.map(item => `
+    <div class="scroll-item" onclick="location.href='/shop/item/?id=${item.product_id}'">
+      <img src="${item.thumbnail}" class="scroll-thumb">
+      <div class="scroll-title-text">${item.title}</div>
     </div>
   `).join("");
 
-  box.querySelectorAll(".recommend-more-item").forEach(card => {
-    card.addEventListener("click", () => {
-      const id = card.dataset.id;
-      location.href = `/OJapp/shop/product/?id=${id}`;
-    });
-  });
+  // おすすめ（ランダム）
+  const recRes = await fetch("/shop/api/items?sort=recommended");
+  const rec = await recRes.json();
+
+  const recWrap = document.getElementById("scroll-recommend");
+  recWrap.innerHTML = rec.map(item => `
+    <div class="scroll-item" onclick="location.href='/shop/item/?id=${item.product_id}'">
+      <img src="${item.thumbnail}" class="scroll-thumb">
+      <div class="scroll-title-text">${item.title}</div>
+    </div>
+  `).join("");
 }
+
+loadScrollRows();
 
 
 
