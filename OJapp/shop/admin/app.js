@@ -1,25 +1,20 @@
-// 商品登録
-document.getElementById("submit-btn").addEventListener("click", async () => {
+document.getElementById("submit").addEventListener("click", async () => {
 
-  const designer = localStorage.getItem("ojshop-admin-designer");
-  if (!designer) {
-    alert("ログイン情報がありません");
+  const file = document.getElementById("thumb").files[0];
+  const title = document.getElementById("title").value;
+  const author = document.getElementById("author").value;
+  const category = document.getElementById("category").value;
+  const price = document.getElementById("price").value;
+  const visible = document.getElementById("visible").value;
+
+  if (!file || !title || !author) {
+    alert("画像・タイトル・作者名は必須です！");
     return;
   }
 
-  const author = designer;
-  const author_key = base64url(author);
-
-  const title = document.getElementById("title").value;
-  const product_url = document.getElementById("product_url").value;
-  const category = document.getElementById("category").value;
-  const price = Number(document.getElementById("price").value || 0);
-
-  // product_id は Worker側で生成してもいいが、今はフロントで生成している想定
+  // ★ ここで product_id を1回生成して変数として保持
   const product_id = crypto.randomUUID();
-
-  // サムネのパス（R2 側に既にアップロード済みの前提）
-  const thumbnail = `thumbs/${author_key}/${product_id}.png`;
+  const author_key = encodeAuthorName(author);
 
   const payload = {
     product_id,
@@ -27,30 +22,27 @@ document.getElementById("submit-btn").addEventListener("click", async () => {
     author,
     author_key,
     category,
-    product_url,
-    price,
-    thumbnail
+    product_url: "",
+    price: Number(price),
+    thumbnail: `thumbs/${author_key}/${product_id}.png`   // ★ ここで正しく使える
   };
 
-  console.log("送信JSON:", payload);
+  const res = await fetch(
+    "https://ojshop-fav.trc-wasps.workers.dev/shop/admin/item",
+    {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload)
+    }
+  );
 
-  const res = await fetch(`${API_BASE}/shop/admin/item`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(payload),
-  });
+  const json = await res.json();
+  const box = document.getElementById("result");
+  box.style.display = "block";
 
-  const json = await res.json().catch(() => {
-    console.error("JSONとして読み込み失敗", res);
-    alert("登録失敗：サーバーがJSONを返しませんでした");
-    return;
-  });
-
-  if (!json || !json.ok) {
-    alert("商品登録に失敗しました（Worker側エラー）");
-    console.error(json);
-    return;
+  if (json.ok) {
+    box.innerHTML = `登録完了！<br>product_id：<b>${json.product_id}</b>`;
+  } else {
+    box.innerHTML = "エラーが発生しました。";
   }
-
-  alert("登録完了！");
 });
