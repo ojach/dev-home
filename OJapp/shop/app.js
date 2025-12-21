@@ -167,39 +167,51 @@ function loadFavorites() {
 
 
 // ============================================
-// 商品グリッド描画
+// 商品一覧レンダー（author_key対応版）
 // ============================================
-function renderShop() {
-  const grid = document.querySelector(".shop-grid");
-  grid.innerHTML = "";
+function renderShop(items) {
+  const box = document.getElementById("items-box");
+  if (!box) return;
 
-  viewItems.forEach(item => {
-    const id = item.product_id;
-    const key = `fav_${FAV_VERSION}_${id}`;
-    const isFav = localStorage.getItem(key);
+  const API_BASE = "https://ojshop-fav.trc-wasps.workers.dev";
 
-    const thumb = item.thumbnail || "/OJapp/shop/noimage.png";
-  const icon = `${API_BASE}/shop/r2/authors/${item.author_key}.png`;
+  box.innerHTML = items.map(item => {
 
+    // 作者アイコンURL（必ず author_key を使う）
+    const authorIcon = item.author_key
+      ? `${API_BASE}/shop/r2/authors/${item.author_key}.png`
+      : "/OJapp/shop/noimage_user.png"; // ない場合の保険
 
-    const card = document.createElement("div");
-    card.className = "item-card";
+    return `
+      <div class="item-card" data-id="${item.product_id}">
+        <img src="${item.thumbnail}" class="item-thumb">
 
-    card.innerHTML = `
-      <div class="item-thumb-box">
-        <img src="${thumb}" class="item-thumb">
-        <img src="${icon}" class="author-icon">
+        <div class="item-info">
+          <div class="item-title">${item.title}</div>
+
+          <div class="item-meta">
+            <img src="${authorIcon}" class="author-icon">
+            <span class="author-name">${item.author}</span>
+          </div>
+
+          <div class="item-bottom">
+            <span class="price">¥${item.price}</span>
+            <span class="fav-count">❤️ ${item.favorite_count}</span>
+          </div>
+        </div>
       </div>
-      <div class="item-title">${item.title}</div>
-      <div class="item-price-line">
-        <span class="item-price">¥${item.price}</span>
-        <span class="fav-btn" data-id="${id}" style="color:${isFav ? "#ff4b7d" : "#999"}">
-          ${isFav ? "❤️" : "♡"}
-        </span>
-        <span class="fav-count" id="fav-${id}">0</span>
-      </div>
-      <div class="item-author">by ${item.author}</div>
     `;
+  }).join("");
+
+  // 商品クリック → 詳細へ
+  box.querySelectorAll(".item-card").forEach(card => {
+    card.addEventListener("click", () => {
+      const id = card.dataset.id;
+      location.href = `/OJapp/shop/product/?id=${id}`;
+    });
+  });
+}
+
 
     card.querySelector(".fav-btn").addEventListener("click", async e => {
   e.stopPropagation();
@@ -238,31 +250,36 @@ function renderShop() {
 
 
 // ============================================
-// 今日のおすすめ（2件）
+// 推しアイコン 2件（author_key対応版）
 // ============================================
-async function renderRecommend() {
-
+function renderRecommend(items) {
   const box = document.getElementById("recommend-box");
   if (!box) return;
 
-  const API = "https://ojshop-fav.trc-wasps.workers.dev/shop/api/items";
+  const API_BASE = "https://ojshop-fav.trc-wasps.workers.dev";
 
-  // Workers API（ランダム）
-  const res = await fetch(`${API}?sort=recommended`);
-  const data = await res.json();
+  // ランダム2件
+  const selected = [...items].sort(() => Math.random() - 0.5).slice(0, 2);
 
-  // 上位2件を使用
-  const selected = data.slice(0, 2);
+  box.innerHTML = selected.map(item => {
 
-  box.innerHTML = selected.map(i => `
-    <div class="recommend-item" data-id="${i.product_id}">
-      <img src="${i.thumbnail}" class="recommend-thumb">
-      <div class="recommend-title">${i.title}</div>
-      <div class="recommend-author">by ${i.author}</div>
-    </div>
-  `).join("");
+    // 作者アイコンURL
+    const authorIcon = item.author_key
+      ? `${API_BASE}/shop/r2/authors/${item.author_key}.png`
+      : "/OJapp/shop/noimage_user.png";
 
-  // クリックで商品ページへ
+    return `
+      <div class="recommend-item" data-id="${item.product_id}">
+        <img src="${item.thumbnail}" class="recommend-thumb">
+
+        <div class="recommend-author-block">
+          <img src="${authorIcon}" class="recommend-author-icon">
+          <div class="recommend-author-name">by ${item.author}</div>
+        </div>
+      </div>
+    `;
+  }).join("");
+
   box.querySelectorAll(".recommend-item").forEach(card => {
     card.addEventListener("click", () => {
       const id = card.dataset.id;
@@ -270,6 +287,7 @@ async function renderRecommend() {
     });
   });
 }
+
 
 renderRecommend();
 
