@@ -219,7 +219,7 @@ async function renderShop() {
       list.appendChild(card);
     });
 
-
+}
 
     // ===============================
     // 商品クリック → 詳細へ
@@ -261,7 +261,7 @@ async function renderShop() {
     });
 
     grid.appendChild(card);
-  });
+  
 
   // カード表示アニメ（元コードをそのまま呼ぶ）
   if (typeof animateCards === "function") {
