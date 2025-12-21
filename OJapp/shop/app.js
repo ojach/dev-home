@@ -308,29 +308,31 @@ function renderRecommend() {
 // ============================================
 async function loadScrollRows() {
 
+  const API = "https://ojshop-fav.trc-wasps.workers.dev";
+
   // 人気（閲覧数順）
-  const popularRes = await fetch("/shop/api/items?sort=views");
+  const popularRes = await fetch(`${API}/shop/api/items?sort=views`);
   const popular = await popularRes.json();
 
-  const popWrap = document.getElementById("scroll-popular");
-  popWrap.innerHTML = popular.map(item => `
-    <div class="scroll-item" onclick="location.href='/shop/item/?id=${item.product_id}'">
-      <img src="${item.thumbnail}" class="scroll-thumb">
-      <div class="scroll-title-text">${item.title}</div>
-    </div>
-  `).join("");
+  document.getElementById("scroll-popular").innerHTML =
+    popular.map(item => `
+      <div class="scroll-item" onclick="location.href='/OJapp/shop/product/?id=${item.product_id}'">
+        <img src="${item.thumbnail}" class="scroll-thumb">
+        <div class="scroll-title-text">${item.title}</div>
+      </div>
+    `).join("");
 
   // おすすめ（ランダム）
-  const recRes = await fetch("/shop/api/items?sort=recommended");
+  const recRes = await fetch(`${API}/shop/api/items?sort=recommended`);
   const rec = await recRes.json();
 
-  const recWrap = document.getElementById("scroll-recommend");
-  recWrap.innerHTML = rec.map(item => `
-    <div class="scroll-item" onclick="location.href='/shop/item/?id=${item.product_id}'">
-      <img src="${item.thumbnail}" class="scroll-thumb">
-      <div class="scroll-title-text">${item.title}</div>
-    </div>
-  `).join("");
+  document.getElementById("scroll-recommend").innerHTML =
+    rec.map(item => `
+      <div class="scroll-item" onclick="location.href='/OJapp/shop/product/?id=${item.product_id}'">
+        <img src="${item.thumbnail}" class="scroll-thumb">
+        <div class="scroll-title-text">${item.title}</div>
+      </div>
+    `).join("");
 }
 
 loadScrollRows();
