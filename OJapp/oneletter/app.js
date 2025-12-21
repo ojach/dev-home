@@ -126,3 +126,4 @@ function showResult(url) {
     alert("コピーしました");
   };
 }
+  }
