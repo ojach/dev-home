@@ -371,7 +371,7 @@ document.getElementById("submit").addEventListener("click", async () => {
 
   const file = document.getElementById("thumb").files[0];
   const title = document.getElementById("title").value;
-  const author = document.getElementById("author").value;  // hidden
+  const author = document.getElementById("author").value;
   const category = document.getElementById("category").value;
   const price = document.getElementById("price").value;
 
@@ -383,6 +383,27 @@ document.getElementById("submit").addEventListener("click", async () => {
   const product_id = crypto.randomUUID();
   const author_key = encodeAuthorName(author);
 
+  // ---------------------------
+  // ① 先にサムネだけ R2 にアップロード
+  // ---------------------------
+  const uploadRes = await fetch(
+    `https://ojshop-fav.trc-wasps.workers.dev/shop/admin/thumb?product_id=${product_id}&author_key=${author_key}`,
+    {
+      method: "POST",
+      body: file
+    }
+  );
+
+  const uploadJson = await uploadRes.json();
+
+  if (!uploadJson.ok) {
+    alert("サムネ画像のアップロードに失敗しました");
+    return;
+  }
+
+  // ---------------------------
+  // ② R2 保存パスを使って D1 に登録
+  // ---------------------------
   const payload = {
     product_id,
     title,
@@ -393,8 +414,6 @@ document.getElementById("submit").addEventListener("click", async () => {
     price: Number(price),
     thumbnail: `thumbs/${author_key}/${product_id}.png`
   };
-
-  console.log("送信payload:", payload);
 
   const res = await fetch(
     "https://ojshop-fav.trc-wasps.workers.dev/shop/admin/item",
@@ -415,6 +434,7 @@ document.getElementById("submit").addEventListener("click", async () => {
     box.innerHTML = "エラーが発生しました。";
   }
 });
+
 
 
 // ============================================
