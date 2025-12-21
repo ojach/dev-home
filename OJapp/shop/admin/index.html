@@ -245,50 +245,48 @@ document.addEventListener("DOMContentLoaded", async () => {
   const label = document.getElementById("author-icon-label");
 
   // ===== R2 に作者アイコンが存在するかチェック =====
-  const exists = await fetch(iconURL, { method: "HEAD" }).then(r => r.ok);
+(async () => {
+  const exists = await fetch(iconURL, { method: "HEAD" })
+    .then(r => r.ok)
+    .catch(() => false);
 
   if (exists) {
-    // ============================================
-    // すでに登録済み → UI を差し替える
-    // ============================================
+    // すでに登録済み → UI 切り替え
     box.innerHTML = `
       <h3 style="margin-bottom:10px;">作者アイコン</h3>
-
       <img src="${iconURL}"
-          style="width:120px;height:120px;border-radius:50%;object-fit:cover;margin-bottom:15px;">
-
+        style="width:120px;height:120px;border-radius:50%;object-fit:cover;margin-bottom:15px;">
       <p style="font-size:14px;margin-bottom:10px;">登録済みのアイコンです</p>
-
       <input type="file" id="author-icon-input" accept="image/*">
       <button class="submit-btn" id="author-icon-update">アイコンを変更する</button>
-
       <div class="result-box" id="author-icon-result" style="display:none;"></div>
     `;
 
-    // ===== アイコン更新処理 =====
-    document.getElementById("author-icon-update").addEventListener("click", async () => {
-      const file = document.getElementById("author-icon-input").files[0];
-      const result = document.getElementById("author-icon-result");
+    // 更新ボタン処理
+    document.getElementById("author-icon-update")
+      .addEventListener("click", async () => {
+        const file = document.getElementById("author-icon-input").files[0];
+        const result = document.getElementById("author-icon-result");
 
-      if (!file) {
-        alert("ファイルを選択してください！");
-        return;
-      }
+        if (!file) {
+          alert("ファイルを選択してください！");
+          return;
+        }
 
-      const res = await fetch(
-        `${API_BASE}/shop/admin/icon?author_key=${authorKey}`,
-        { method: "POST", body: file }
-      );
+        const res = await fetch(
+          `${API_BASE}/shop/admin/icon?author_key=${authorKey}`,
+          { method: "POST", body: file }
+        );
 
-      const json = await res.json();
-      result.style.display = "block";
+        const json = await res.json();
+        result.style.display = "block";
 
-      result.innerHTML = json.ok
-        ? "アイコンを更新しました！再読み込みしてください。"
-        : "更新に失敗しました。";
-    });
+        result.innerHTML = json.ok
+          ? "アイコンを更新しました！再読み込みしてください。"
+          : "更新に失敗しました。";
+      });
 
-    return; // 以降（初回UI）は実行しない
+    return; 
   }
 
 
