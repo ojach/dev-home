@@ -1,206 +1,197 @@
-<!-- すべてのページのヘッダーとフッターのコピペ用 -->
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-  <!-- ここに head-template.html をコピペ -->
-  <!-- ▼ OJapp 共通 HEAD（コピペ用） -->
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>OJapp | Webサイトをアプリ化したいけど、PWAは正直めんどくさい人へ</title>
-<meta name="title" content="Webサイトをアプリ化する仕組み｜Web-to-App 解説">
-<meta name="description" content="WebサイトをiPhoneのホーム画面にアプリとして追加する仕組みを解説。OJappの技術基盤やWeb-to-Appの概念を分かりやすく説明します。">
+<title>Webサイトをホーム画面にアイコン追加する方法【iPhone / Android】｜OJapp</title>
 
-<meta property="og:title" content="Web-to-App｜ホーム画面に追加の仕組み">
-<meta property="og:description" content="Webサイトをアプリ化する理論と OJapp による実装方法を解説。">
+<meta name="description" content="iPhoneやAndroidでWebサイトをホーム画面のアイコンとして追加する手順を、初心者向けにわかりやすく解説します。さらにOJappを使えば、URLをオリジナルアイコン付きのアプリとして作成できます。">
+
+<!-- OGP -->
+<meta property="og:title" content="Webサイトをホーム画面に追加する方法｜OJapp">
+<meta property="og:description" content="iPhone・Androidユーザー向け。Webサイトをホーム画面のアイコンに追加する方法を画像付きで解説。OJappを使えば、自分だけのオリジナルアプリアイコンも作れます。">
+<meta property="og:image" content="https://ojach.com/OJapp/ogp.png">
 <meta property="og:type" content="article">
-<meta property="og:image" content="https://github.ojach.com/OJapp/ogp.png">
-<meta name="robots" content="index, follow">
+<meta property="og:url" content="https://ojach.com/OJapp/web-to-app/">
 
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://ojach.com/OJapp/ogp.png">
+
+<!-- 構造化データ（Article） -->
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
-  "@type": "WebPage",
-  "name": "Web-to-App 解説",
-  "url": "https://github.ojach.com/OJapp/web-to-app/index.html",
-  "breadcrumb": {
-    "@type": "BreadcrumbList",
-    "itemListElement": [
-      {
-        "@type": "ListItem",
-        "position": 1,
-        "name": "OJapp",
-        "item": "https://github.ojach.com/OJapp/"
-      },
-      {
-        "@type": "ListItem",
-        "position": 2,
-        "name": "Web-to-App 解説"
-      }
-    ]
-  }
+  "@type": "Article",
+  "headline": "Webサイトをホーム画面にアイコン追加する方法【iPhone / Android】",
+  "description": "iPhoneやAndroidでWebサイトをホーム画面のアイコンとして追加する手順をわかりやすく解説。さらにOJappを使うと、オリジナルのアプリアイコンも作成できます。",
+  "image": "https://ojach.com/OJapp/ogp.png",
+  "author": {
+    "@type": "Organization",
+    "name": "OJapp Tools"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "OJapp Tools",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://ojach.com/OJapp/ogp.png"
+    }
+  },
+  "url": "https://ojach.com/OJapp/web-to-app/"
 }
 </script>
-<!-- ファビコン -->
-<link rel="icon" type="image/png" sizes="16x16" href="/OJapp/icon/favicon-16.png">
-<link rel="icon" type="image/png" sizes="32x32" href="/OJapp/icon/favicon-32.png">
-<link rel="icon" type="image/png" sizes="48x48" href="/OJapp/icon/favicon-48.png">
 
-<!-- iPhone ホームアイコン -->
-<link rel="apple-touch-icon" sizes="180x180" href="/OJapp/icon/icon-180.png">
+<link rel="stylesheet" href="../style-base.css">
 
-<!-- PWA（必要なら有効化） -->
-<!-- <link rel="manifest" href="/OJapp/manifest.json"> -->
+<style>
+body {
+  font-family: "Helvetica","Arial","YuGothic",sans-serif;
+  margin: 0;
+  background: #fff;
+  color: #222;
+}
 
-<meta name="theme-color" content="#2bb7ff">
+.header {
+  width: 100%;
+  height: 56px;
+  border-bottom: 1px solid #eee;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 16px;
+}
 
-<!-- 共通CSS -->
-<link rel="stylesheet" href="/OJapp/style.css">
-<!-- ダークモード呼ぶ -->
-<script src="/OJapp/darkmode.js"></script>
+.logo-link {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  text-decoration: none;
+  color: inherit;
+}
+
+.logo-img {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+}
+
+.logo-text {
+  font-size: 20px;
+  font-weight: bold;
+}
+
+.main {
+  width: 100%;
+  max-width: 680px;
+  margin: 0 auto;
+  padding: 24px;
+}
+
+h1 {
+  font-size: 26px;
+  font-weight: bold;
+}
+
+h2 {
+  margin-top: 32px;
+  font-size: 22px;
+  border-left: 6px solid #2bb7ff;
+  padding-left: 10px;
+}
+
+.step {
+  background: #f7f7f7;
+  padding: 16px;
+  border-radius: 10px;
+  margin: 16px 0;
+}
+
+ul li {
+  line-height: 1.9;
+}
+</style>
+
 </head>
-
 <body>
 
-<div id="header"></div>
-<script>
-fetch("/OJapp/header.html")
-  .then(r => r.text())
-  .then(h => document.getElementById("header").innerHTML = h);
-</script>
+<!-- Header -->
+<div class="header">
+  <a href="/OJapp/" class="logo-link">
+    <img src="/OJapp/icon/ojapp-logo.png" class="logo-img">
+    <span class="logo-text">OJapp Tools</span>
+  </a>
+</div>
 
 <div class="main">
-  <!-- ページ固有の内容を書く -->
-  <nav class="breadcrumb">
-  <a href="/OJapp/">OJapp</a> › 
-  <span>WebToApp</span>
-  </nav>
 
-  <h1>Webサイトをアプリ化したいけど、PWAは正直めんどくさい人へ</h1>
+<h1>Webサイトをホーム画面にアイコン追加する方法【iPhone / Android】</h1>
 
-  <p>
-    Webサイトを「アプリみたいに使いたい」。
-    ただそれだけなのに、調べ始めるとこうなる。
-  </p>
+<p>このページでは、スマホのブラウザで見ているWebサイトを、アプリのようにホーム画面へ追加する方法を分かりやすく解説します。</p>
 
+<p>さらに、<strong>OJapp を使えば、どんなURLでも好きな画像を使った“オリジナルアプリ”として作成できます。</strong></p>
+
+<h2>iPhoneでホーム画面に追加する方法（Safari）</h2>
+
+<div class="step">
   <ul>
-    <li>manifest？</li>
-    <li>HTTPS必須？</li>
-    <li>iOSとAndroidで挙動違う？</li>
-    <li>ホーム画面に追加したのに消える？</li>
-    <li>結局ちゃんと作らないとダメ？</li>
+    <li>Safari で開く</li>
+    <li>共有ボタン（□↑）をタップ</li>
+    <li>「ホーム画面に追加」を選択</li>
+    <li>名前を入力して「追加」</li>
   </ul>
+</div>
 
-  <p>
-    ……いや、そこまで本気じゃないねん。
-  </p>
+<h2>Androidでホーム画面に追加する方法（Chrome）</h2>
 
-  <p>
-    ちゃんとしたアプリを作りたい人、
-    完璧なPWAを作りたい人は、
-    ちゃんとPWAを作った方がいい。
-  </p>
-
-  <p>
-    でも、
-  </p>
-
+<div class="step">
   <ul>
-    <li>自分のサイトを、ちょっとアプリっぽく使いたい</li>
-    <li>ショップやツールの入口を、ホーム画面に置きたい</li>
-    <li>人に「このURL使って」って渡しやすくしたい</li>
+    <li>Chrome でサイトを開く</li>
+    <li>右上の「⋮（メニュー）」をタップ</li>
+    <li>「ホーム画面に追加」を選択</li>
+    <li>「追加」で完了</li>
   </ul>
+</div>
 
-  <p>
-    それだけなら、そこまでやらなくていい。
-  </p>
+<h2>アプリのように使える？</h2>
+<p>ホーム画面に追加すると、アプリとほぼ同じように起動できます。  
+サイトによっては「PWA」としてインストールでき、オフライン動作にも対応します。</p>
 
-  <h2>OJappは「入口だけ」を作る</h2>
+<h2>もっと自由に？ → OJapp が解決！</h2>
+<p>
+「ホーム画面に追加はしたいけど、<strong>アイコンがダサい</strong>…」  
+「<strong>自分だけのアプリっぽく</strong>見せたい」  
+という人のために作ったのが <strong>OJapp</strong>。
+</p>
 
-  <p>
-    OJappがやっているのは、Webサイトを作ることじゃない。
-  </p>
-
-  <p>
-    <strong>Webとホーム画面を繋ぐ「入口」を作るだけ。</strong>
-  </p>
-
+<div class="step">
+  <p><strong>OJapp なら：</strong></p>
   <ul>
-    <li>アイコンを決める</li>
-    <li>名前をつける</li>
-    <li>URLを入れる</li>
+    <li>好きな画像をアイコンにできる</li>
+    <li>URLを設定するだけ</li>
+    <li>「ホーム画面に追加」ボタン付きのページを自動生成</li>
   </ul>
+</div>
 
-  <p>
-    それだけで、自分専用の「アプリっぽい入口」ができる。
-  </p>
+<p><a href="/OJapp/" style="font-weight:bold; color:#2bb7ff;">→ OJapp（Webアプリ化ツール）を開く</a></p>
 
-  <p>
-    中身のWebは触らない。
-    サーバーもいじらない。
-    危ないこともしない。
-  </p>
+<h2>まとめ</h2>
 
-  <p>
-    だから楽だし、だから遊べる。
-  </p>
-
-  <h2>ちゃんとしたアプリじゃない。でも、それでいい。</h2>
-
-  <p>
-    OJappは万能じゃない。
-  </p>
-
-  <ul>
-    <li>オフラインでは動かない</li>
-    <li>ネイティブ機能は使えない</li>
-    <li>ストアに並ぶアプリにはならない</li>
-  </ul>
-
-  <p>
-    でも、
-  </p>
-
-  <ul>
-    <li>ホーム画面に置ける</li>
-    <li>見た目が揃う</li>
-    <li>人に渡せる</li>
-    <li>使うのが楽しい</li>
-  </ul>
-
-  <p>
-    それで十分な人は、意外と多い。
-  </p>
-
-  <h2>「作る」より「置く」ためのツール</h2>
-
-  <p>
-    OJappは、開発者向けツールじゃない。
-  </p>
-
-  <p>
-    <strong>
-      使うための道具。<br>
-      遊ぶための道具。
-    </strong>
-  </p>
-
-  <p>
-    ホーム画面をちょっと楽しくしたい人、
-    Webをもう一歩近くに置きたい人。
-  </p>
-
-  <p>
-    そういう人のための、小さな遊び場です。
-  </p>
+<ul>
+  <li>iPhoneでもAndroidでもWebサイトをホーム画面に追加できる</li>
+  <li>Safari / Chrome に標準搭載されている機能なので無料</li>
+  <li>もっと自由にしたければ OJapp が便利</li>
+</ul>
 
 </div>
 
+<!-- footer -->
 <div id="footer"></div>
 <script>
 fetch("/OJapp/footer.html")
   .then(r => r.text())
-  .then(h => document.getElementById("footer").innerHTML = h);
+  .then(html => footer.innerHTML = html);
 </script>
 
 </body>
