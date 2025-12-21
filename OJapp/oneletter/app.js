@@ -89,8 +89,6 @@ const res = await fetch(API_ENDPOINT, {
   headers: { "Content-Type": "application/json" },
   body: JSON.stringify(payload)
 });
-
-        })
       });
 
       const json = await res.json();
