@@ -82,61 +82,37 @@ function renderDynamicFilters() {
 // ============================================
 // ソート ＆ 絞り込み
 // ============================================
-function applyFilters() {
-  const cat = document.getElementById("filter-category").value;
-  const author = document.getElementById("filter-author").value;
-  const price = document.getElementById("filter-price").value;
+async function applyFilters() {
   const activeTab = document.querySelector(".shop-tab.active");
   const sort = activeTab ? activeTab.dataset.sort : "new";
 
-  let filtered = items.slice();
+  const API = "https://ojshop-fav.trc-wasps.workers.dev/shop/api/items";
 
-  // 絞り込み
-  if (cat !== "all") filtered = filtered.filter(i => i.category === cat);
-  if (author !== "all") filtered = filtered.filter(i => i.author === author);
-  if (price === "free") filtered = filtered.filter(i => i.price == 0);
-  if (price === "under500") filtered = filtered.filter(i => i.price <= 500);
-  if (price === "over500") filtered = filtered.filter(i => i.price >= 500);
+  // sort="fav" は Workers では "popular"
+  // sort="random" は "recommended"
+  let sortKey = sort;
+  if (sort === "fav") sortKey = "popular";
+  if (sort === "random") sortKey = "recommended";
 
-  // 完全ランダム
-  function shuffle(arr) {
-    const a = arr.slice();
-    for (let i = a.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [a[i], a[j]] = [a[j], a[i]];
-    }
-    return a;
-  }
+  // Workers APIを叩く！
+  const res = await fetch(`${API}?sort=${sortKey}`);
+  const data = await res.json();
 
-  if (sort !== "random") randomCache = null;
-
-  if (sort === "random") {
-    if (!filtered.length) {
-      viewItems = [];
-      renderShop();
-      return;
-    }
-    if (!randomCache) {
-      randomCache = shuffle(filtered).slice(0, 20);
-    }
-    viewItems = randomCache;
-    renderShop();
-    return;
-  }
-
-  // 新着順
-  if (sort === "new") {
-    filtered.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
-  }
-
-  // 人気順
-  if (sort === "fav") {
-    filtered.sort((a, b) => (b.favCount || 0) - (a.favCount || 0));
-  }
-
-  viewItems = filtered.slice(0, 20);
+  // data は items の配列
+  viewItems = data.slice(0, 20);
   renderShop();
 }
+document.querySelectorAll(".shop-tab").forEach(tab => {
+  tab.addEventListener("click", () => {
+
+    // active入れ替え
+    document.querySelectorAll(".shop-tab").forEach(t => t.classList.remove("active"));
+    tab.classList.add("active");
+
+    // ソート再実行
+    applyFilters();
+  });
+});
 
 
 
