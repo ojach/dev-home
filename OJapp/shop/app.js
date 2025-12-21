@@ -349,7 +349,6 @@ async function start() {
   renderRecommend();
   renderDynamicFilters();
   applyFilters();
-  renderRecommendMore();
   await loadFavorites();       // ← 1回だけでOK
 }
 
