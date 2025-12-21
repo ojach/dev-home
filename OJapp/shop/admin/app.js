@@ -18,7 +18,7 @@ export default {
     const img = form.get("thumbnail");
     const key = `thumbs/${author}/${product_id}.png`;
 
-    await env.SHOP_R2.put(key, img.stream(), {
+    await env.SHOP_IMAGES.put(key, img.stream(), {
       httpMetadata: { contentType: img.type }
     });
 
