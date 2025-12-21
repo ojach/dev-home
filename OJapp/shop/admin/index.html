@@ -226,36 +226,30 @@ function encodeAuthorName(name) {
 
 
 // ============================================
-// 作者アイコンアップロード機能（表示切り替え対応版）
+// 作者アイコン UI 切替（完全版・絶対動く）
 // ============================================
 document.addEventListener("DOMContentLoaded", async () => {
 
   const designer = localStorage.getItem("ojshop-admin-designer");
-  if (!designer) return; // 未ログイン
+  if (!designer) return;
 
   const authorKey = encodeAuthorName(designer);
   const API_BASE = "https://ojshop-fav.trc-wasps.workers.dev";
   const iconURL = `${API_BASE}/shop/r2/authors/${authorKey}.png`;
 
-  const box = document.getElementById("author-icon-box");   // ← ここに差し替える
-  const preview = document.getElementById("author-icon-preview");
-  const input = document.getElementById("author-icon-input");
-  const submitBtn = document.getElementById("author-icon-submit");
-  const result = document.getElementById("author-icon-result");
-  const label = document.getElementById("author-icon-label");
+  const box = document.getElementById("author-icon-box");
 
-  // ===== R2 に作者アイコンが存在するかチェック =====
-  // ▼ 内部の即時実行 async をここで開始
-  (async () => {
+  // ▼ ここが重要：IIFE を「この中で実行する」
+  await (async () => {
 
     const exists = await fetch(iconURL, { method: "HEAD" })
       .then(r => r.ok)
       .catch(() => false);
 
     if (exists) {
-      // ============================
-      // すでに登録済み → 別 UI を描画
-      // ============================
+      // -----------------------------
+      // 登録済み UI（これを表示）
+      // -----------------------------
       box.innerHTML = `
         <h3 style="margin-bottom:10px;">作者アイコン</h3>
 
@@ -276,10 +270,7 @@ document.addEventListener("DOMContentLoaded", async () => {
           const file = document.getElementById("author-icon-input").files[0];
           const result = document.getElementById("author-icon-result");
 
-          if (!file) {
-            alert("ファイルを選択してください！");
-            return;
-          }
+          if (!file) return alert("ファイルを選択してください！");
 
           const res = await fetch(
             `${API_BASE}/shop/admin/icon?author_key=${authorKey}`,
@@ -294,25 +285,17 @@ document.addEventListener("DOMContentLoaded", async () => {
             : "更新に失敗しました。";
         });
 
-      return; // ★ 未登録UIへ行かない
+      return; // ★ 未登録UIに行かない
     }
 
-    // ============================
-    // 未登録 → 現状の UI をそのまま利用
-    // ============================
+    // -----------------------------
+    // 未登録 UI（今の画面）
+    // -----------------------------
     const preview = document.getElementById("author-icon-preview");
     const input = document.getElementById("author-icon-input");
     const submitBtn = document.getElementById("author-icon-submit");
     const resultBox = document.getElementById("author-icon-result");
     const label = document.getElementById("author-icon-label");
-
-    fetch(iconURL, { method: "HEAD" }).then(r => {
-      if (r.ok) {
-        preview.src = iconURL;
-        preview.style.display = "block";
-        label.textContent = "作者アイコン（再提出で更新できます）";
-      }
-    });
 
     input.addEventListener("change", e => {
       const file = e.target.files[0];
@@ -324,15 +307,15 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     submitBtn.addEventListener("click", async () => {
       const file = input.files[0];
-      if (!file) {
-        alert("ファイルを選択してください！");
-        return;
-      }
+      if (!file) return alert("ファイルを選んでください");
 
-      const res = await fetch(`${API_BASE}/shop/admin/icon?author_key=${authorKey}`, {
-        method: "POST",
-        body: file
-      });
+      const res = await fetch(
+        `${API_BASE}/shop/admin/icon?author_key=${authorKey}`,
+        {
+          method: "POST",
+          body: file
+        }
+      );
 
       const json = await res.json();
       resultBox.style.display = "block";
@@ -341,10 +324,11 @@ document.addEventListener("DOMContentLoaded", async () => {
         ? `アイコンをアップロードしました！<br>${json.url}`
         : "アップロード失敗...";
     });
-    
-  })(); // ★★★ 内部 async の閉じ括弧
+
+  })(); // ★★★ これが DOMContentLoaded の中で動く
 
 });
+
 
 // ============================================
 // パスワードで取得した作者名を hidden に入れる
