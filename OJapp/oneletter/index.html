@@ -65,6 +65,55 @@
   <button id="createBtn" class="btn" disabled>One Letter を作る</button>
 
   <div id="resultArea"></div>
+  <!-- ▼▼▼ リアルタイムプレビュー ▼▼▼ -->
+<div id="previewArea" style="
+  margin-top: 40px;
+  padding: 20px;
+  border-radius: 16px;
+  background: #fafafa;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.06);
+  max-width: 520px;
+  margin-left: auto;
+  margin-right: auto;
+">
+  <div style="font-weight: bold; margin-bottom: 10px; font-size: 18px;">
+    📄 リアルタイムプレビュー
+  </div>
+
+  <div id="liveView" style="text-align:center;">
+
+    <!-- 画像プレビュー -->
+    <img id="liveImage" src="" style="
+      width: 100%;
+      max-width: 350px;
+      border-radius: 16px;
+      display: none;
+      margin-bottom: 20px;
+      box-shadow: 0 3px 14px rgba(0,0,0,0.12);
+    ">
+
+    <!-- 文章 -->
+    <div id="liveText" style="
+      font-size: 16px;
+      white-space: pre-wrap;
+      margin-top: 10px;
+      margin-bottom: 30px;
+      color: #444;
+      line-height: 1.7;
+    "></div>
+
+    <!-- 差出人 -->
+    <div id="liveFrom" style="
+      font-size: 14px;
+      color: #666;
+      text-align: right;
+      margin-top: 20px;
+    "></div>
+
+  </div>
+</div>
+<!-- ▲▲▲ リアルタイムプレビュー ▲▲▲ -->
+
 </div>
 
 <script type="module" src="app.js"></script>
