@@ -172,7 +172,7 @@ function loadFavorites() {
 async function renderShop() {
   const API_BASE = "https://ojshop-fav.trc-wasps.workers.dev";
 
-  const res = await fetch(`${API_BASE}/shop/items`);
+  const res = await fetch(`${API_BASE}/shop/api/items`);
   const items = await res.json();
 
   const list = document.getElementById("shop-list");
@@ -182,17 +182,14 @@ async function renderShop() {
     .filter(item => item.visible === 1) // 公開商品のみ
     .forEach(item => {
 
-      // サムネURL作成
       const thumbURL = item.thumbnail
         ? `${API_BASE}/shop/r2/${item.thumbnail}`
         : "/OJapp/shop/noimage.png";
 
-      // 作者アイコン
       const authorIcon = item.author_key
         ? `${API_BASE}/shop/r2/authors/${item.author_key}.png`
-        : "/OJapp/shop/noimage_user.png";
+        : "/OJapp/shop/noimage_user.png`;
 
-      // カードHTML
       const card = document.createElement("div");
       card.className = "shop-card";
 
@@ -211,62 +208,13 @@ async function renderShop() {
         </div>
       `;
 
-      // クリックで商品ページへ
+      // 商品ページへ
       card.addEventListener("click", () => {
         location.href = `/OJapp/shop/product/?id=${item.product_id}`;
       });
 
       list.appendChild(card);
     });
-
-
-
-    // ===============================
-    // 商品クリック → 詳細へ
-    // ===============================
-    card.addEventListener("click", e => {
-      if (e.target.classList.contains("fav-btn")) return;
-      sessionStorage.setItem("ojapp_scroll_position", window.scrollY);
-      location.href = `/OJapp/shop/product/?id=${id}`;
-    });
-
-    // ===============================
-    // ❤️ お気に入り
-    // ===============================
-    card.querySelector(".fav-btn").addEventListener("click", async e => {
-      e.stopPropagation();
-
-      const key = `fav_${FAV_VERSION}_${id}`;
-
-      // 二重押し禁止
-      if (localStorage.getItem(key)) return;
-
-      const res = await fetch(`${API_BASE}/`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ id })
-      });
-
-      const data = await res.json();
-
-      // 更新
-      document.getElementById(`fav-${id}`).textContent = data.count;
-
-      // 記録
-      localStorage.setItem(key, "true");
-
-      // 赤くする
-      e.target.textContent = "❤️";
-      e.target.style.color = "#ff4b7d";
-    });
-
-    grid.appendChild(card);
-  
-
-  // カード表示アニメ（元コードをそのまま呼ぶ）
-  if (typeof animateCards === "function") {
-    animateCards();
-  }
 }
 
 
