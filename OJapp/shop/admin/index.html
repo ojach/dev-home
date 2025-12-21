@@ -367,45 +367,45 @@ document.getElementById("thumb").addEventListener("change", e => {
 
 
 // ============================================
-// 商品登録処理
+// 商品登録処理（完全修正版）
 // ============================================
 document.getElementById("submit").addEventListener("click", async () => {
 
   const file = document.getElementById("thumb").files[0];
   const title = document.getElementById("title").value;
-  const author = document.getElementById("author").value;
+  const author = document.getElementById("author").value;  // hidden
   const category = document.getElementById("category").value;
   const price = document.getElementById("price").value;
-  const visible = document.getElementById("visible").value;
 
-  if (!file || !title || !author) {
-    alert("画像・タイトル・作者名は必須です！");
+  if (!file || !title) {
+    alert("画像・タイトルは必須です！");
     return;
   }
 
-const payload = {
-  product_id: crypto.randomUUID(),
-  title,
-  author,
-  author_key: encodeAuthorName(author),
-  category,
-  product_url: "",
-  price: Number(price),
-  thumbnail: `thumbs/${encodeAuthorName(author)}/${product_id}.png`
-};
+  const product_id = crypto.randomUUID();
+  const author_key = encodeAuthorName(author);
 
-const res = await fetch(
-  "https://ojshop-fav.trc-wasps.workers.dev/shop/admin/item",
-  {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(payload)
-  }
-);
+  const payload = {
+    product_id,
+    title,
+    author,
+    author_key,
+    category,
+    product_url: "",
+    price: Number(price),
+    thumbnail: `thumbs/${author_key}/${product_id}.png`
+  };
 
-const json = await res.json();
+  console.log("送信payload:", payload);
 
-  });
+  const res = await fetch(
+    "https://ojshop-fav.trc-wasps.workers.dev/shop/admin/item",
+    {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload)
+    }
+  );
 
   const json = await res.json();
   const box = document.getElementById("result");
