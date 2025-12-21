@@ -1,42 +1,47 @@
-// ========== 設定 ==========
+/***************************************************
+ * OJapp OneLetter — app.js 完全版
+ * すべての設定をリアルタイムプレビュー ＆ API 送信に反映
+ ***************************************************/
+
 const API_ENDPOINT = "https://ojach.com/oneletter/api/create";
 
-// ========== DOM ==========
+// 主要DOM
 const imageInput = document.getElementById("imageInput");
 const preview = document.getElementById("preview");
 const textInput = document.getElementById("letterText");
-const titleInput = document.getElementById("letterTitle");
 const fromInput = document.getElementById("letterFrom");
 const createBtn = document.getElementById("createBtn");
 const count = document.getElementById("count");
 const resultArea = document.getElementById("resultArea");
 
-// ▼ 全オプション
-const optTemplate = document.querySelectorAll('input[name="template"]');
-const optFont = document.querySelectorAll('input[name="font"]');
-const optWriting = document.querySelectorAll('input[name="writing"]');
-const optSize = document.querySelectorAll('input[name="size"]');
+// オプションDOM
 const bgInput = document.getElementById("bg");
 
-// ▼ リアルタイムプレビュー要素
+// ラジオグループ
+function getRadio(name) {
+  const el = document.querySelector(`input[name="${name}"]:checked`);
+  return el ? el.value : null;
+}
+
+// プレビューDOM
+const liveWrap = document.getElementById("liveWrap");
 const liveImage = document.getElementById("liveImage");
-const liveText  = document.getElementById("liveText");
-const liveFrom  = document.getElementById("liveFrom");
-const liveWrap  = document.getElementById("liveWrap");
+const liveText = document.getElementById("liveText");
+const liveFrom = document.getElementById("liveFrom");
 
 let imageBlob = null;
 
 
-// ==============================
-// 画像処理（中央トリム512）
-// ==============================
+/***************************************************
+ * 画像処理：512px 正方形にトリム
+ ***************************************************/
 imageInput.addEventListener("change", () => {
   const file = imageInput.files[0];
   if (!file) return;
 
   const img = new Image();
   const reader = new FileReader();
-  reader.onload = e => (img.src = e.target.result);
+  reader.onload = e => img.src = e.target.result;
   reader.readAsDataURL(file);
 
   img.onload = () => {
@@ -51,92 +56,115 @@ imageInput.addEventListener("change", () => {
 
     canvas.toBlob(blob => {
       imageBlob = blob;
-
-      // アップロードプレビュー
       preview.src = URL.createObjectURL(blob);
 
-      // リアルタイム反映
+      // リアルタイムプレビュー
       liveImage.src = URL.createObjectURL(blob);
       liveImage.style.display = "block";
 
       validate();
+      updatePreview();
     }, "image/png");
   };
 });
 
 
-// ==============================
-// 入力イベント（リアルタイム反映）
-// ==============================
+/***************************************************
+ * 入力イベント → リアルタイム反映
+ ***************************************************/
 textInput.addEventListener("input", () => {
   count.textContent = textInput.value.length;
   liveText.textContent = textInput.value;
   validate();
+  updatePreview();
 });
 
-titleInput.addEventListener("input", () => updateLive());
-fromInput.addEventListener("input", () => updateLive());
-
-// 全オプション変更時に更新
-[optTemplate, optFont, optWriting, optSize].forEach(list => {
-  list.forEach(el => el.addEventListener("change", updateLive));
+fromInput.addEventListener("input", () => {
+  liveFrom.textContent = fromInput.value ? `— ${fromInput.value}` : "";
+  updatePreview();
 });
 
-bgInput.addEventListener("input", updateLive);
+// すべてのオプションにイベントをつける
+["template","font","writing","size"].forEach(name => {
+  document.querySelectorAll(`input[name="${name}"]`)
+    .forEach(r => r.addEventListener("change", updatePreview));
+});
+
+bgInput.addEventListener("input", updatePreview);
 
 
-// ==============================
-// UI設定取得
-// ==============================
-function getRadio(name) {
-  const el = document.querySelector(`input[name="${name}"]:checked`);
-  return el ? el.value : null;
-}
+/***************************************************
+ * プレビュー全反映
+ ***************************************************/
+function updatePreview() {
 
-function updateLive() {
-  // テンプレ変更
+  // テンプレート適用
   const tpl = getRadio("template");
   liveWrap.setAttribute("data-template", tpl);
-
-  // フォント
-  const font = getRadio("font");
-  liveWrap.style.fontFamily = font;
 
   // 背景色
   liveWrap.style.background = bgInput.value;
 
-  // 縦横
-  const writing = getRadio("writing");
-  liveText.style.writingMode = writing === "vertical" ? "vertical-rl" : "horizontal-tb";
-  liveText.style.textOrientation = writing === "vertical" ? "upright" : "mixed";
+  // フォント
+  const font = getRadio("font");
+  liveWrap.style.fontFamily =
+    font === "serif" ? "serif" :
+    font === "round" ? "'Zen Maru Gothic', sans-serif" :
+    "sans-serif";
 
-  // サイズ
+  // 書字方向
+  const writing = getRadio("writing");
+  if (writing === "vertical") {
+    liveText.style.writingMode = "vertical-rl";
+    liveText.style.textOrientation = "upright";
+  } else {
+    liveText.style.writingMode = "horizontal-tb";
+    liveText.style.textOrientation = "mixed";
+  }
+
+  // 文字サイズ
   const size = getRadio("size");
   liveText.style.fontSize =
     size === "large" ? "22px" :
-    size === "small" ? "14px" : "18px";
+    size === "small" ? "14px" :
+    "18px";
 
-  // 差出人
-  liveFrom.textContent = fromInput.value ? `— ${fromInput.value}` : "";
+  // 画像表示 ON/OFF（テンプレに応じて）
+  liveImage.style.display =
+    tpl === "text_only" ? "none" : "block";
+
+  // img_overlay の場合は full style 化
+  if (tpl === "img_overlay") {
+    liveWrap.style.position = "relative";
+    liveImage.style.width = "100%";
+    liveImage.style.maxWidth = "100%";
+    liveText.style.position = "absolute";
+    liveText.style.bottom = "30px";
+    liveText.style.left = "20px";
+    liveText.style.right = "20px";
+    liveText.style.color = "white";
+    liveText.style.textShadow = "0 2px 6px rgba(0,0,0,0.4)";
+  } else {
+    // 通常レイアウトに戻す
+    liveText.style.position = "static";
+    liveText.style.color = "#444";
+    liveText.style.textShadow = "none";
+  }
 }
 
 
-// ==============================
-// バリデーション
-// ==============================
+/***************************************************
+ * バリデーション
+ ***************************************************/
 function validate() {
   createBtn.disabled = !(imageBlob && textInput.value.trim().length > 0);
 }
 
 
-// ==============================
-// 作成処理
-// ==============================
+/***************************************************
+ * POST: OneLetter 作成処理
+ ***************************************************/
 createBtn.addEventListener("click", async () => {
-  const text = textInput.value.trim();
-  const title = titleInput.value.trim();
-  const from  = fromInput.value.trim();
-
   const fr = new FileReader();
   fr.onload = async () => {
     createBtn.disabled = true;
@@ -145,31 +173,25 @@ createBtn.addEventListener("click", async () => {
     try {
       const payload = {
         image_base64: fr.result,
-        text,
-        title,
-        from,
+        text: textInput.value.trim(),
+        from: fromInput.value.trim(),
 
-        // === 追加設定（サーバー側へ） ===
         template: getRadio("template"),
         font: getRadio("font"),
         bg: bgInput.value,
         writing: getRadio("writing"),
-        size: getRadio("size"),
+        size: getRadio("size")
       };
 
       const res = await fetch(API_ENDPOINT, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {"Content-Type": "application/json"},
         body: JSON.stringify(payload)
       });
 
       const json = await res.json();
-
-      if (json.status === "ok") {
-        showResult(json.access_url);
-      } else {
-        alert("作成に失敗しました");
-      }
+      if (json.status === "ok") showResult(json.access_url);
+      else alert("作成に失敗しました");
 
     } catch (e) {
       alert("通信エラー");
@@ -185,9 +207,9 @@ createBtn.addEventListener("click", async () => {
 });
 
 
-// ==============================
-// 完成URL表示
-// ==============================
+/***************************************************
+ * 結果表示
+ ***************************************************/
 function showResult(url) {
   resultArea.innerHTML = `
     <div class="result">
@@ -195,15 +217,15 @@ function showResult(url) {
       <div class="url">${url}</div>
       <div class="row">
         <button id="copyBtn">📋 コピー</button>
-        <a class="openBtn" href="${url}" target="_blank" rel="noopener">開く</a>
+        <a class="openBtn" href="${url}" target="_blank">開く</a>
       </div>
     </div>
   `;
 
-  resultArea.scrollIntoView({ behavior: "smooth" });
-
-  document.getElementById("copyBtn").onclick = async () => {
-    await navigator.clipboard.writeText(url);
+  document.getElementById("copyBtn").onclick = () => {
+    navigator.clipboard.writeText(url);
     alert("コピーしました");
   };
+
+  resultArea.scrollIntoView({behavior: "smooth"});
 }
