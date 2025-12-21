@@ -1,38 +1,67 @@
 export default {
   async fetch(req, env) {
+
+    // POST 以外禁止
     if (req.method !== "POST") {
       return new Response("Method Not Allowed", { status: 405 });
     }
 
     const form = await req.formData();
 
+    // 商品ID生成
     const product_id = crypto.randomUUID();
+    const author = form.get("author");
 
-    const image = form.get("thumbnail");
-    const key = `thumb/${product_id}.jpg`;
+    // ================================
+    // サムネ受け取り → R2へ保存
+    // ================================
+    const img = form.get("thumbnail");
+    const key = `thumbs/${author}/${product_id}.png`;
 
-    await env.SHOP_R2.put(key, image.stream(), {
-      httpMetadata: { contentType: image.type }
+    await env.SHOP_R2.put(key, img.stream(), {
+      httpMetadata: { contentType: img.type }
     });
 
-    const thumbnail = `https://your-r2-domain/${key}`;
+    // 正しいR2配信URL
+    const thumbnailURL = `https://ojshop-fav.trc-wasps.workers.dev/shop/r2/${key}`;
 
-    await env.DB.prepare(`
-      INSERT INTO items
-      (product_id, title, author, category, price, visible, thumbnail)
-      VALUES (?, ?, ?, ?, ?, ?, ?)
-    `).bind(
+    // ================================
+    // 商品情報を Workers本体へ登録
+    // ================================
+    const body = {
       product_id,
-      form.get("title"),
-      form.get("author"),
-      form.get("category"),
-      Number(form.get("price")),
-      form.get("visible") ? 1 : 0,
-      thumbnail
-    ).run();
+      title: form.get("title"),
+      author,
+      category: form.get("category"),
+      price: Number(form.get("price") || 0),
+      visible: Number(form.get("visible") || 1),
+      thumbnail: thumbnailURL
+    };
 
-    return new Response(JSON.stringify({ ok: true, product_id }), {
-      headers: { "Content-Type": "application/json" }
-    });
+    const apiRes = await fetch(
+      "https://ojshop-fav.trc-wasps.workers.dev/shop/admin/item",
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body)
+      }
+    );
+
+    const dbResult = await apiRes.json();
+
+    // ================================
+    // フロントへ返却
+    // ================================
+    return new Response(
+      JSON.stringify({
+        ok: true,
+        product_id,
+        thumbnail: thumbnailURL,
+        db: dbResult
+      }),
+      {
+        headers: { "Content-Type": "application/json" }
+      }
+    );
   }
 };
