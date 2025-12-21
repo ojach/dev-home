@@ -188,7 +188,7 @@ async function renderShop() {
 
       const authorIcon = item.author_key
         ? `${API_BASE}/shop/r2/authors/${item.author_key}.png`
-        : "/OJapp/shop/noimage_user.png`;
+        : "/OJapp/shop/noimage_user.png";
 
       const card = document.createElement("div");
       card.className = "shop-card";
