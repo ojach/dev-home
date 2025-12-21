@@ -11,14 +11,12 @@
     background: #f7f9fc;
     padding: 20px;
   }
-
   h1 {
     text-align: center;
     margin-bottom: 20px;
     font-size: 24px;
     font-weight: 700;
   }
-
   .form-box {
     background: #ffffff;
     border-radius: 16px;
@@ -31,14 +29,12 @@
   .input-group {
     margin-bottom: 16px;
   }
-
   .input-group label {
     font-size: 14px;
     font-weight: 600;
     display: block;
     margin-bottom: 6px;
   }
-
   .input-group input,
   .input-group select {
     width: 100%;
@@ -73,9 +69,7 @@
     transition: 0.2s;
   }
 
-  .submit-btn:active {
-    opacity: 0.7;
-  }
+  .submit-btn:active { opacity: 0.7; }
 
   .result-box {
     text-align: center;
@@ -84,28 +78,96 @@
     color: #333;
     display: none;
   }
-  .logout-btn {
-  margin-top: 20px;
-  padding: 10px 18px;
-  background: #ff4b7d;
-  color: #fff;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  font-size: 14px;
-}
 
-.logout-btn:hover {
-  background: #ff2f68;
-}
+  .logout-btn {
+    margin-top: 20px;
+    padding: 10px 18px;
+    background: #ff4b7d;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 14px;
+  }
+  .logout-btn:hover { background: #ff2f68; }
 
 </style>
 </head>
-
 <body>
-  <script>
+
+<h1 id="page-title">🛒 OJapp Shop Admin</h1>
+
+<!-- ================================
+     作者アイコン提出エリア
+================================ -->
+<div class="form-box" id="author-icon-box" style="margin-bottom: 30px;">
+  <h3 style="margin-bottom: 10px;">作者アイコン</h3>
+
+  <!-- プレビュー -->
+  <img id="author-icon-preview" class="thumb-preview" style="display:none">
+
+  <div class="input-group">
+    <label id="author-icon-label">作者アイコンを提出してください（PNG推奨）</label>
+    <input type="file" id="author-icon-input" accept="image/*">
+  </div>
+
+  <button class="submit-btn" id="author-icon-submit">アイコンをアップロード</button>
+
+  <div class="result-box" id="author-icon-result"></div>
+</div>
+
+
+<!-- ================================
+     商品登録フォーム
+================================ -->
+<div class="form-box">
+
+  <img id="preview" class="thumb-preview">
+
+  <div class="input-group">
+    <label>サムネ画像</label>
+    <input type="file" id="thumb" accept="image/*">
+  </div>
+
+  <div class="input-group">
+    <label>タイトル</label>
+    <input type="text" id="title">
+  </div>
+
+  <div class="input-group">
+    <input type="hidden" id="author" name="author">
+  </div>
+
+  <div class="input-group">
+    <label>カテゴリー</label>
+    <input type="text" id="category">
+  </div>
+
+  <div class="input-group">
+    <label>価格（数字のみ）</label>
+    <input type="number" id="price">
+  </div>
+
+  <div class="input-group">
+    <label>公開する</label>
+    <select id="visible">
+      <option value="1">公開</option>
+      <option value="0">非公開</option>
+    </select>
+  </div>
+
+  <button class="submit-btn" id="submit">商品を登録する</button>
+
+  <button id="logout-btn" class="logout-btn">ログアウト</button>
+
+  <div class="result-box" id="result"></div>
+</div>
+<script>
+// ============================================
+// ログイン処理（778パスワード）
+// ============================================
 (() => {
-  const KEY = "ojshop-admin-designer"; // ログイン情報保存キー
+  const KEY = "ojshop-admin-designer";
 
   // すでにログイン済みならスキップ
   if (localStorage.getItem(KEY)) return;
@@ -120,29 +182,48 @@
     return;
   }
 
-  // 最後の3桁が 778 かチェック
   if (!input.endsWith("778")) {
     alert("パスワードが違います。");
     location.href = "/OJapp/shop/";
     return;
   }
 
-  // デザイナー名を切り出す
-  const designer = input.slice(0, -3); // 末尾3文字を除外
+  // 作者名（778を抜いた部分）
+  const designer = input.slice(0, -3);
 
   // 保存
   localStorage.setItem(KEY, designer);
 
   alert("ログイン成功！ようこそ " + designer + " さん");
 })();
-    // ============================================
-// 作者アイコンアップロード機能（完全版）
+</script>
+<script>
 // ============================================
+// 作者名 → Base64URL 変換（最強・安全方式）
+// ============================================
+function encodeAuthorName(name) {
+  const utf8 = new TextEncoder().encode(name);
+  let binary = "";
+  utf8.forEach(b => binary += String.fromCharCode(b));
 
+  return btoa(binary)
+    .replace(/\+/g, "-")
+    .replace(/\//g, "_")
+    .replace(/=+$/, "");
+}
+
+
+// ============================================
+// 作者アイコンアップロード機能
+// ============================================
 document.addEventListener("DOMContentLoaded", () => {
 
   const designer = localStorage.getItem("ojshop-admin-designer");
-  if (!designer) return;
+  if (!designer) return; // 未ログイン
+
+  const authorKey = encodeAuthorName(designer);
+  const API_BASE = "https://ojshop-fav.trc-wasps.workers.dev";
+  const iconURL = `${API_BASE}/shop/r2/authors/${authorKey}.png`;
 
   const preview = document.getElementById("author-icon-preview");
   const input = document.getElementById("author-icon-input");
@@ -150,32 +231,22 @@ document.addEventListener("DOMContentLoaded", () => {
   const result = document.getElementById("author-icon-result");
   const label = document.getElementById("author-icon-label");
 
-  // 必須要素が見つからない場合
-  if (!preview || !input || !submitBtn || !result) {
-    console.error("作者アイコン関連の要素が見つかりません。");
-    return;
-  }
 
-  // -------------------------------
-  // アイコンの存在チェック → 初回/再提出の振り分け
-  // -------------------------------
-  const iconURL = `https://ojshop-fav.trc-wasps.workers.dev/shop/r2/authors/${designer}.png`;
-
+  // ===== ファイル存在チェック → 初回 or 再提出 =====
   fetch(iconURL, { method: "HEAD" }).then(r => {
     if (r.ok) {
-      // すでに登録済み → 再提出モード
+      // すでに存在 → 再提出
       preview.src = iconURL;
       preview.style.display = "block";
       label.textContent = "作者アイコン（再提出で更新できます）";
     } else {
-      // 初回提出
+      // 初回
       label.textContent = "作者アイコンを提出してください（PNG推奨）";
     }
   });
 
-  // -------------------------------
-  // プレビュー表示
-  // -------------------------------
+
+  // ===== プレビュー表示 =====
   input.addEventListener("change", e => {
     const file = e.target.files[0];
     if (!file) return;
@@ -184,9 +255,8 @@ document.addEventListener("DOMContentLoaded", () => {
     preview.style.display = "block";
   });
 
-  // -------------------------------
-  // アイコンアップロード
-  // -------------------------------
+
+  // ===== アイコンアップロード =====
   submitBtn.addEventListener("click", async () => {
     const file = input.files[0];
     if (!file) {
@@ -195,7 +265,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     const res = await fetch(
-      `https://ojshop-fav.trc-wasps.workers.dev/shop/admin/icon?author=${designer}`,
+      `${API_BASE}/shop/admin/icon?author_key=${authorKey}`,
       {
         method: "POST",
         body: file
@@ -213,85 +283,22 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
 });
-
 </script>
-
-<h1 id="page-title">🛒 OJapp Shop Admin</h1>
-<!-- ============================================
-     作者アイコン提出エリア
-============================================= -->
-<div class="form-box" id="author-icon-box" style="margin-bottom: 30px;">
-  <h3 style="margin-bottom: 10px;">作者アイコン</h3>
-
-  <!-- プレビュー -->
-  <img id="author-icon-preview" class="thumb-preview" style="display:none">
-
-  <div class="input-group">
-    <label id="author-icon-label">作者アイコンを提出してください（PNG推奨）</label>
-    <input type="file" id="author-icon-input" accept="image/*">
-  </div>
-
-  <button class="submit-btn" id="author-icon-submit">アイコンをアップロード</button>
-
-  <div class="result-box" id="author-icon-result"></div>
-</div>
-
-  <div class="form-box">
-    <img id="preview" class="thumb-preview">
-
-    <div class="input-group">
-      <label>サムネ画像</label>
-      <input type="file" id="thumb" accept="image/*">
-    </div>
-
-    <div class="input-group">
-      <label>タイトル</label>
-      <input type="text" id="title">
-    </div>
-
-    <div class="input-group">
-     <input type="hidden" name="author">
-
-    </div>
-
-    <div class="input-group">
-      <label>カテゴリー</label>
-      <input type="text" id="category">
-    </div>
-
-    <div class="input-group">
-      <label>価格（数字のみ）</label>
-      <input type="number" id="price">
-    </div>
-
-    <div class="input-group">
-      <label>公開する</label>
-      <select id="visible">
-        <option value="1">公開</option>
-        <option value="0">非公開</option>
-      </select>
-    </div>
-
-    <button class="submit-btn" id="submit">商品を登録する</button>
-<button id="logout-btn" class="logout-btn">ログアウト</button>
-
-    <div class="result-box" id="result"></div>
-  </div>
-
-
 <script>
-//passwordでデザイナー名自動
-  document.addEventListener("DOMContentLoaded", () => {
+// ============================================
+// パスワードで取得した作者名を hidden に入れる
+// ============================================
+document.addEventListener("DOMContentLoaded", () => {
   const designer = localStorage.getItem("ojshop-admin-designer");
   if (designer) {
-    const authorInput = document.querySelector('input[name="author"]');
-    if (authorInput) authorInput.value = designer;
+    document.getElementById("author").value = designer;
   }
 });
-  
-// ============================
+
+
+// ============================================
 // サムネプレビュー
-// ============================
+// ============================================
 document.getElementById("thumb").addEventListener("change", e => {
   const file = e.target.files[0];
   if (!file) return;
@@ -301,10 +308,12 @@ document.getElementById("thumb").addEventListener("change", e => {
   preview.style.display = "block";
 });
 
-// ============================
-// 登録
-// ============================
+
+// ============================================
+// 商品登録処理
+// ============================================
 document.getElementById("submit").addEventListener("click", async () => {
+
   const file = document.getElementById("thumb").files[0];
   const title = document.getElementById("title").value;
   const author = document.getElementById("author").value;
@@ -325,24 +334,27 @@ document.getElementById("submit").addEventListener("click", async () => {
   fd.append("price", price);
   fd.append("visible", visible);
 
-  const res = await fetch("/shop/admin/app", {  // ← Workers ルートに合わせる
+  const res = await fetch("https://ojshop-fav.trc-wasps.workers.dev/shop/admin/app", {
     method: "POST",
     body: fd
   });
 
   const json = await res.json();
-  document.getElementById("result").style.display = "block";
+  const box = document.getElementById("result");
+  box.style.display = "block";
 
   if (json.ok) {
-    document.getElementById("result").innerHTML =
-      `登録完了！<br>product_id：<b>${json.product_id}</b>`;
+    box.innerHTML = `登録完了！<br>product_id：<b>${json.product_id}</b>`;
   } else {
-    document.getElementById("result").innerHTML =
-      "エラーが発生しました。";
+    box.innerHTML = "エラーが発生しました。";
   }
 });
-  // ログアウト機能
-  document.addEventListener("DOMContentLoaded", () => {
+
+
+// ============================================
+// ログアウト
+// ============================================
+document.addEventListener("DOMContentLoaded", () => {
   const btn = document.getElementById("logout-btn");
   if (!btn) return;
 
@@ -350,17 +362,19 @@ document.getElementById("submit").addEventListener("click", async () => {
     if (confirm("ログアウトしますか？")) {
       localStorage.removeItem("ojshop-admin-designer");
       alert("ログアウトしました！");
-      location.reload(); // 再読み込みでログイン画面へ
+      location.reload();
     }
   });
 });
-  
+
+
+// ============================================
+// ページタイトル 自動設定
+// ============================================
 document.addEventListener("DOMContentLoaded", () => {
   const designer = localStorage.getItem("ojshop-admin-designer");
   if (designer) {
-    // 末尾が s ならそのまま "s’" にして自然に
     const suffix = designer.endsWith("s") ? "’" : "'s";
-
     document.getElementById("page-title").textContent =
       `${designer}${suffix} OJapp Shop`;
   }
