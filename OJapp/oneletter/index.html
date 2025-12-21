@@ -27,6 +27,40 @@
     <div class="section-title">Step3：差出人（任意）</div>
     <input type="text" id="letterTitle" placeholder="from ...">
   </div>
+<div class="section">
+  <div class="section-title">テンプレート</div>
+  <label><input type="radio" name="template" value="img_text" checked> 画像＋文字</label><br>
+  <label><input type="radio" name="template" value="img_overlay"> 全画面画像＋文字</label><br>
+  <label><input type="radio" name="template" value="text_only"> 文字のみ</label>
+</div>
+<div class="section">
+  <div class="section-title">フォント</div>
+  <label><input type="radio" name="font" value="sans" checked> 丸くない（標準）</label><br>
+  <label><input type="radio" name="font" value="serif"> 明朝体（エモ）</label><br>
+  <label><input type="radio" name="font" value="round"> 丸文字（やさしい）</label>
+</div>
+<div class="section">
+  <div class="section-title">背景色</div>
+  <select id="bg">
+    <option value="#fafafa">白</option>
+    <option value="#000000">黒</option>
+    <option value="#ffecec">薄ピンク</option>
+    <option value="#fff7d4">薄イエロー</option>
+    <option value="#e8faff">水色</option>
+    <option value="#eaf0ff">薄ブルー</option>
+  </select>
+</div>
+<div class="section">
+  <div class="section-title">文字の向き</div>
+  <label><input type="radio" name="writing" value="h" checked> 横書き</label><br>
+  <label><input type="radio" name="writing" value="v"> 縦書き</label>
+</div>
+<div class="section">
+  <div class="section-title">文字サイズ</div>
+  <label><input type="radio" name="size" value="s"> 小</label><br>
+  <label><input type="radio" name="size" value="m" checked> 中</label><br>
+  <label><input type="radio" name="size" value="l"> 大</label>
+</div>
 
   <button id="createBtn" class="btn" disabled>One Letter を作る</button>
 
