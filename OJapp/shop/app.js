@@ -255,11 +255,19 @@ function renderShop() {
 // ============================================
 // 今日のおすすめ（2件）
 // ============================================
-function renderRecommend() {
+async function renderRecommend() {
+
   const box = document.getElementById("recommend-box");
   if (!box) return;
 
-  const selected = [...items].sort(() => Math.random() - 0.5).slice(0, 2);
+  const API = "https://ojshop-fav.trc-wasps.workers.dev/shop/api/items";
+
+  // Workers API（ランダム）
+  const res = await fetch(`${API}?sort=recommended`);
+  const data = await res.json();
+
+  // 上位2件を使用
+  const selected = data.slice(0, 2);
 
   box.innerHTML = selected.map(i => `
     <div class="recommend-item" data-id="${i.product_id}">
@@ -269,13 +277,11 @@ function renderRecommend() {
     </div>
   `).join("");
 
+  // クリックで商品ページへ
   box.querySelectorAll(".recommend-item").forEach(card => {
     card.addEventListener("click", () => {
       const id = card.dataset.id;
-      location.href = `/OJapp/shop/product/?id=${id}`;
-    });
-  });
-}
+      location.href = `/OJapp/shop/product/?id=${id
 
 
 
