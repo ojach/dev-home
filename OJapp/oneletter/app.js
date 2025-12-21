@@ -71,20 +71,25 @@ createBtn.addEventListener("click", async () => {
     createBtn.textContent = "作成中…";
 
     try {
-      const res = await fetch(API_ENDPOINT, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          image_base64: fr.result,
-          text,
-          title
+     const payload = {
+  image_base64: fr.result,
+  text: text,
+  title: title,
 
-            // === 追加項目 ===
-    template: getSetting("template"),
-    font: getSetting("font"),
-    bg: getValue("bg"),
-    writing: getSetting("writing"),
-    size: getSetting("size"),
+  // === 追加設定 ===
+  template: getSetting("template"),
+  font: getSetting("font"),
+  bg: getValue("bg"),
+  writing: getSetting("writing"),
+  size: getSetting("size"),
+};
+
+const res = await fetch(API_ENDPOINT, {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify(payload)
+});
+
         })
       });
 
