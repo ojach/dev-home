@@ -334,8 +334,8 @@ document.getElementById("submit").addEventListener("click", async () => {
   fd.append("price", price);
   fd.append("visible", visible);
 
-  const res = await fetch("https://ojshop-fav.trc-wasps.workers.dev/shop/admin/app", {
-    method: "POST",
+  const res = await fetch("https://ojshop-fav.trc-wasps.workers.dev/shop/admin/item", {
+ method: "POST",
     body: fd
   });
 
