@@ -191,7 +191,7 @@ itemDiv.querySelector(".btn-mosaic").addEventListener("click", () => {
           ${item.visible ? "非公開にする" : "公開にする"}
         </button>
 
-        <button class="btn-mosaic" data-id="${item.product_id}">モザイク</button>
+        <button class="btn-mosaic" data-id="${item.product_id}">編集</button>
 
         <button class="btn-del" data-id="${item.product_id}">削除</button>
       </div>
