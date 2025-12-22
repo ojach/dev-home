@@ -167,29 +167,39 @@ function loadFavorites() {
 
 
 // ============================================
-// 商品一覧レンダー（author_key対応 + ハート対応）
+// 商品一覧レンダー（完全版）
 // ============================================
 async function renderShop() {
+
   const API_BASE = "https://ojshop-fav.trc-wasps.workers.dev";
 
+  // ★ 正しい API エンドポイント
   const res = await fetch(`${API_BASE}/shop/api/items`);
   const items = await res.json();
 
   const list = document.getElementById("shop-list");
+  if (!list) {
+    console.error("ERROR: #shop-list が存在しません");
+    return;
+  }
+
   list.innerHTML = "";
 
   items
-    .filter(item => item.visible === 1) // 公開商品のみ
+    .filter(item => item.visible === 1)
     .forEach(item => {
 
+      // サムネ（R2 パスは item.thumbnail に "thumbs/author/id.png" が入っている）
       const thumbURL = item.thumbnail
         ? `${API_BASE}/shop/r2/${item.thumbnail}`
         : "/OJapp/shop/noimage.png";
 
+      // 作者アイコン
       const authorIcon = item.author_key
         ? `${API_BASE}/shop/r2/authors/${item.author_key}.png`
         : "/OJapp/shop/noimage_user.png";
 
+      // カード生成
       const card = document.createElement("div");
       card.className = "shop-card";
 
@@ -208,9 +218,9 @@ async function renderShop() {
         </div>
       `;
 
-      // 商品ページへ
+      // 商品ページへ遷移
       card.addEventListener("click", () => {
-        location.href = `/OJapp/shop/product/?id=${item.product_id}`;
+        location.href = \`/OJapp/shop/product/?id=${item.product_id}\`;
       });
 
       list.appendChild(card);
@@ -221,24 +231,31 @@ async function renderShop() {
 
 
 // ============================================
-// 推しアイコン 2件（author_key対応版）
+// 推しアイテム 2件（完全版）
 // ============================================
 async function renderRecommend() {
 
   const API_BASE = "https://ojshop-fav.trc-wasps.workers.dev";
 
-  const res = await fetch(`${API_BASE}/shop/items`);
+  // ★ 絶対にここを間違えてはいけない
+  const res = await fetch(`${API_BASE}/shop/api/items`);
   const items = await res.json();
 
-  // visible=1 の中から、適当に 2 件だけ採用（後で選定ルール変えられる）
   const recommendItems = items
     .filter(item => item.visible === 1)
-    .slice(0, 2); // ← ここが「2件」
+    .sort(() => Math.random() - 0.5)   // ランダム抽選
+    .slice(0, 2);                      // 2件だけ採用
 
   const list = document.getElementById("recommend-list");
+  if (!list) {
+    console.error("ERROR: #recommend-list が存在しません");
+    return;
+  }
+
   list.innerHTML = "";
 
   recommendItems.forEach(item => {
+
     const thumbURL = item.thumbnail
       ? `${API_BASE}/shop/r2/${item.thumbnail}`
       : "/OJapp/shop/noimage.png";
@@ -252,15 +269,17 @@ async function renderRecommend() {
     `;
 
     card.addEventListener("click", () => {
-      location.href = `/OJapp/shop/product/?id=${item.product_id}`;
+      location.href = \`/OJapp/shop/product/?id=${item.product_id}\`;
     });
 
     list.appendChild(card);
   });
 }
+document.addEventListener("DOMContentLoaded", () => {
+  renderShop();
+  renderRecommend();
+});
 
-
-renderRecommend();
 
 // ============================================
 // 横スクロールおすすめ
