@@ -1,22 +1,30 @@
 // ============================================
-// OJapp Shop 2025-12-22 完全安定版（D1 + R2対応）
+// OJapp Shop 2025-12-22 完全安定版（D1 + R2 + Admin）
 // ============================================
 
 const API_BASE = "https://ojshop-fav.trc-wasps.workers.dev";
 const FAV_VERSION = "v2";
 
-let items = [];     // 全商品
-let viewItems = []; // フィルタ後表示商品
+// admin判定
+const ADMIN_NAME = localStorage.getItem("ojshop-admin-designer");
+const IS_ADMIN = Boolean(ADMIN_NAME);
+
+let items = [];
+let viewItems = [];
 
 
 // ===============================
-// 商品一覧を Workers から取得
+// 商品一覧取得
 // ===============================
 async function loadItems() {
   const res = await fetch(`${API_BASE}/shop/api/items`);
   return await res.json();
 }
 
+
+// ===============================
+// お気に入り（色復元）
+// ===============================
 function loadFavorites() {
   document.querySelectorAll(".fav-btn").forEach(btn => {
     const id = btn.dataset.id;
@@ -24,15 +32,14 @@ function loadFavorites() {
 
     if (localStorage.getItem(key)) {
       btn.classList.add("active");
-      btn.textContent = "❤️";    // ← これが絶対必要
+      btn.textContent = "❤️";
     }
   });
 }
 
 
-
 // ===============================
-// 推しアイコン（2件）
+// 推しアイテム（2件固定）
 // ===============================
 async function renderRecommend() {
   const res = await fetch(`${API_BASE}/shop/api/items?sort=recommended`);
@@ -66,9 +73,8 @@ async function renderRecommend() {
 }
 
 
-
 // ===============================
-// フィルターUI 詰め込み
+// フィルタ UI
 // ===============================
 function renderDynamicFilters() {
   const categories = new Set(["all"]);
@@ -80,8 +86,8 @@ function renderDynamicFilters() {
   });
 
   const category = document.getElementById("filter-category");
-  const author = document.getElementById("filter-author");
-  const price = document.getElementById("filter-price");
+  const author   = document.getElementById("filter-author");
+  const price    = document.getElementById("filter-price");
 
   if (!category) return;
 
@@ -107,7 +113,7 @@ function renderDynamicFilters() {
     ["all", "全価格帯"],
     ["free", "無料"],
     ["under500", "〜¥500"],
-    ["over500", "¥500〜"],
+    ["over500", "¥501〜"],
   ].forEach(([v, t]) => {
     const o = document.createElement("option");
     o.value = v;
@@ -117,13 +123,11 @@ function renderDynamicFilters() {
 }
 
 
-
 // ===============================
-// 絞り込み ＆ ソート
+// ソート + 絞り込み
 // ===============================
 async function applyFilters() {
 
-  // 1) まずソート結果を取得
   const activeTab = document.querySelector(".shop-tab.active");
   const sort = activeTab ? activeTab.dataset.sort : "new";
 
@@ -134,53 +138,57 @@ async function applyFilters() {
   const res = await fetch(`${API_BASE}/shop/api/items?sort=${sortKey}`);
   let data = await res.json();
 
-  // 2) ▼ カテゴリー / 作者 / 価格 の絞り込み
+  // 絞り込み
   const selectedCategory = document.getElementById("filter-category").value;
   const selectedAuthor   = document.getElementById("filter-author").value;
   const selectedPrice    = document.getElementById("filter-price").value;
 
   data = data.filter(item => {
 
-    // カテゴリー
     if (selectedCategory !== "all" && item.category !== selectedCategory)
       return false;
 
-    // 作者
     if (selectedAuthor !== "all" && item.author !== selectedAuthor)
       return false;
 
-    // 価格
     if (selectedPrice === "free" && item.price !== 0) return false;
     if (selectedPrice === "under500" && item.price > 500) return false;
-    if (selectedPrice === "over500" && item.price < 500) return false;
+    if (selectedPrice === "over500" && item.price < 501) return false;
 
     return true;
   });
 
-  // 最大20件
   viewItems = data.slice(0, 20);
-
-  renderShop();
 }
 
 
-
 // ===============================
-// 商品グリッド描画
+// 商品グリッド（admin UI 出し分け）
 // ===============================
 async function renderShop() {
   const grid = document.getElementById("shop-list");
   grid.innerHTML = "";
 
   viewItems.forEach(item => {
-
     const thumb = `${API_BASE}/shop/r2/${item.thumbnail}`;
     const icon  = `${API_BASE}/shop/r2/authors/${item.author_key}.png`;
 
     const card = document.createElement("div");
     card.className = "item-card";
 
+    // ★ Admin UI（編集/公開/削除）
+    const adminTools = IS_ADMIN ? `
+      <div class="admin-tools">
+        <button class="admin-edit-btn" data-id="${item.product_id}">編集</button>
+        <button class="admin-visible-btn" data-id="${item.product_id}">
+          ${item.visible ? "非公開にする" : "公開にする"}
+        </button>
+      </div>
+    ` : "";
+
     card.innerHTML = `
+      ${adminTools}
+
       <div class="item-thumb-box">
         <img src="${thumb}" class="item-thumb">
         <img src="${icon}" class="author-icon">
@@ -195,15 +203,20 @@ async function renderShop() {
 
       <div class="fav-zone">
         <span class="fav-btn" data-id="${item.product_id}">🤍</span>
-        <span class="fav-count" data-id="${item.product_id}">${item.favorite_count}</span>
+        <span class="fav-count" data-id="${item.product_id}">
+          ${item.favorite_count}
+        </span>
       </div>
     `;
 
-    // 詳細ページへ
-    card.addEventListener("click", (e) => {
-      // ハート押しは移動しない
-      if (e.target.classList.contains("fav-btn")) return;
+    // ===============================
+    // イベント
+    // ===============================
 
+    // 商品ページ
+    card.addEventListener("click", (e) => {
+      if (e.target.classList.contains("fav-btn")) return;
+      if (e.target.closest(".admin-tools")) return; // admin UIクリック時は移動しない
       location.href = `/OJapp/shop/product/?id=${item.product_id}`;
     });
 
@@ -213,40 +226,76 @@ async function renderShop() {
       toggleFav(e.target);
     });
 
-    grid.appendChild(card);
+    // ★ Admin の公開/非公開
+    if (IS_ADMIN) {
+      const btn = card.querySelector(".admin-visible-btn");
+      btn.addEventListener("click", async (e) => {
+        e.stopPropagation();
+        await toggleVisible(item.product_id, !item.visible);
+        start(); // 再描画
+      });
+    }
 
+    grid.appendChild(card);
     requestAnimationFrame(() => card.classList.add("show"));
   });
 
-  // ★ ここで色復元！
   loadFavorites();
 }
 
 
+// ===============================
+// Admin: 公開/非公開 切替
+// ===============================
+async function toggleVisible(id, newState) {
+  await fetch(`${API_BASE}/shop/admin/visible?id=${id}&v=${newState ? 1 : 0}`);
+}
 
 
 // ===============================
-// 人気・おすすめ 横スクロール
+// ハート押し（1回だけ）
+// ===============================
+async function toggleFav(btn) {
+  const id = btn.dataset.id;
+  const key = `fav_${id}`;
+
+  if (localStorage.getItem(key)) return;
+
+  btn.classList.add("active");
+  btn.textContent = "❤️";
+
+  const res = await fetch(`${API_BASE}/shop/api/fav?id=${id}`, {
+    method: "POST"
+  });
+
+  const data = await res.json();
+
+  const countEl = document.querySelector(`.fav-count[data-id="${id}"]`);
+  if (countEl) countEl.textContent = data.favorite_count;
+
+  localStorage.setItem(key, "1");
+}
+
+
+// ===============================
+// 人気/おすすめスクロール
 // ===============================
 async function loadScrollRows() {
 
-  // 人気（閲覧数順）
+  // 人気
   {
     const res = await fetch(`${API_BASE}/shop/api/items?sort=views`);
     const data = await res.json();
 
     const wrap = document.getElementById("scroll-popular");
     if (wrap) {
-      wrap.innerHTML = data.map(item => {
-        const thumb = `${API_BASE}/shop/r2/${item.thumbnail}`;
-        return `
-          <div class="scroll-item"
-               onclick="location.href='/OJapp/shop/product/?id=${item.product_id}'">
-            <img src="${thumb}" class="scroll-thumb">
-            <div class="scroll-title-text">${item.title}</div>
-          </div>
-        `;
-      }).join("");
+      wrap.innerHTML = data.map(item => `
+        <div class="scroll-item"
+             onclick="location.href='/OJapp/shop/product/?id=${item.product_id}'">
+          <img src="${API_BASE}/shop/r2/${item.thumbnail}" class="scroll-thumb">
+          <div class="scroll-title-text">${item.title}</div>
+        </div>
+      `).join("");
     }
   }
 
@@ -257,63 +306,31 @@ async function loadScrollRows() {
 
     const wrap = document.getElementById("scroll-recommend");
     if (wrap) {
-      wrap.innerHTML = data.map(item => {
-        const thumb = `${API_BASE}/shop/r2/${item.thumbnail}`;
-        return `
-          <div class="scroll-item"
-               onclick="location.href='/OJapp/shop/product/?id=${item.product_id}'">
-            <img src="${thumb}" class="scroll-thumb">
-            <div class="scroll-title-text">${item.title}</div>
-          </div>
-        `;
-      }).join("");
+      wrap.innerHTML = data.map(item => `
+        <div class="scroll-item"
+             onclick="location.href='/OJapp/shop/product/?id=${item.product_id}'">
+          <img src="${API_BASE}/shop/r2/${item.thumbnail}" class="scroll-thumb">
+          <div class="scroll-title-text">${item.title}</div>
+        </div>
+      `).join("");
     }
   }
 }
-// -------------------------
-//   お気に入りボタンAPI
-//--------------------------
-async function toggleFav(btn) {
-  const id = btn.dataset.id;
-  const key = `fav_${id}`;
-
-  // ★ すでに押したなら何もせず return
-  if (localStorage.getItem(key)) return;
-
-  // 色を変える
-  btn.classList.add("active");
- btn.textContent = "❤️";
-  // API に送る（1回だけ加算）
-  const res = await fetch(`${API_BASE}/shop/api/fav?id=${id}`, {
-    method: "POST",
-  });
-
-  const data = await res.json();
-
-  // 数字更新
-  const countEl = document.querySelector(`.fav-count[data-id="${id}"]`);
-  if (countEl) countEl.textContent = data.favorite_count;
-
-  // ★ ここで「一生押した扱い」にする
-  localStorage.setItem(key, "1");
-}
-
 
 
 // ===============================
 // 初期スタート
 // ===============================
 async function start() {
-
   items = await loadItems();
   viewItems = [...items];
 
   renderRecommend();
   renderDynamicFilters();
-  applyFilters();
+  await applyFilters();
   loadScrollRows();
+  renderShop();
 }
-
 
 
 // ===============================
@@ -323,10 +340,9 @@ document.querySelectorAll(".shop-tab").forEach(tab => {
   tab.addEventListener("click", () => {
     document.querySelectorAll(".shop-tab").forEach(t => t.classList.remove("active"));
     tab.classList.add("active");
-    applyFilters();
+    applyFilters().then(renderShop);
   });
 });
 
-
-
 document.addEventListener("DOMContentLoaded", start);
+
