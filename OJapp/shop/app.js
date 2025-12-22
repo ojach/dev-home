@@ -233,7 +233,26 @@ async function loadScrollRows() {
     }
   }
 }
+// -------------------------
+//   お気に入りボタンAPI
+//--------------------------
+async function toggleFav(btn) {
+  const id = btn.dataset.id;
 
+  // 表示だけ先に更新
+  btn.classList.add("active");
+
+  // Workers に +1 を送信
+  const res = await fetch(`${API_BASE}/shop/api/fav?id=${id}`, {
+    method: "POST",
+  });
+
+  const data = await res.json();
+
+  // 数字反映
+  const countEl = document.querySelector(`.fav-count[data-id="${id}"]`);
+  if (countEl) countEl.textContent = data.favorite_count;
+}
 
 
 // ===============================
