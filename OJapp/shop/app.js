@@ -1,34 +1,63 @@
 // ============================================
-// OJapp Shop 2025-12-19 最新安定版（D1対応）
+// OJapp Shop 2025-12-22 完全安定版（D1 + R2対応）
 // ============================================
-
-// ----------------------
-// 設定
-// ----------------------
-const FAV_VERSION = "v2";
-let items = [];
-let viewItems = [];
-
-let currentSort = "new";
-let randomCache = null;
 
 const API_BASE = "https://ojshop-fav.trc-wasps.workers.dev";
+const FAV_VERSION = "v2";
+
+let items = [];     // 全商品
+let viewItems = []; // フィルタ後表示商品
 
 
-// ============================================
-// D1から商品一覧取得
-// ============================================
+// ===============================
+// 商品一覧を Workers から取得
+// ===============================
 async function loadItems() {
   const res = await fetch(`${API_BASE}/shop/api/items`);
-  if (!res.ok) throw new Error("items fetch failed");
   return await res.json();
 }
 
 
 
-// ============================================
-// フィルター生成
-// ============================================
+// ===============================
+// 推しアイコン（2件）
+// ===============================
+async function renderRecommend() {
+  const res = await fetch(`${API_BASE}/shop/api/items?sort=recommended`);
+  const data = await res.json();
+
+  const box = document.getElementById("recommend-list");
+  if (!box) return;
+
+  box.innerHTML = "";
+
+  data.slice(0, 2).forEach(item => {
+    const thumb = `${API_BASE}/shop/r2/${item.thumbnail}`;
+    const icon  = `${API_BASE}/shop/r2/authors/${item.author_key}.png`;
+
+    const div = document.createElement("div");
+    div.className = "recommend-item";
+    div.innerHTML = `
+      <img src="${thumb}" class="recommend-thumb">
+      <div class="recommend-title">${item.title}</div>
+      <div class="recommend-author">
+        <img src="${icon}" class="recommend-author-icon"> ${item.author}
+      </div>
+    `;
+
+    div.addEventListener("click", () => {
+      location.href = `/OJapp/shop/product/?id=${item.product_id}`;
+    });
+
+    box.appendChild(div);
+  });
+}
+
+
+
+// ===============================
+// フィルターUI 詰め込み
+// ===============================
 function renderDynamicFilters() {
   const categories = new Set(["all"]);
   const authors = new Set(["all"]);
@@ -42,22 +71,24 @@ function renderDynamicFilters() {
   const author = document.getElementById("filter-author");
   const price = document.getElementById("filter-price");
 
+  if (!category) return;
+
   category.innerHTML = "";
   author.innerHTML = "";
   price.innerHTML = "";
 
   [...categories].forEach(c => {
-    const opt = document.createElement("option");
-    opt.value = c;
-    opt.textContent = c === "all" ? "全て" : c;
-    category.appendChild(opt);
+    const o = document.createElement("option");
+    o.value = c;
+    o.textContent = c === "all" ? "全て" : c;
+    category.appendChild(o);
   });
 
   [...authors].forEach(a => {
-    const opt = document.createElement("option");
-    opt.value = a;
-    opt.textContent = a === "all" ? "全て" : a;
-    author.appendChild(opt);
+    const o = document.createElement("option");
+    o.value = a;
+    o.textContent = a === "all" ? "全て" : a;
+    author.appendChild(o);
   });
 
   [
@@ -66,108 +97,47 @@ function renderDynamicFilters() {
     ["under500", "〜¥500"],
     ["over500", "¥500〜"],
   ].forEach(([v, t]) => {
-    const opt = document.createElement("option");
-    opt.value = v;
-    opt.textContent = t;
-    price.appendChild(opt);
+    const o = document.createElement("option");
+    o.value = v;
+    o.textContent = t;
+    price.appendChild(o);
   });
 }
 
 
 
-// ============================================
-// ソート ＆ 絞り込み
-// ============================================
+// ===============================
+// 絞り込み ＆ ソート
+// ===============================
 async function applyFilters() {
   const activeTab = document.querySelector(".shop-tab.active");
-  const sort = activeTab ? activeTab.dataset.sort : "new";
+  let sort = activeTab ? activeTab.dataset.sort : "new";
 
-  const API = `${API_BASE}/shop/api/items`;
+  // Workers用変換
+  if (sort === "fav") sort = "popular";
+  if (sort === "random") sort = "recommended";
 
-  let sortKey = sort;
-  if (sort === "fav") sortKey = "popular";
-  if (sort === "random") sortKey = "recommended";
-
-  const res = await fetch(`${API}?sort=${sortKey}`);
+  const res = await fetch(`${API_BASE}/shop/api/items?sort=${sort}`);
   const data = await res.json();
 
-  viewItems = data.slice(0, 20);
+  viewItems = data.slice(0, 40);
   renderShop();
 }
 
-document.querySelectorAll(".shop-tab").forEach(tab => {
-  tab.addEventListener("click", () => {
-    document.querySelectorAll(".shop-tab").forEach(t => t.classList.remove("active"));
-    tab.classList.add("active");
-
-    applyFilters();
-  });
-});
 
 
-
-// ============================================
-// モーダル
-// ============================================
-function openModal(item) {
-  const modal = document.getElementById("item-modal");
-  document.getElementById("modal-thumb").src = item.thumbnail;
-  document.getElementById("modal-title").textContent = item.title;
-  document.getElementById("modal-author").textContent = `作者: ${item.author}`;
-  document.getElementById("modal-category").textContent = `カテゴリー: ${item.category}`;
-  modal.classList.remove("hidden");
-}
-
-function closeModal() {
-  document.getElementById("item-modal").classList.add("hidden");
-}
-
-
-
-// ============================================
-// フェードインアニメ
-// ============================================
-function animateCards() {
-  const cards = document.querySelectorAll(".item-card");
-  cards.forEach((card, i) => {
-    setTimeout(() => card.classList.add("show"), i * 60);
-  });
-}
-
-
-
-// ============================================
-// お気に入りロード
-// ============================================
-function loadFavorites() {
-  document.querySelectorAll(".fav-btn").forEach(btn => {
-    const id = btn.dataset.id;
-    const key = `fav_${FAV_VERSION}_${id}`;
-    if (localStorage.getItem(key)) {
-      btn.textContent = "❤️";
-      btn.style.color = "#ff4b7d";
-    }
-  });
-}
-
-
-
-// ============================================
-// 商品一覧レンダー（修正版）
-// ============================================
+// ===============================
+// 商品グリッド描画
+// ===============================
 async function renderShop() {
-  const API = API_BASE;
-
-  const res = await fetch(`${API}/shop/api/items`);
-  const items = await res.json();
-
-  // ★ 修正：IDを shop-grid → shop-list に統一
   const grid = document.getElementById("shop-list");
+  if (!grid) return;
+
   grid.innerHTML = "";
 
-  items.forEach(item => {
-    const thumb = `${API}/shop/r2/${item.thumbnail}`;
-    const icon  = `${API}/shop/r2/authors/${item.author_key}.png`;
+  viewItems.forEach(item => {
+    const thumb = `${API_BASE}/shop/r2/${item.thumbnail}`;
+    const icon  = `${API_BASE}/shop/r2/authors/${item.author_key}.png`;
 
     const card = document.createElement("div");
     card.className = "item-card";
@@ -186,128 +156,92 @@ async function renderShop() {
     `;
 
     card.addEventListener("click", () => {
-      location.href = \`/OJapp/shop/product/?id=\${item.product_id}\`;
+      location.href = `/OJapp/shop/product/?id=${item.product_id}`;
     });
 
     grid.appendChild(card);
 
-    requestAnimationFrame(() => {
-      card.classList.add("show");
-    });
+    requestAnimationFrame(() => card.classList.add("show"));
   });
 }
 
 
 
-// ============================================
-// 推しアイテム 2件（修正版）
-// ============================================
-async function renderRecommend() {
-  const API = API_BASE;
-  const res = await fetch(`${API}/shop/api/items?sort=recommended`);
-  const items = await res.json();
-
-  // ★ 修正：recommend-box → recommend-list
-  const box = document.getElementById("recommend-list");
-  box.innerHTML = "";
-
-  items.slice(0, 2).forEach(item => {
-    const thumb = `${API}/shop/r2/${item.thumbnail}`;
-    const icon = `${API}/shop/r2/authors/${item.author_key}.png`;
-
-    const div = document.createElement("div");
-    div.className = "recommend-item";
-    div.innerHTML = `
-      <img src="${thumb}" class="recommend-thumb">
-      <div class="recommend-title">${item.title}</div>
-      <div class="recommend-author">
-        <img src="${icon}" class="recommend-author-icon"> ${item.author}
-      </div>
-    `;
-
-    div.addEventListener("click", () => {
-      location.href = \`/OJapp/shop/product/?id=\${item.product_id}\`;
-    });
-
-    box.appendChild(div);
-  });
-}
-
-
-
-// ============================================
-// 横スクロール（人気 / おすすめ）
-// ============================================
+// ===============================
+// 人気・おすすめ 横スクロール
+// ===============================
 async function loadScrollRows() {
-  const API = API_BASE;
 
-  const popularRes = await fetch(`${API}/shop/api/items?sort=views`);
-  const popular = await popularRes.json();
+  // 人気（閲覧数順）
+  {
+    const res = await fetch(`${API_BASE}/shop/api/items?sort=views`);
+    const data = await res.json();
 
-  document.getElementById("scroll-popular").innerHTML =
-    popular.map(item => {
-      const thumb = item.thumbnail
-        ? `${API}/shop/r2/${item.thumbnail}`
-        : "/OJapp/shop/noimage.png";
+    const wrap = document.getElementById("scroll-popular");
+    if (wrap) {
+      wrap.innerHTML = data.map(item => {
+        const thumb = `${API_BASE}/shop/r2/${item.thumbnail}`;
+        return `
+          <div class="scroll-item"
+               onclick="location.href='/OJapp/shop/product/?id=${item.product_id}'">
+            <img src="${thumb}" class="scroll-thumb">
+            <div class="scroll-title-text">${item.title}</div>
+          </div>
+        `;
+      }).join("");
+    }
+  }
 
-      return `
-        <div class="scroll-item"
-             onclick="location.href='/OJapp/shop/product/?id=${item.product_id}'">
-          <img src="${thumb}" class="scroll-thumb">
-          <div class="scroll-title-text">${item.title}</div>
-        </div>
-      `;
-    }).join("");
+  // おすすめ（ランダム）
+  {
+    const res = await fetch(`${API_BASE}/shop/api/items?sort=recommended`);
+    const data = await res.json();
 
-
-  const recRes = await fetch(`${API}/shop/api/items?sort=recommended`);
-  const rec = await recRes.json();
-
-  document.getElementById("scroll-recommend").innerHTML =
-    rec.map(item => {
-      const thumb = item.thumbnail
-        ? `${API}/shop/r2/${item.thumbnail}`
-        : "/OJapp/shop/noimage.png";
-
-      return `
-        <div class="scroll-item"
-             onclick="location.href='/OJapp/shop/product/?id=${item.product_id}'">
-          <img src="${thumb}" class="scroll-thumb">
-          <div class="scroll-title-text">${item.title}</div>
-        </div>
-      `;
-    }).join("");
+    const wrap = document.getElementById("scroll-recommend");
+    if (wrap) {
+      wrap.innerHTML = data.map(item => {
+        const thumb = `${API_BASE}/shop/r2/${item.thumbnail}`;
+        return `
+          <div class="scroll-item"
+               onclick="location.href='/OJapp/shop/product/?id=${item.product_id}'">
+            <img src="${thumb}" class="scroll-thumb">
+            <div class="scroll-title-text">${item.title}</div>
+          </div>
+        `;
+      }).join("");
+    }
+  }
 }
 
-loadScrollRows();
 
 
-
-// ============================================
-// 初期起動
-// ============================================
+// ===============================
+// 初期スタート
+// ===============================
 async function start() {
+
   items = await loadItems();
   viewItems = [...items];
 
   renderRecommend();
   renderDynamicFilters();
   applyFilters();
-  await loadFavorites();
-  renderShop();
+  loadScrollRows();
 }
+
+
+
+// ===============================
+// ソートタブ
+// ===============================
+document.querySelectorAll(".shop-tab").forEach(tab => {
+  tab.addEventListener("click", () => {
+    document.querySelectorAll(".shop-tab").forEach(t => t.classList.remove("active"));
+    tab.classList.add("active");
+    applyFilters();
+  });
+});
+
+
 
 document.addEventListener("DOMContentLoaded", start);
-
-
-
-// ============================================
-// ダークモード
-// ============================================
-function updateThemeIcon() {
-  const button = document.querySelector(".switch");
-  if (!button) return;
-  button.textContent = document.documentElement.classList.contains("dark")
-    ? "🌙"
-    : "🤩";
-}
