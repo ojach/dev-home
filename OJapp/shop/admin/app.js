@@ -196,6 +196,7 @@ document.addEventListener("DOMContentLoaded", loadMyItems);
 // ⑥ ボタン動作（公開 / 編集 / 削除）
 // ============================================
 function bindAdminButtons() {
+
   // --- 公開/非公開 ---
   document.querySelectorAll(".btn-vis").forEach(btn => {
     btn.addEventListener("click", async () => {
@@ -210,32 +211,34 @@ function bindAdminButtons() {
     });
   });
 
+  // --- 編集 ---
+  document.querySelectorAll(".btn-edit").forEach(btn => {
+    btn.addEventListener("click", () => {
+      const id = btn.dataset.id;
+      const item = window.allItems.find(i => i.product_id === id);
+      if (!item) return;
+      openEditModal(item);
+    });
+  });
+
   // --- 削除 ---
   document.querySelectorAll(".btn-del").forEach(btn => {
     btn.addEventListener("click", async () => {
       const id = btn.dataset.id;
 
       if (!confirm("本当に削除しますか？")) return;
-      if (!confirm("最終確認。本当に削除しますか？")) return;
+      if (!confirm("最終確認です。本当に削除しますか？")) return;
 
       await fetch(`${API_BASE}/shop/admin/delete?id=${id}`, {
-        method: "POST"
+        method:"POST"
       });
 
       loadMyItems();
     });
   });
 
-  // --- 編集モーダルを開く ---
- document.querySelectorAll(".btn-edit").forEach(btn => {
-  btn.addEventListener("click", () => {
-    const id = btn.dataset.id;
-    const item = items.find(t => t.product_id === id);
-    if (item) openEditModal(item);
-  });
-});
-
 }
+
 
 // ============================================
 // ⑦ 編集モーダル
