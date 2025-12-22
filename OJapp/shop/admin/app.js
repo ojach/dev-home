@@ -178,15 +178,9 @@ async function loadMyItems() {
         <b>${item.title}</b><br>
         ${item.price}円 / ${item.category}
       </div>
-
-      <div class="admin-buttons">
-        <button class="btn-vis" data-id="${item.product_id}">
-          ${item.visible ? "非公開にする" : "公開にする"}
-        </button>
-
+ <div class="admin-buttons">
         <button class="btn-mosaic" data-id="${item.product_id}">編集</button>
 
-        <button class="btn-del" data-id="${item.product_id}">削除</button>
       </div>
     `;
 
@@ -233,13 +227,14 @@ function bindAdminButtons() {
   });
 
   // --- 編集モーダルを開く ---
-  document.querySelectorAll(".btn-mosaic").forEach(btn => {
-    btn.addEventListener("click", () => {
-      const id = btn.dataset.id;
-      const item = allItems.find(i => i.product_id === id);
-      if (item) openEditModal(item);
-    });
+ document.querySelectorAll(".btn-edit").forEach(btn => {
+  btn.addEventListener("click", () => {
+    const id = btn.dataset.id;
+    const item = items.find(t => t.product_id === id);
+    if (item) openEditModal(item);
   });
+});
+
 }
 
 // ============================================
