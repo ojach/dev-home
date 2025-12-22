@@ -152,7 +152,7 @@ async function applyFilters() {
       return false;
 
     if (selectedPrice === "free" && item.price !== 0) return false;
-    if (selectedPrice === "under500" && item.price > 500) return false;
+    if (selectedPrice === "under500" && (item.price < 1 || item.price > 500)) return false;
     if (selectedPrice === "over500" && item.price < 501) return false;
 
     return true;
