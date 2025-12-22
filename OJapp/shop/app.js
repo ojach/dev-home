@@ -169,16 +169,16 @@ async function applyFilters() {
 // ===============================
 async function renderShop() {
   const grid = document.getElementById("shop-list");
-  if (!grid) return;
-
   grid.innerHTML = "";
 
   viewItems.forEach(item => {
+
     const thumb = `${API_BASE}/shop/r2/${item.thumbnail}`;
     const icon  = `${API_BASE}/shop/r2/authors/${item.author_key}.png`;
 
     const card = document.createElement("div");
     card.className = "item-card";
+
     card.innerHTML = `
       <div class="item-thumb-box">
         <img src="${thumb}" class="item-thumb">
@@ -191,39 +191,33 @@ async function renderShop() {
         <div class="item-price">${item.price}円</div>
         <div class="item-author">${item.author}</div>
       </div>
+
       <div class="fav-zone">
-  <span class="fav-btn" data-id="${item.product_id}" onclick="toggleFav(this)">🤍</span>
-  <span class="fav-count" data-id="${item.product_id}">
-    ${item.favorite_count ?? 0}
-  </span>
-</div>
+        <span class="fav-btn" data-id="${item.product_id}">🤍</span>
+        <span class="fav-count" data-id="${item.product_id}">${item.favorite_count}</span>
+      </div>
     `;
-card.querySelector(".fav-btn").addEventListener("click", (e) => {
-  e.stopPropagation();  // カードの遷移を止める
 
-  const btn = e.target;
-  const id = btn.dataset.id;
-  const key = `fav_${FAV_VERSION}_${id}`;
+    // 詳細ページへ
+    card.addEventListener("click", (e) => {
+      // ハート押しは移動しない
+      if (e.target.classList.contains("fav-btn")) return;
 
-  if (localStorage.getItem(key)) {
-    localStorage.removeItem(key);
-    btn.textContent = "🤍";
-    btn.style.color = "#aaa";
-  } else {
-    localStorage.setItem(key, "1");
-    btn.textContent = "❤️";
-    btn.style.color = "#ff4b7d";
-  }
-});
-
-    card.addEventListener("click", () => {
       location.href = `/OJapp/shop/product/?id=${item.product_id}`;
+    });
+
+    // ハート押し
+    card.querySelector(".fav-btn").addEventListener("click", (e) => {
+      e.stopPropagation();
+      toggleFav(e.target);
     });
 
     grid.appendChild(card);
 
     requestAnimationFrame(() => card.classList.add("show"));
   });
+
+  // ★ ここで色復元！
   loadFavorites();
 }
 
