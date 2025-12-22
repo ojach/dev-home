@@ -237,6 +237,7 @@ document.addEventListener("DOMContentLoaded", () => {
   // ----------------------------------------------------
   document.getElementById("author").value = designer;
 
+
 // ============================================
 // 作者アイコン UI 切替（完全版）
 // ============================================
@@ -246,22 +247,20 @@ document.addEventListener("DOMContentLoaded", async () => {
   if (!designer) return;
 
   const authorKey = encodeAuthorName(designer);
-
   const API_BASE = "https://ojshop-fav.trc-wasps.workers.dev";
   const iconURL = `${API_BASE}/shop/r2/authors/${authorKey}.png`;
 
-  // UIを描画する唯一の枠
   const box = document.getElementById("author-icon-box");
 
-  // アイコン存在チェック
+  // R2 にファイルあるかチェック
   const exists = await fetch(iconURL, { method: "HEAD" })
     .then(r => r.ok)
     .catch(() => false);
 
-  // -----------------------------------------------------
-  // ① 登録済み → 変更UIのみ表示
-  // -----------------------------------------------------
   if (exists) {
+    // -----------------------------
+    // 登録済み UI（これだけ表示）
+    // -----------------------------
     box.innerHTML = `
       <h3 style="margin-bottom:10px;">作者アイコン</h3>
 
@@ -271,16 +270,15 @@ document.addEventListener("DOMContentLoaded", async () => {
       <p style="font-size:14px;margin-bottom:10px;">登録済みのアイコンです</p>
 
       <input type="file" id="author-icon-input" accept="image/*">
-
       <button class="submit-btn" id="author-icon-update">アイコンを変更する</button>
-
       <div class="result-box" id="author-icon-result" style="display:none;"></div>
     `;
 
-    // ボタン動作
     document.getElementById("author-icon-update")
       .addEventListener("click", async () => {
         const file = document.getElementById("author-icon-input").files[0];
+        const result = document.getElementById("author-icon-result");
+
         if (!file) return alert("ファイルを選択してください！");
 
         const res = await fetch(
@@ -289,50 +287,52 @@ document.addEventListener("DOMContentLoaded", async () => {
         );
 
         const json = await res.json();
-
-        const result = document.getElementById("author-icon-result");
         result.style.display = "block";
+
         result.innerHTML = json.ok
           ? "アイコンを更新しました！再読み込みしてください。"
           : "更新に失敗しました。";
       });
 
-    return;
+    return; // ← 未登録 UI を出さない
   }
 
-  // -----------------------------------------------------
-  // ② 未登録 → アップロードUIだけ表示
-  // -----------------------------------------------------
-  box.innerHTML = `
-    <h3 style="margin-bottom:10px;">作者アイコン</h3>
-    <p style="font-size:14px;margin-bottom:10px;">作者アイコンを提出してください（PNG推奨）</p>
+  // -----------------------------
+  // 未登録 UI（こちらは else）
+  // -----------------------------
+  const preview = document.getElementById("author-icon-preview");
+  const input = document.getElementById("author-icon-input");
+  const submitBtn = document.getElementById("author-icon-submit");
+  const resultBox = document.getElementById("author-icon-result");
 
-    <input type="file" id="author-icon-input" accept="image/*">
+  input.addEventListener("change", e => {
+    const file = e.target.files[0];
+    if (!file) return;
 
-    <button class="submit-btn" id="author-icon-submit">アイコンをアップロード</button>
+    preview.src = URL.createObjectURL(file);
+    preview.style.display = "block";
+  });
 
-    <div class="result-box" id="author-icon-result" style="display:none;"></div>
-  `;
+  submitBtn.addEventListener("click", async () => {
+    const file = input.files[0];
+    if (!file) return alert("ファイルを選んでください");
 
-  // ボタン動作
-  document.getElementById("author-icon-submit")
-    .addEventListener("click", async () => {
-      const file = document.getElementById("author-icon-input").files[0];
-      if (!file) return alert("ファイルを選んでください");
+    const res = await fetch(
+      `${API_BASE}/shop/admin/icon?author_key=${authorKey}`,
+      {
+        method: "POST",
+        body: file
+      }
+    );
 
-      const res = await fetch(
-        `${API_BASE}/shop/admin/icon?author_key=${authorKey}`,
-        { method: "POST", body: file }
-      );
+    const json = await res.json();
+    resultBox.style.display = "block";
 
-      const json = await res.json();
-      const result = document.getElementById("author-icon-result");
-      result.style.display = "block";
+    resultBox.innerHTML = json.ok
+      ? `アイコンをアップロードしました！<br>${json.url}`
+      : "アップロード失敗...";
+  });
 
-      result.innerHTML = json.ok
-        ? `アイコンをアップロードしました！`
-        : "アップロード失敗...";
-    });
 });
 
 
