@@ -104,3 +104,21 @@ input[type=file] {
 .btn-show { background: #67c26f; color:#fff; }
 .btn-delete { background: #ff4b7d; color:#fff; }
 
+.submit-btn {
+  background: linear-gradient(#2bb7ff, #0fa3ff);
+  color: white;
+  font-weight: bold;
+  padding: 14px 22px;
+  font-size: 17px;
+  border-radius: 14px;
+  display: block;
+  margin: 16px 0;
+  width: 100%;
+  border: none;
+  box-shadow: 0 4px 0 #0b78c2;
+}
+.submit-btn:active {
+  transform: scale(.97);
+  box-shadow: 0 2px 0 #075a8f;
+}
+
