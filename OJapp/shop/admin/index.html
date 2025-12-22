@@ -106,7 +106,12 @@
     <!-- ① 作者アイコン                    -->
     <!-- ================================== -->
     <div class="admin-section">
-      <div class="admin-title">作者アイコン</div>
+      <div class="admin-title" id="admin-shop-title"></div>
+<script>
+  const d = localStorage.getItem("ojshop-admin-designer") || "";
+  document.getElementById("admin-shop-title").textContent = `${d}’s OJapp Shop`;
+</script>
+
 
       <div id="author-icon-box">
         <!-- ここは JS 側で “登録済/未登録” を切替描画 -->
