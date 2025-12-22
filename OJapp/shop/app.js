@@ -24,9 +24,11 @@ function loadFavorites() {
 
     if (localStorage.getItem(key)) {
       btn.classList.add("active");
+      btn.textContent = "❤️";    // ← これが絶対必要
     }
   });
 }
+
 
 
 // ===============================
@@ -158,8 +160,7 @@ async function applyFilters() {
   // 最大20件
   viewItems = data.slice(0, 20);
 
-  // レンダリング
-  renderShop();
+  
 }
 
 
@@ -281,7 +282,7 @@ async function toggleFav(btn) {
 
   // 色を変える
   btn.classList.add("active");
-
+ btn.textContent = "❤️";
   // API に送る（1回だけ加算）
   const res = await fetch(`${API_BASE}/shop/api/fav?id=${id}`, {
     method: "POST",
@@ -311,6 +312,7 @@ async function start() {
   renderDynamicFilters();
   applyFilters();
   loadScrollRows();
+  renderShop();
 }
 
 
