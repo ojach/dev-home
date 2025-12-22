@@ -269,7 +269,8 @@ async function renderRecommend() {
     `;
 
     card.addEventListener("click", () => {
-      location.href = \`/OJapp/shop/product/?id=${item.product_id}\`;
+      location.href = `/OJapp/shop/product/?id=${item.product_id}`;
+
     });
 
     list.appendChild(card);
