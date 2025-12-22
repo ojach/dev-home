@@ -163,10 +163,12 @@ async function renderShop() {
         <div class="item-price">${item.price}円</div>
         <div class="item-author">${item.author}</div>
       </div>
-       <div class="fav-zone">
-    <span class="fav-btn" data-id="${item.product_id}">🤍</span>
-    <span class="fav-count">${item.fav_count ?? 0}</span>
-  </div>
+      <div class="fav-zone">
+  <span class="fav-btn" data-id="${item.product_id}" onclick="toggleFav(this)">🤍</span>
+  <span class="fav-count" data-id="${item.product_id}">
+    ${item.favorite_count ?? 0}
+  </span>
+</div>
     `;
 card.querySelector(".fav-btn").addEventListener("click", (e) => {
   e.stopPropagation();  // カードの遷移を止める
