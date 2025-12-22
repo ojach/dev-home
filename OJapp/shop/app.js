@@ -223,7 +223,7 @@ async function renderShop() {
 // ============================================
 // 推しアイコン 2件（author_key対応版）
 // ============================================
-function renderRecommend() {
+async function renderRecommend() {
 
   const API_BASE = "https://ojshop-fav.trc-wasps.workers.dev";
 
