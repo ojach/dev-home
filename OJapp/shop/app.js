@@ -153,7 +153,28 @@ async function renderShop() {
         <div class="item-price">${item.price}円</div>
         <div class="item-author">${item.author}</div>
       </div>
+       <div class="fav-zone">
+    <span class="fav-btn" data-id="${item.product_id}">🤍</span>
+    <span class="fav-count">${item.fav_count ?? 0}</span>
+  </div>
     `;
+card.querySelector(".fav-btn").addEventListener("click", (e) => {
+  e.stopPropagation();  // カードの遷移を止める
+
+  const btn = e.target;
+  const id = btn.dataset.id;
+  const key = `fav_${FAV_VERSION}_${id}`;
+
+  if (localStorage.getItem(key)) {
+    localStorage.removeItem(key);
+    btn.textContent = "🤍";
+    btn.style.color = "#aaa";
+  } else {
+    localStorage.setItem(key, "1");
+    btn.textContent = "❤️";
+    btn.style.color = "#ff4b7d";
+  }
+});
 
     card.addEventListener("click", () => {
       location.href = `/OJapp/shop/product/?id=${item.product_id}`;
