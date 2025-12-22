@@ -169,13 +169,14 @@
 <div id="edit-modal" class="modal hidden">
   <div class="modal-bg"></div>
 
-  <div class="modal-content">
+  <div class="modal-content edit-box">
     <button class="modal-close-edit">×</button>
 
     <h2>商品を編集</h2>
 
-    <!-- 画像プレビュー -->
     <img id="edit-thumb-preview" class="modal-thumb">
+
+    <label>サムネ差し替え</label>
     <input type="file" id="edit-thumb-input" accept="image/*">
 
     <label>タイトル</label>
@@ -190,9 +191,25 @@
     <label>価格（円）</label>
     <input type="text" id="edit-price">
 
-    <button id="edit-save" class="modal-buy">保存する</button>
+    <!-- 公開 / 非公開 切り替え -->
+    <label>公開状態</label>
+    <select id="edit-visible">
+      <option value="1">公開</option>
+      <option value="0">非公開</option>
+    </select>
+
+    <button id="edit-save" class="submit-btn">保存する</button>
+
+    <hr>
+
+    <!-- 危険ゾーン -->
+    <button id="edit-delete" class="btn-del" style="width:100%;margin-top:10px;">
+      この商品を削除する
+    </button>
+
   </div>
 </div>
+
 
   <!-- ================================== -->
   <!-- admin専用 JS                        -->
