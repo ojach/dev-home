@@ -282,15 +282,11 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 
-// ============================================
-// 横スクロールおすすめ
-// ============================================
 async function loadScrollRows() {
+
   const API = "https://ojshop-fav.trc-wasps.workers.dev";
 
-  // ===============================
   // 人気（閲覧数順）
-  // ===============================
   const popularRes = await fetch(`${API}/shop/api/items?sort=views`);
   const popular = await popularRes.json();
 
@@ -311,9 +307,7 @@ async function loadScrollRows() {
     }).join("");
 
 
-  // ===============================
   // おすすめ（ランダム）
-  // ===============================
   const recRes = await fetch(`${API}/shop/api/items?sort=recommended`);
   const rec = await recRes.json();
 
@@ -332,6 +326,7 @@ async function loadScrollRows() {
         </div>
       `;
     }).join("");
+
 }
 
 loadScrollRows();
