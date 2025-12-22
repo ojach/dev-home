@@ -243,25 +243,31 @@ function bindAdminButtons() {
 function openEditModal(item) {
   const modal = document.getElementById("edit-modal");
 
+  // 現在の値セット
+  modal.dataset.id = item.product_id;
   document.getElementById("edit-title").value = item.title;
   document.getElementById("edit-category").value = item.category;
   document.getElementById("edit-url").value = item.product_url;
   document.getElementById("edit-price").value = item.price;
+
+  // 公開状態
+  document.getElementById("edit-visible").value = item.visible ? "1" : "0";
+
+  // サムネ
   document.getElementById("edit-thumb-preview").src =
     `${API_BASE}/shop/r2/${item.thumbnail}`;
 
-  modal.dataset.id = item.product_id;
   modal.classList.remove("hidden");
 }
 
-document.querySelector(".modal-close-edit").addEventListener("click", () => {
-  document.getElementById("edit-modal").classList.add("hidden");
-});
-document.querySelector("#edit-modal .modal-bg").addEventListener("click", () => {
-  document.getElementById("edit-modal").classList.add("hidden");
-});
 
-// 保存
+// ▼ モーダルを閉じる
+document.querySelector(".modal-close-edit").onclick =
+document.querySelector("#edit-modal .modal-bg").onclick =
+  () => document.getElementById("edit-modal").classList.add("hidden");
+
+
+// ▼ 保存
 document.getElementById("edit-save").addEventListener("click", async () => {
   const id = document.getElementById("edit-modal").dataset.id;
 
@@ -270,29 +276,42 @@ document.getElementById("edit-save").addEventListener("click", async () => {
     title: document.getElementById("edit-title").value,
     category: document.getElementById("edit-category").value,
     product_url: document.getElementById("edit-url").value,
-    price: Number(document.getElementById("edit-price").value)
+    price: Number(document.getElementById("edit-price").value),
+    visible: Number(document.getElementById("edit-visible").value)
   };
 
   // サムネ差し替え
   const file = document.getElementById("edit-thumb-input").files[0];
   if (file) {
-    const designer = localStorage.getItem("ojshop-admin-designer");
-    const authorKey = encodeAuthorName(designer);
-
+    const authorKey = encodeAuthorName(localStorage.getItem("ojshop-admin-designer"));
     await fetch(`${API_BASE}/shop/admin/thumb?product_id=${id}&author_key=${authorKey}`, {
       method: "POST",
       body: file
     });
   }
 
-  // DB 更新
+  // DB更新
   await fetch(`${API_BASE}/shop/admin/edit`, {
     method: "PUT",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(body)
+    body: JSON.stringify(body),
   });
 
   alert("保存しました！");
+  location.reload();
+});
+
+
+// ▼ 削除ボタン
+document.getElementById("edit-delete").addEventListener("click", async () => {
+  const id = document.getElementById("edit-modal").dataset.id;
+
+  if (!confirm("本当に削除しますか？")) return;
+  if (!confirm("最終確認：削除すると復元できません！")) return;
+
+  await fetch(`${API_BASE}/shop/admin/delete?id=${id}`, { method: "POST" });
+
+  alert("削除しました");
   location.reload();
 });
 
