@@ -6,10 +6,10 @@
 // 設定
 // ----------------------
 const FAV_VERSION = "v2";
-let items = [];      
-let viewItems = [];  
+let items = [];
+let viewItems = [];
 
-let currentSort = "new"; 
+let currentSort = "new";
 let randomCache = null;
 
 const API_BASE = "https://ojshop-fav.trc-wasps.workers.dev";
@@ -20,7 +20,6 @@ const API_BASE = "https://ojshop-fav.trc-wasps.workers.dev";
 // ============================================
 async function loadItems() {
   const res = await fetch(`${API_BASE}/shop/api/items`);
-
   if (!res.ok) throw new Error("items fetch failed");
   return await res.json();
 }
@@ -47,7 +46,6 @@ function renderDynamicFilters() {
   author.innerHTML = "";
   price.innerHTML = "";
 
-  // カテゴリー
   [...categories].forEach(c => {
     const opt = document.createElement("option");
     opt.value = c;
@@ -55,7 +53,6 @@ function renderDynamicFilters() {
     category.appendChild(opt);
   });
 
-  // 作者
   [...authors].forEach(a => {
     const opt = document.createElement("option");
     opt.value = a;
@@ -63,7 +60,6 @@ function renderDynamicFilters() {
     author.appendChild(opt);
   });
 
-  // 価格帯
   [
     ["all", "全価格帯"],
     ["free", "無料"],
@@ -86,30 +82,24 @@ async function applyFilters() {
   const activeTab = document.querySelector(".shop-tab.active");
   const sort = activeTab ? activeTab.dataset.sort : "new";
 
-  const API = "https://ojshop-fav.trc-wasps.workers.dev/shop/api/items";
+  const API = `${API_BASE}/shop/api/items`;
 
-  // sort="fav" は Workers では "popular"
-  // sort="random" は "recommended"
   let sortKey = sort;
   if (sort === "fav") sortKey = "popular";
   if (sort === "random") sortKey = "recommended";
 
-  // Workers APIを叩く！
   const res = await fetch(`${API}?sort=${sortKey}`);
   const data = await res.json();
 
-  // data は items の配列
   viewItems = data.slice(0, 20);
   renderShop();
 }
+
 document.querySelectorAll(".shop-tab").forEach(tab => {
   tab.addEventListener("click", () => {
-
-    // active入れ替え
     document.querySelectorAll(".shop-tab").forEach(t => t.classList.remove("active"));
     tab.classList.add("active");
 
-    // ソート再実行
     applyFilters();
   });
 });
@@ -117,7 +107,7 @@ document.querySelectorAll(".shop-tab").forEach(tab => {
 
 
 // ============================================
-// モーダル（使う場合）
+// モーダル
 // ============================================
 function openModal(item) {
   const modal = document.getElementById("item-modal");
@@ -135,7 +125,7 @@ function closeModal() {
 
 
 // ============================================
-// 表示アニメ
+// フェードインアニメ
 // ============================================
 function animateCards() {
   const cards = document.querySelectorAll(".item-card");
@@ -150,12 +140,9 @@ function animateCards() {
 // お気に入りロード
 // ============================================
 function loadFavorites() {
-
-  // 各商品の♡状態を復元
   document.querySelectorAll(".fav-btn").forEach(btn => {
     const id = btn.dataset.id;
     const key = `fav_${FAV_VERSION}_${id}`;
-
     if (localStorage.getItem(key)) {
       btn.textContent = "❤️";
       btn.style.color = "#ff4b7d";
@@ -165,17 +152,17 @@ function loadFavorites() {
 
 
 
-
 // ============================================
-// 商品一覧レンダー（完全版）
+// 商品一覧レンダー（修正版）
 // ============================================
 async function renderShop() {
-  const API = "https://ojshop-fav.trc-wasps.workers.dev";
+  const API = API_BASE;
 
   const res = await fetch(`${API}/shop/api/items`);
   const items = await res.json();
 
-  const grid = document.getElementById("shop-grid");
+  // ★ 修正：IDを shop-grid → shop-list に統一
+  const grid = document.getElementById("shop-list");
   grid.innerHTML = "";
 
   items.forEach(item => {
@@ -199,12 +186,11 @@ async function renderShop() {
     `;
 
     card.addEventListener("click", () => {
-      location.href = `/OJapp/shop/product/?id=${item.product_id}`;
+      location.href = \`/OJapp/shop/product/?id=\${item.product_id}\`;
     });
 
     grid.appendChild(card);
 
-    // フェードインアニメ
     requestAnimationFrame(() => {
       card.classList.add("show");
     });
@@ -213,17 +199,16 @@ async function renderShop() {
 
 
 
-
-
 // ============================================
-// 推しアイテム 2件（完全版）
+// 推しアイテム 2件（修正版）
 // ============================================
 async function renderRecommend() {
-  const API = "https://ojshop-fav.trc-wasps.workers.dev";
+  const API = API_BASE;
   const res = await fetch(`${API}/shop/api/items?sort=recommended`);
   const items = await res.json();
 
-  const box = document.getElementById("recommend-box");
+  // ★ 修正：recommend-box → recommend-list
+  const box = document.getElementById("recommend-list");
   box.innerHTML = "";
 
   items.slice(0, 2).forEach(item => {
@@ -241,30 +226,26 @@ async function renderRecommend() {
     `;
 
     div.addEventListener("click", () => {
-      location.href = `/OJapp/shop/product/?id=${item.product_id}`;
+      location.href = \`/OJapp/shop/product/?id=\${item.product_id}\`;
     });
 
     box.appendChild(div);
   });
 }
 
-document.addEventListener("DOMContentLoaded", () => {
-  renderShop();
-  renderRecommend();
-});
 
 
+// ============================================
+// 横スクロール（人気 / おすすめ）
+// ============================================
 async function loadScrollRows() {
+  const API = API_BASE;
 
-  const API = "https://ojshop-fav.trc-wasps.workers.dev";
-
-  // 人気（閲覧数順）
   const popularRes = await fetch(`${API}/shop/api/items?sort=views`);
   const popular = await popularRes.json();
 
   document.getElementById("scroll-popular").innerHTML =
     popular.map(item => {
-
       const thumb = item.thumbnail
         ? `${API}/shop/r2/${item.thumbnail}`
         : "/OJapp/shop/noimage.png";
@@ -279,13 +260,11 @@ async function loadScrollRows() {
     }).join("");
 
 
-  // おすすめ（ランダム）
   const recRes = await fetch(`${API}/shop/api/items?sort=recommended`);
   const rec = await recRes.json();
 
   document.getElementById("scroll-recommend").innerHTML =
     rec.map(item => {
-
       const thumb = item.thumbnail
         ? `${API}/shop/r2/${item.thumbnail}`
         : "/OJapp/shop/noimage.png";
@@ -298,7 +277,6 @@ async function loadScrollRows() {
         </div>
       `;
     }).join("");
-
 }
 
 loadScrollRows();
@@ -309,14 +287,14 @@ loadScrollRows();
 // 初期起動
 // ============================================
 async function start() {
-  items = await loadItems();   // ← D1 API 読み込み
+  items = await loadItems();
   viewItems = [...items];
 
   renderRecommend();
   renderDynamicFilters();
   applyFilters();
-  await loadFavorites(); 
-   renderShop();
+  await loadFavorites();
+  renderShop();
 }
 
 document.addEventListener("DOMContentLoaded", start);
