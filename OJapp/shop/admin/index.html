@@ -1,424 +1,55 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>OJapp Shop Admin</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>OJapp Shop Admin</title>
 
-<style>
-  body {
-    font-family: -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
-    background: #f7f9fc;
-    padding: 20px;
-  }
-  h1 {
-    text-align: center;
-    margin-bottom: 20px;
-    font-size: 24px;
-    font-weight: 700;
-  }
-  .form-box {
-    background: #ffffff;
-    border-radius: 16px;
-    padding: 20px;
-    max-width: 440px;
-    margin: 0 auto;
-    box-shadow: 0 6px 20px rgba(0,0,0,0.08);
-  }
-
-  .input-group {
-    margin-bottom: 16px;
-  }
-  .input-group label {
-    font-size: 14px;
-    font-weight: 600;
-    display: block;
-    margin-bottom: 6px;
-  }
-  .input-group input,
-  .input-group select {
-    width: 100%;
-    padding: 12px 14px;
-    border-radius: 12px;
-    border: 1px solid #dde3ea;
-    background: #fdfdfd;
-    font-size: 15px;
-  }
-
-  .thumb-preview {
-    width: 100%;
-    aspect-ratio: 1/1;
-    border-radius: 16px;
-    object-fit: cover;
-    border: 1px solid #e5e5e5;
-    margin-bottom: 12px;
-    display: none;
-  }
-
-  .submit-btn {
-    width: 100%;
-    background: linear-gradient(135deg, #2bb7ff, #4d8cff);
-    color: white;
-    border: none;
-    padding: 14px;
-    border-radius: 12px;
-    font-size: 16px;
-    font-weight: bold;
-    cursor: pointer;
-    margin-top: 10px;
-    transition: 0.2s;
-  }
-
-  .submit-btn:active { opacity: 0.7; }
-
-  .result-box {
-    text-align: center;
-    margin-top: 20px;
-    font-size: 15px;
-    color: #333;
-    display: none;
-  }
-
-  .logout-btn {
-    margin-top: 20px;
-    padding: 10px 18px;
-    background: #ff4b7d;
-    color: #fff;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    font-size: 14px;
-  }
-  .logout-btn:hover { background: #ff2f68; }
-  .primary-btn {
-    background: linear-gradient(90deg, #4fc3ff, #3a7bff);
-    border: none;
-    padding: 12px 20px;
-    color: white;
-    border-radius: 10px;
-    cursor: pointer;
-    font-size: 15px;
-    width: 100%;
-    margin-top: 15px;
-  }
-  .primary-btn:hover {
-    opacity: 0.9;
-  }
-</style>
+  <link rel="stylesheet" href="/OJapp/shop/admin/style.css">
 </head>
 <body>
 
-<h1 id="page-title">🛒 OJapp Shop Admin</h1>
-<div id="author-icon-box" style="margin-bottom:30px;"></div>
-<!-- ================================
-     作者アイコン提出エリア
-================================ -->
-<div class="form-box" id="author-icon-box" style="margin-bottom: 30px;">
-  <h3 style="margin-bottom: 10px;">作者アイコン</h3>
-
-  <!-- プレビュー -->
-  <img id="author-icon-preview" class="thumb-preview" style="display:none">
-
-  <div class="input-group">
-    <label id="author-icon-label">作者アイコンを提出してください（PNG推奨）</label>
-    <input type="file" id="author-icon-input" accept="image/*">
-  </div>
-
-  <button class="submit-btn" id="author-icon-submit">アイコンをアップロード</button>
-
-  <div class="result-box" id="author-icon-result"></div>
+<div id="admin-header">
+  <h1 id="page-title">OJapp Shop Admin</h1>
+  <button id="logout-btn" class="logout-btn">ログアウト</button>
 </div>
 
+<!-- ▼ 作者アイコン -->
+<section class="section">
+  <h2>作者アイコン</h2>
+  <div id="author-icon-box">読込中…</div>
+</section>
 
-<!-- ================================
-     商品登録フォーム
-================================ -->
-<div class="form-box">
 
+<!-- ▼ 商品追加 -->
+<section class="section">
+  <h2>商品追加</h2>
+  
+  <label>タイトル</label>
+  <input id="title" type="text" placeholder="商品名">
+
+  <label>サムネイル画像</label>
+  <input id="thumb" type="file" accept="image/*">
   <img id="preview" class="thumb-preview">
 
-  <div class="input-group">
-    <label>サムネ画像</label>
-    <input type="file" id="thumb" accept="image/*">
-  </div>
+  <label>カテゴリ</label>
+  <input id="category" type="text" placeholder="例：シンプル / かわいい">
 
-  <div class="input-group">
-    <label>タイトル</label>
-    <input type="text" id="title">
-  </div>
+  <label>価格</label>
+  <input id="price" type="number" value="0">
 
-  <div class="input-group">
-    <input type="hidden" id="author" name="author">
-  </div>
-
-  <div class="input-group">
-    <label>カテゴリー</label>
-    <input type="text" id="category">
-  </div>
-
-  <div class="input-group">
-    <label>価格（数字のみ）</label>
-    <input type="number" id="price">
-  </div>
-
-  <div class="input-group">
-    <label>公開する</label>
-    <select id="visible">
-      <option value="1">公開</option>
-      <option value="0">非公開</option>
-    </select>
-  </div>
-
-  <button class="submit-btn" id="submit">商品を登録する</button>
-
-  <button id="logout-btn" class="logout-btn">ログアウト</button>
-
-  <div class="result-box" id="result"></div>
-</div>
-<script>
-// ============================================
-// 共有：Base64URL（作者名 → author_key）
-// ============================================
-function encodeAuthorName(name) {
-  const utf8 = new TextEncoder().encode(name);
-  let binary = "";
-  utf8.forEach(b => binary += String.fromCharCode(b));
-  return btoa(binary)
-    .replace(/\+/g, "-")
-    .replace(/\//g, "_")
-    .replace(/=+$/, "");
-}
+  <button id="submit" class="submit-btn">商品を登録する</button>
+  <div id="result" class="result-box"></div>
+</section>
 
 
-// ============================================
-// DOMContentLoaded（全部ここで動かす）
-// ============================================
-document.addEventListener("DOMContentLoaded", () => {
-
-  const API_BASE = "https://ojshop-fav.trc-wasps.workers.dev";
-  const KEY = "ojshop-admin-designer";
-
-  // ----------------------------------------------------
-  // ログイン処理
-  // ----------------------------------------------------
-  let designer = localStorage.getItem(KEY);
-
-  if (!designer) {
-    const input = prompt("デザイナー専用ページです。\nパスワードを入力してください：");
-
-    if (!input) {
-      alert("キャンセルされました");
-      location.href = "/OJapp/shop/";
-      return;
-    }
-
-    if (!input.endsWith("778")) {
-      alert("パスワードが違います。");
-      location.href = "/OJapp/shop/";
-      return;
-    }
-
-    designer = input.slice(0, -3);
-    localStorage.setItem(KEY, designer);
-    alert(`ログイン成功！ようこそ ${designer} さん`);
-  }
+<!-- ▼ 自分の作品一覧 -->
+<section class="section">
+  <h2>あなたの作品一覧</h2>
+  <div id="my-items"></div>
+</section>
 
 
-  // ----------------------------------------------------
-  // ページタイトル設定
-  // ----------------------------------------------------
-  const suffix = designer.endsWith("s") ? "’" : "'s";
-  document.getElementById("page-title").textContent =
-    `${designer}${suffix} OJapp Shop`;
-
-
-  // ----------------------------------------------------
-  // 作者名 hidden にセット
-  // ----------------------------------------------------
-  document.getElementById("author").value = designer;
-
-
-// ============================================
-// 作者アイコン UI 切替（完全版）
-// ============================================
-document.addEventListener("DOMContentLoaded", async () => {
-
-  const designer = localStorage.getItem("ojshop-admin-designer");
-  if (!designer) return;
-
-  const authorKey = encodeAuthorName(designer);
-  const API_BASE = "https://ojshop-fav.trc-wasps.workers.dev";
-  const iconURL = `${API_BASE}/shop/r2/authors/${authorKey}.png`;
-
-  const box = document.getElementById("author-icon-box");
-
-  // R2 にファイルあるかチェック
-  const exists = await fetch(iconURL, { method: "HEAD" })
-    .then(r => r.ok)
-    .catch(() => false);
-
-  if (exists) {
-    // -----------------------------
-    // 登録済み UI（これだけ表示）
-    // -----------------------------
-    box.innerHTML = `
-      <h3 style="margin-bottom:10px;">作者アイコン</h3>
-
-      <img src="${iconURL}"
-           style="width:120px;height:120px;border-radius:50%;object-fit:cover;margin-bottom:15px;">
-
-      <p style="font-size:14px;margin-bottom:10px;">登録済みのアイコンです</p>
-
-      <input type="file" id="author-icon-input" accept="image/*">
-      <button class="submit-btn" id="author-icon-update">アイコンを変更する</button>
-      <div class="result-box" id="author-icon-result" style="display:none;"></div>
-    `;
-
-    document.getElementById("author-icon-update")
-      .addEventListener("click", async () => {
-        const file = document.getElementById("author-icon-input").files[0];
-        const result = document.getElementById("author-icon-result");
-
-        if (!file) return alert("ファイルを選択してください！");
-
-        const res = await fetch(
-          `${API_BASE}/shop/admin/icon?author_key=${authorKey}`,
-          { method: "POST", body: file }
-        );
-
-        const json = await res.json();
-        result.style.display = "block";
-
-        result.innerHTML = json.ok
-          ? "アイコンを更新しました！再読み込みしてください。"
-          : "更新に失敗しました。";
-      });
-
-    return; // ← 未登録 UI を出さない
-  }
-
-  // -----------------------------
-  // 未登録 UI（こちらは else）
-  // -----------------------------
-  const preview = document.getElementById("author-icon-preview");
-  const input = document.getElementById("author-icon-input");
-  const submitBtn = document.getElementById("author-icon-submit");
-  const resultBox = document.getElementById("author-icon-result");
-
-  input.addEventListener("change", e => {
-    const file = e.target.files[0];
-    if (!file) return;
-
-    preview.src = URL.createObjectURL(file);
-    preview.style.display = "block";
-  });
-
-  submitBtn.addEventListener("click", async () => {
-    const file = input.files[0];
-    if (!file) return alert("ファイルを選んでください");
-
-    const res = await fetch(
-      `${API_BASE}/shop/admin/icon?author_key=${authorKey}`,
-      {
-        method: "POST",
-        body: file
-      }
-    );
-
-    const json = await res.json();
-    resultBox.style.display = "block";
-
-    resultBox.innerHTML = json.ok
-      ? `アイコンをアップロードしました！<br>${json.url}`
-      : "アップロード失敗...";
-  });
-
-});
-
-
-  // ----------------------------------------------------
-  // サムネ画像プレビュー
-  // ----------------------------------------------------
-  document.getElementById("thumb").addEventListener("change", e => {
-    const file = e.target.files[0];
-    if (!file) return;
-    const preview = document.getElementById("preview");
-    preview.src = URL.createObjectURL(file);
-    preview.style.display = "block";
-  });
-
-
-  // ----------------------------------------------------
-  // 商品登録
-  // ----------------------------------------------------
-  document.getElementById("submit").addEventListener("click", async () => {
-
-    const file = document.getElementById("thumb").files[0];
-    const title = document.getElementById("title").value;
-    const author = designer;
-    const category = document.getElementById("category").value;
-    const price = document.getElementById("price").value;
-
-    if (!file || !title) {
-      alert("画像・タイトルは必須です！");
-      return;
-    }
-
-    const product_id = crypto.randomUUID();
-    const author_key = encodeAuthorName(author);
-
-    // ---------- ① R2にサムネアップロード ----------
-    const upRes = await fetch(
-      `${API_BASE}/shop/admin/thumb?product_id=${product_id}&author_key=${author_key}`,
-      { method: "POST", body: file }
-    );
-
-    const upJson = await upRes.json();
-    if (!upJson.ok) {
-      alert("サムネ画像のアップロードに失敗しました");
-      return;
-    }
-
-    // ---------- ② D1 に商品登録 ----------
-    const payload = {
-      product_id,
-      title,
-      author,
-      author_key,
-      category,
-      product_url: "",
-      price: Number(price),
-      thumbnail: `thumbs/${author_key}/${product_id}.png`
-    };
-
-    const res = await fetch(`${API_BASE}/shop/admin/item`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(payload)
-    });
-
-    const json = await res.json();
-    const box = document.getElementById("result");
-    box.style.display = "block";
-
-    box.innerHTML = json.ok
-      ? `登録完了！<br>product_id：<b>${json.product_id}</b>`
-      : "エラーが発生しました。";
-  });
-
-
-  // ----------------------------------------------------
-  // ログアウト
-  // ----------------------------------------------------
-  document.getElementById("logout-btn").addEventListener("click", () => {
-    if (!confirm("ログアウトしますか？")) return;
-    localStorage.removeItem(KEY);
-    alert("ログアウトしました！");
-    location.reload();
-  });
-
-});
-</script>
-
+<script src="/OJapp/shop/admin/app.js"></script>
 </body>
 </html>
