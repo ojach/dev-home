@@ -120,17 +120,45 @@ function renderDynamicFilters() {
 // 絞り込み ＆ ソート
 // ===============================
 async function applyFilters() {
+
+  // 1) まずソート結果を取得
   const activeTab = document.querySelector(".shop-tab.active");
-  let sort = activeTab ? activeTab.dataset.sort : "new";
+  const sort = activeTab ? activeTab.dataset.sort : "new";
 
-  // Workers用変換
-  if (sort === "fav") sort = "popular";
-  if (sort === "random") sort = "recommended";
+  let sortKey = sort;
+  if (sort === "fav") sortKey = "popular";
+  if (sort === "random") sortKey = "recommended";
 
-  const res = await fetch(`${API_BASE}/shop/api/items?sort=${sort}`);
-  const data = await res.json();
+  const res = await fetch(`${API_BASE}/shop/api/items?sort=${sortKey}`);
+  let data = await res.json();
 
-  viewItems = data.slice(0, 40);
+  // 2) ▼ カテゴリー / 作者 / 価格 の絞り込み
+  const selectedCategory = document.getElementById("filter-category").value;
+  const selectedAuthor   = document.getElementById("filter-author").value;
+  const selectedPrice    = document.getElementById("filter-price").value;
+
+  data = data.filter(item => {
+
+    // カテゴリー
+    if (selectedCategory !== "all" && item.category !== selectedCategory)
+      return false;
+
+    // 作者
+    if (selectedAuthor !== "all" && item.author !== selectedAuthor)
+      return false;
+
+    // 価格
+    if (selectedPrice === "free" && item.price !== 0) return false;
+    if (selectedPrice === "under500" && item.price > 500) return false;
+    if (selectedPrice === "over500" && item.price < 500) return false;
+
+    return true;
+  });
+
+  // 最大20件
+  viewItems = data.slice(0, 20);
+
+  // レンダリング
   renderShop();
 }
 
@@ -196,7 +224,9 @@ card.querySelector(".fav-btn").addEventListener("click", (e) => {
 
     requestAnimationFrame(() => card.classList.add("show"));
   });
+  loadFavorites();
 }
+
 
 
 
