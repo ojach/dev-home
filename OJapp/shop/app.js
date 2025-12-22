@@ -250,24 +250,29 @@ async function loadScrollRows() {
 //--------------------------
 async function toggleFav(btn) {
   const id = btn.dataset.id;
+  const key = `fav_${id}`;
 
-  // 色だけ先に更新
+  // ★ すでに押したなら何もせず return
+  if (localStorage.getItem(key)) return;
+
+  // 色を変える
   btn.classList.add("active");
 
-  // Workers へ送信
+  // API に送る（1回だけ加算）
   const res = await fetch(`${API_BASE}/shop/api/fav?id=${id}`, {
     method: "POST",
   });
 
   const data = await res.json();
 
-  // 数字へ反映
+  // 数字更新
   const countEl = document.querySelector(`.fav-count[data-id="${id}"]`);
   if (countEl) countEl.textContent = data.favorite_count;
 
-  // localStorage にも保存しておく（色維持用）
-  localStorage.setItem(`fav_${id}`, "1");
+  // ★ ここで「一生押した扱い」にする
+  localStorage.setItem(key, "1");
 }
+
 
 
 // ===============================
