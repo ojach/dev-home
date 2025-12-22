@@ -165,6 +165,34 @@
 
   </div>
 
+<!-- ▼ 編集モーダル -->
+<div id="edit-modal" class="modal hidden">
+  <div class="modal-bg"></div>
+
+  <div class="modal-content">
+    <button class="modal-close-edit">×</button>
+
+    <h2>商品を編集</h2>
+
+    <!-- 画像プレビュー -->
+    <img id="edit-thumb-preview" class="modal-thumb">
+    <input type="file" id="edit-thumb-input" accept="image/*">
+
+    <label>タイトル</label>
+    <input type="text" id="edit-title">
+
+    <label>カテゴリー</label>
+    <input type="text" id="edit-category">
+
+    <label>販売URL</label>
+    <input type="text" id="edit-url">
+
+    <label>価格（円）</label>
+    <input type="text" id="edit-price">
+
+    <button id="edit-save" class="modal-buy">保存する</button>
+  </div>
+</div>
 
   <!-- ================================== -->
   <!-- admin専用 JS                        -->
