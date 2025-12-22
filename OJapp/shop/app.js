@@ -17,6 +17,16 @@ async function loadItems() {
   return await res.json();
 }
 
+function loadFavorites() {
+  document.querySelectorAll(".fav-btn").forEach(btn => {
+    const id = btn.dataset.id;
+    const key = `fav_${id}`;
+
+    if (localStorage.getItem(key)) {
+      btn.classList.add("active");
+    }
+  });
+}
 
 
 // ===============================
@@ -239,19 +249,22 @@ async function loadScrollRows() {
 async function toggleFav(btn) {
   const id = btn.dataset.id;
 
-  // 表示だけ先に更新
+  // 色だけ先に更新
   btn.classList.add("active");
 
-  // Workers に +1 を送信
+  // Workers へ送信
   const res = await fetch(`${API_BASE}/shop/api/fav?id=${id}`, {
     method: "POST",
   });
 
   const data = await res.json();
 
-  // 数字反映
+  // 数字へ反映
   const countEl = document.querySelector(`.fav-count[data-id="${id}"]`);
   if (countEl) countEl.textContent = data.favorite_count;
+
+  // localStorage にも保存しておく（色維持用）
+  localStorage.setItem(`fav_${id}`, "1");
 }
 
 
