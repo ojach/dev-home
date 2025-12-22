@@ -166,6 +166,10 @@ async function loadMyItems() {
     box.innerHTML = "<p>まだ商品がありません。</p>";
     return;
   }
+// 編集モーダル起動
+itemDiv.querySelector(".btn-mosaic").addEventListener("click", () => {
+  openEditModal(item);
+});
 
   box.innerHTML = "";
 
@@ -289,4 +293,61 @@ function showMosaic(imgURL) {
   img.crossOrigin = "anonymous";
   img.src = imgURL;
 }
+//===================
+// モーダル
+//===================
+function openEditModal(item) {
+  const modal = document.getElementById("edit-modal");
+
+  // 現在の値をセット
+  document.getElementById("edit-title").value = item.title;
+  document.getElementById("edit-category").value = item.category;
+  document.getElementById("edit-url").value = item.product_url;
+  document.getElementById("edit-price").value = item.price;
+  document.getElementById("edit-thumb-preview").src =
+    `${API_BASE}/shop/r2/${item.thumbnail}`;
+
+  modal.dataset.id = item.product_id;
+  modal.classList.remove("hidden");
+}
+document.querySelector(".modal-close-edit").addEventListener("click", () => {
+  document.getElementById("edit-modal").classList.add("hidden");
+});
+document.querySelector("#edit-modal .modal-bg").addEventListener("click", () => {
+  document.getElementById("edit-modal").classList.add("hidden");
+});
+document.getElementById("edit-save").addEventListener("click", async () => {
+  const id = document.getElementById("edit-modal").dataset.id;
+
+  const body = {
+    product_id: id,
+    title: document.getElementById("edit-title").value,
+    category: document.getElementById("edit-category").value,
+    product_url: document.getElementById("edit-url").value,
+    price: Number(document.getElementById("edit-price").value),
+  };
+
+  // サムネ差し替えの場合
+  const file = document.getElementById("edit-thumb-input").files[0];
+  if (file) {
+    const authorKey = localStorage.getItem("ojshop-admin-designer");
+    const formData = new FormData();
+    formData.append("file", file);
+
+    await fetch(`${API_BASE}/shop/admin/thumb?product_id=${id}&author_key=${authorKey}`, {
+      method: "POST",
+      body: file
+    });
+  }
+
+  // DB 更新
+  await fetch(`${API_BASE}/shop/admin/edit`, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(body),
+  });
+
+  alert("保存しました！");
+  location.reload();
+});
 
