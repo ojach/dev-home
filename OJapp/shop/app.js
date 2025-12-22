@@ -219,8 +219,8 @@ async function renderShop() {
       `;
 
       // 商品ページへ遷移
-      card.addEventListener("click", () => {
-        location.href = \`/OJapp/shop/product/?id=${item.product_id}\`;
+     card.addEventListener("click", () => {
+        location.href = `/OJapp/shop/product/?id=${item.product_id}`;
       });
 
       list.appendChild(card);
