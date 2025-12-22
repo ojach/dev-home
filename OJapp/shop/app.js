@@ -170,62 +170,47 @@ function loadFavorites() {
 // 商品一覧レンダー（完全版）
 // ============================================
 async function renderShop() {
+  const API = "https://ojshop-fav.trc-wasps.workers.dev";
 
-  const API_BASE = "https://ojshop-fav.trc-wasps.workers.dev";
-
-  // ★ 正しい API エンドポイント
-  const res = await fetch(`${API_BASE}/shop/api/items`);
+  const res = await fetch(`${API}/shop/api/items`);
   const items = await res.json();
 
-  const list = document.getElementById("shop-list");
-  if (!list) {
-    console.error("ERROR: #shop-list が存在しません");
-    return;
-  }
+  const grid = document.getElementById("shop-grid");
+  grid.innerHTML = "";
 
-  list.innerHTML = "";
+  items.forEach(item => {
+    const thumb = `${API}/shop/r2/${item.thumbnail}`;
+    const icon  = `${API}/shop/r2/authors/${item.author_key}.png`;
 
-  items
-    .filter(item => item.visible === 1)
-    .forEach(item => {
+    const card = document.createElement("div");
+    card.className = "item-card";
+    card.innerHTML = `
+      <div class="item-thumb-box">
+        <img src="${thumb}" class="item-thumb">
+        <img src="${icon}" class="author-icon">
+      </div>
 
-      // サムネ（R2 パスは item.thumbnail に "thumbs/author/id.png" が入っている）
-      const thumbURL = item.thumbnail
-        ? `${API_BASE}/shop/r2/${item.thumbnail}`
-        : "/OJapp/shop/noimage.png";
+      <div class="item-title">${item.title}</div>
 
-      // 作者アイコン
-      const authorIcon = item.author_key
-        ? `${API_BASE}/shop/r2/authors/${item.author_key}.png`
-        : "/OJapp/shop/noimage_user.png";
+      <div class="item-meta">
+        <div class="item-price">${item.price}円</div>
+        <div class="item-author">${item.author}</div>
+      </div>
+    `;
 
-      // カード生成
-      const card = document.createElement("div");
-      card.className = "shop-card";
-
-      card.innerHTML = `
-        <img class="thumb" src="${thumbURL}" />
-
-        <div class="info">
-          <h3>${item.title}</h3>
-
-          <div class="author-box">
-            <img class="author-icon" src="${authorIcon}">
-            <span class="author">${item.author}</span>
-          </div>
-
-          <div class="price">${item.price}円</div>
-        </div>
-      `;
-
-      // 商品ページへ遷移
-     card.addEventListener("click", () => {
-        location.href = `/OJapp/shop/product/?id=${item.product_id}`;
-      });
-
-      list.appendChild(card);
+    card.addEventListener("click", () => {
+      location.href = `/OJapp/shop/product/?id=${item.product_id}`;
     });
+
+    grid.appendChild(card);
+
+    // フェードインアニメ
+    requestAnimationFrame(() => {
+      card.classList.add("show");
+    });
+  });
 }
+
 
 
 
@@ -234,48 +219,35 @@ async function renderShop() {
 // 推しアイテム 2件（完全版）
 // ============================================
 async function renderRecommend() {
-
-  const API_BASE = "https://ojshop-fav.trc-wasps.workers.dev";
-
-  // ★ 絶対にここを間違えてはいけない
-  const res = await fetch(`${API_BASE}/shop/api/items`);
+  const API = "https://ojshop-fav.trc-wasps.workers.dev";
+  const res = await fetch(`${API}/shop/api/items?sort=recommended`);
   const items = await res.json();
 
-  const recommendItems = items
-    .filter(item => item.visible === 1)
-    .sort(() => Math.random() - 0.5)   // ランダム抽選
-    .slice(0, 2);                      // 2件だけ採用
+  const box = document.getElementById("recommend-box");
+  box.innerHTML = "";
 
-  const list = document.getElementById("recommend-list");
-  if (!list) {
-    console.error("ERROR: #recommend-list が存在しません");
-    return;
-  }
+  items.slice(0, 2).forEach(item => {
+    const thumb = `${API}/shop/r2/${item.thumbnail}`;
+    const icon = `${API}/shop/r2/authors/${item.author_key}.png`;
 
-  list.innerHTML = "";
-
-  recommendItems.forEach(item => {
-
-    const thumbURL = item.thumbnail
-      ? `${API_BASE}/shop/r2/${item.thumbnail}`
-      : "/OJapp/shop/noimage.png";
-
-    const card = document.createElement("div");
-    card.className = "recommend-card";
-
-    card.innerHTML = `
-      <img src="${thumbURL}" class="recommend-thumb">
-      <div class="rec-title">${item.title}</div>
+    const div = document.createElement("div");
+    div.className = "recommend-item";
+    div.innerHTML = `
+      <img src="${thumb}" class="recommend-thumb">
+      <div class="recommend-title">${item.title}</div>
+      <div class="recommend-author">
+        <img src="${icon}" class="recommend-author-icon"> ${item.author}
+      </div>
     `;
 
-    card.addEventListener("click", () => {
+    div.addEventListener("click", () => {
       location.href = `/OJapp/shop/product/?id=${item.product_id}`;
-
     });
 
-    list.appendChild(card);
+    box.appendChild(div);
   });
 }
+
 document.addEventListener("DOMContentLoaded", () => {
   renderShop();
   renderRecommend();
