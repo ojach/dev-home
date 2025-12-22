@@ -26,7 +26,7 @@ async function renderRecommend() {
   const res = await fetch(`${API_BASE}/shop/api/items?sort=recommended`);
   const data = await res.json();
 
-  const box = document.getElementById("recommend-list");
+  const box = document.getElementById("recommend-box");
   if (!box) return;
 
   box.innerHTML = "";
