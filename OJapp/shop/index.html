@@ -88,26 +88,7 @@ fetch("/OJapp/footer.html")
   .then(h => document.getElementById("footer").innerHTML = h);
 </script>
 
-
-<!-- ▼ モーダル -->
-<div id="item-modal" class="modal hidden">
-  <div class="modal-bg"></div>
-
-  <div class="modal-content">
-    <button class="modal-close">×</button>
-
-    <img id="modal-thumb" class="modal-thumb">
-    <h2 id="modal-title"></h2>
-
-    <div id="modal-author"></div>
-    <div id="modal-category"></div>
-
-    <a id="modal-link" class="modal-buy" target="_blank">購入ページへ</a>
-  </div>
-</div>
-
 <script src="/OJapp/shop/app.js"></script>
-
 
 </body>
 </html>
