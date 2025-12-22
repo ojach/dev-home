@@ -160,7 +160,7 @@ async function applyFilters() {
   // 最大20件
   viewItems = data.slice(0, 20);
 
-  
+  renderShop();
 }
 
 
@@ -312,7 +312,6 @@ async function start() {
   renderDynamicFilters();
   applyFilters();
   loadScrollRows();
-  renderShop();
 }
 
 
