@@ -240,12 +240,10 @@ document.addEventListener("DOMContentLoaded", async () => {
   const box = document.getElementById("author-icon-box");
 
   // ▼ ここが重要：IIFE を「この中で実行する」
-  await (async () => {
-
-    const exists = await fetch(iconURL, { method: "HEAD" })
+  const exists = await (async () => {
+    return await fetch(iconURL, { method: "HEAD" })
       .then(r => r.ok)
       .catch(() => false);
-
     if (exists) {
       // -----------------------------
       // 登録済み UI（これを表示）
