@@ -196,9 +196,9 @@ async function loadMyItems() {
   let res = await fetch(`${API_BASE}/shop/admin/items?author_key=${author_key}`);
 myItemsCache = await res.json();
 
-
   // 自分の商品だけフィルタ
-  myItemsCache = all.filter(i => i.author_key === author_key);
+myItemsCache = myItemsCache.filter(i => i.author_key === author_key);
+
 
   if (myItemsCache.length === 0) {
     box.innerHTML = "<p>まだ商品がありません。</p>";
