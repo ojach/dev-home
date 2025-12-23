@@ -322,16 +322,6 @@ document.getElementById("edit-save").addEventListener("click", async () => {
     visible: Number(document.getElementById("edit-visible").value)
   };
 
-  // サムネ差し替え
-  const file = document.getElementById("edit-thumb-input").files[0];
-  if (file) {
-    const authorKey = encodeAuthorName(localStorage.getItem("ojshop-admin-designer"));
-    await fetch(`${API_BASE}/shop/admin/thumb?product_id=${id}&author_key=${authorKey}`, {
-      method: "POST",
-      body: file
-    });
-  }
-
   // DB更新
   await fetch(`${API_BASE}/shop/admin/edit`, {
     method: "PUT",
