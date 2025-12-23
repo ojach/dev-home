@@ -258,7 +258,6 @@ function bindAdminButtons() {
       const id = btn.dataset.id;
 
       if (!confirm("削除しますか？")) return;
-      if (!confirm("最終確認です。本当に？")) return;
 
       await fetch(`${API_BASE}/shop/admin/delete?id=${id}`, {
         method: "POST"
@@ -344,19 +343,6 @@ document.getElementById("edit-save").addEventListener("click", async () => {
   location.reload();
 });
 
-
-// ▼ 削除ボタン
-document.getElementById("edit-delete").addEventListener("click", async () => {
-  const id = document.getElementById("edit-modal").dataset.id;
-
-  if (!confirm("本当に削除しますか？")) return;
-  if (!confirm("最終確認：削除すると復元できません！")) return;
-
-  await fetch(`${API_BASE}/shop/admin/delete?id=${id}`, { method: "POST" });
-
-  alert("削除しました");
-  location.reload();
-});
 
 document.addEventListener("DOMContentLoaded", loadMyItems);
 
