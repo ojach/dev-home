@@ -16,28 +16,35 @@ function encodeAuthorName(name) {
 }
 
 // ============================================
-// ① ログイン（778方式）
+// 新ログイン（作者名 + PIN）
 // ============================================
-(() => {
-  const KEY = "ojshop-admin-designer";
-  if (localStorage.getItem(KEY)) return;
+document.getElementById("login-btn")?.addEventListener("click", async () => {
+  const name = document.getElementById("login-name").value.trim();
+  const pin  = document.getElementById("login-pin").value.trim();
 
-  const input = prompt("デザイナー専用ページです。\nパスワードを入力してください：");
-  if (!input) {
-    alert("キャンセルされました");
-    location.href = "/OJapp/shop/";
-    return;
-  }
-  if (!input.endsWith("778")) {
-    alert("パスワードが違います。");
-    location.href = "/OJapp/shop/";
-    return;
+  if (!name || !pin) {
+    return alert("作者名と PIN を入力してください");
   }
 
-  const designer = input.slice(0, -3);
-  localStorage.setItem(KEY, designer);
-  alert("ログイン成功！ようこそ " + designer + " さん");
-})();
+  // Workers に照合
+  const res = await fetch(`${API_BASE}/shop/admin/pin`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ mode: "check", name, pin })
+  });
+
+  const json = await res.json();
+
+  if (!json.ok) {
+    return alert("ログイン失敗：名前か PIN が違います");
+  }
+
+  // ログイン成功 → localStorage に保存
+  localStorage.setItem("ojshop-admin-designer", name);
+
+  alert("ログイン成功！");
+  location.reload();
+});
 
 // ============================================
 // ② 作者アイコン UI
