@@ -18,33 +18,50 @@ function encodeAuthorName(name) {
 // ============================================
 // 新ログイン（作者名 + PIN）
 // ============================================
-document.getElementById("login-btn")?.addEventListener("click", async () => {
-  const name = document.getElementById("login-name").value.trim();
-  const pin  = document.getElementById("login-pin").value.trim();
+// ============================================
+// Admin Login (作者名 + 4桁PIN)
+// ============================================
+(async () => {
 
-  if (!name || !pin) {
-    return alert("作者名と PIN を入力してください");
+  const KEY = "ojshop-admin-designer";
+  const PIN_KEY = "ojshop-admin-pin";
+
+  // すでにログインしてる？
+  if (localStorage.getItem(KEY) && localStorage.getItem(PIN_KEY)) return;
+
+  const username = prompt("作者名を入力してください：");
+  if (!username) {
+    alert("キャンセルされました");
+    location.href = "/OJapp/shop/";
+    return;
   }
 
-  // Workers に照合
-  const res = await fetch(`${API_BASE}/shop/admin/pin`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ mode: "check", name, pin })
-  });
+  const pin = prompt("4桁のPINを入力してください：");
+  if (!pin) {
+    alert("キャンセルされました");
+    location.href = "/OJapp/shop/";
+    return;
+  }
 
+  // Workers に照合しにいく
+  const res = await fetch(
+    `${API_BASE}/shop/admin/check-pin?author=${username}&pin=${pin}`
+  );
   const json = await res.json();
 
   if (!json.ok) {
-    return alert("ログイン失敗：名前か PIN が違います");
+    alert("認証失敗！");
+    location.href = "/OJapp/shop/";
+    return;
   }
 
-  // ログイン成功 → localStorage に保存
-  localStorage.setItem("ojshop-admin-designer", name);
+  // OK → 保存
+  localStorage.setItem(KEY, username);
+  localStorage.setItem(PIN_KEY, pin);
 
-  alert("ログイン成功！");
-  location.reload();
-});
+  alert(`${username} さん、ログイン成功！`);
+})();
+
 
 // ============================================
 // ② 作者アイコン UI
