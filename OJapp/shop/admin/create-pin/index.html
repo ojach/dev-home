@@ -1,1 +1,116 @@
+<!-- すべてのページのヘッダーとフッターのコピペ用 -->
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <!-- ここに head-template.html をコピペ -->
+  <!-- ▼ OJapp 共通 HEAD（コピペ用） -->
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+<title>OJapp</title>
+
+<!-- ファビコン -->
+<link rel="icon" type="image/png" sizes="16x16" href="/OJapp/icon/favicon-16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/OJapp/icon/favicon-32.png">
+<link rel="icon" type="image/png" sizes="48x48" href="/OJapp/icon/favicon-48.png">
+
+<!-- iPhone ホームアイコン -->
+<link rel="apple-touch-icon" sizes="180x180" href="/OJapp/icon/icon-180.png">
+
+<!-- PWA（必要なら有効化） -->
+<!-- <link rel="manifest" href="/OJapp/manifest.json"> -->
+
+<meta name="theme-color" content="#2bb7ff">
+
+<!-- 共通CSS -->
+<link rel="stylesheet" href="/OJapp/style.css">
+<!-- ダークモード呼ぶ -->
+<script src="/OJapp/darkmode.js"></script>
+</head>
+
+<body>
+
+<div id="header"></div>
+<script>
+fetch("/OJapp/header.html")
+  .then(r => r.text())
+  .then(h => document.getElementById("header").innerHTML = h);
+</script>
+
+<main style="max-width:600px;margin:40px auto;padding:20px;
+             background:#fff;border-radius:16px;
+             box-shadow:0 4px 14px rgba(0,0,0,0.12);
+             font-family:sans-serif;">
+
+  <h2 style="margin-bottom:16px;font-size:22px;font-weight:bold;">
+    🔐 PIN 発行ツール（管理者専用）
+  </h2>
+
+  <p style="opacity:.7;margin-bottom:20px;font-size:14px;">
+    作者名を入力 → PIN生成 → Discordで作者へ渡すだけ。
+    <br>※PIN再発行すると過去PINは無効になります。
+  </p>
+
+  <label style="font-weight:600;">作者名</label>
+  <input id="author" placeholder="例：ojach"
+         style="width:100%;padding:12px;font-size:16px;
+                border-radius:10px;border:1px solid #ddd;
+                margin:8px 0 20px 0;">
+
+  <button onclick="createPIN()"
+          style="width:100%;padding:14px;font-size:16px;
+                 background:#0f9cf5;color:#fff;
+                 border:none;border-radius:12px;
+                 font-weight:bold;cursor:pointer;">
+    PINを生成する
+  </button>
+
+  <pre id="result"
+       style="margin-top:24px;padding:16px;background:#f5f5f5;
+              border-radius:12px;white-space:pre-wrap;
+              min-height:80px;font-size:15px;"></pre>
+</main>
+
+<script>
+const API = "https://ojshop-fav.trc-wasps.workers.dev";
+
+async function createPIN() {
+  const name = document.getElementById("author").value.trim();
+  const box = document.getElementById("result");
+
+  if (!name) {
+    box.textContent = "❌ 作者名を入力してください。";
+    return;
+  }
+
+  box.textContent = "⏳ PIN生成中…";
+
+  const res = await fetch(`${API}/shop/admin/create-pin?name=` + encodeURIComponent(name), {
+    method: "POST"
+  });
+
+  const data = await res.json();
+
+  if (!data.ok) {
+    box.textContent = "❌ 生成に失敗しました。";
+    return;
+  }
+
+  box.textContent =
+    "✅ PIN 発行に成功！\n\n" +
+    `作者名： ${data.author}\n` +
+    `PIN： ${data.pin}\n\n` +
+    `🔓 ログインキー： ${data.author}${data.pin}\n\n` +
+    "※作者へこのログインキーを渡してください。";
+}
+</script>
+
+<div id="footer"></div>
+<script>
+fetch("/OJapp/footer.html")
+  .then(r => r.text())
+  .then(h => document.getElementById("footer").innerHTML = h);
+</script>
+
+</body>
+</html>
