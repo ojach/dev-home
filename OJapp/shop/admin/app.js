@@ -16,24 +16,25 @@ function encodeAuthorName(name) {
 }
 
 
-// ============================================
-// Admin Login (作者名 + 4桁PIN)
-// ============================================
-(async () => {
+// ======================================================
+// ① 新ログイン方式（作者名 + PIN で認証）
+// ======================================================
+(() => {
+  const KEY = "ojshop-admin-designer"; // 作者名だけ保存する
+  const saved = localStorage.getItem(KEY);
 
-  const KEY = "ojshop-admin-designer";
-  const PIN_KEY = "ojshop-admin-pin";
+  // すでにログイン済なら問答無用スキップ
+  if (saved) return;
 
-  // すでにログインしてる？
-  if (localStorage.getItem(KEY) && localStorage.getItem(PIN_KEY)) return;
-
-  const username = prompt("作者名を入力してください：");
-  if (!username) {
+  // 作者名
+  const name = prompt("作者名を入力してください（例：ojach）：");
+  if (!name) {
     alert("キャンセルされました");
     location.href = "/OJapp/shop/";
     return;
   }
 
+  // PIN
   const pin = prompt("4桁のPINを入力してください：");
   if (!pin) {
     alert("キャンセルされました");
@@ -41,24 +42,35 @@ function encodeAuthorName(name) {
     return;
   }
 
-  // Workers に照合しにいく
-  const res = await fetch(
-    `${API_BASE}/shop/admin/check-pin?author=${username}&pin=${pin}`
-  );
-  const json = await res.json();
+  // Workers へ照合リクエスト
+  fetch("https://ojshop-fav.trc-wasps.workers.dev/shop/admin/pin", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      mode: "check",
+      name,
+      pin
+    })
+  })
+    .then(r => r.json())
+    .then(json => {
+      if (!json.ok) {
+        alert("ログイン失敗！PIN または作者名が違います。");
+        location.href = "/OJapp/shop/";
+        return;
+      }
 
-  if (!json.ok) {
-    alert("認証失敗！");
-    location.href = "/OJapp/shop/";
-    return;
-  }
-
-  // OK → 保存
-  localStorage.setItem(KEY, username);
-  localStorage.setItem(PIN_KEY, pin);
-
-  alert(`${username} さん、ログイン成功！`);
+      // 🎉 成功
+      localStorage.setItem(KEY, name);
+      alert("ログイン成功！ ようこそ " + name + " さん");
+      location.reload();
+    })
+    .catch(err => {
+      alert("サーバーエラー：" + err.message);
+      location.href = "/OJapp/shop/";
+    });
 })();
+
 
 
 // ============================================
