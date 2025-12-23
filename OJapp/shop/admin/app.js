@@ -220,13 +220,9 @@ async function loadMyItems() {
       </div>
 
       <div class="admin-buttons">
-        <button class="btn-vis" data-id="${item.product_id}">
-          ${item.visible ? "非公開にする" : "公開にする"}
-        </button>
-
+       
         <button class="btn-edit" data-id="${item.product_id}">編集</button>
 
-        <button class="btn-del" data-id="${item.product_id}">削除</button>
       </div>
     `;
 
