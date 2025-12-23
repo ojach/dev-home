@@ -16,33 +16,36 @@ function encodeAuthorName(name) {
 }
 
 
-// ======================================================
-// ① 新ログイン方式（作者名 + PIN で認証）
-// ======================================================
+// ============================================
+// ① 新ログイン方式（作者名＋PIN を一度に入力）
+// ============================================
 (() => {
-  const KEY = "ojshop-admin-designer"; // 作者名だけ保存する
+  const KEY = "ojshop-admin-designer";  // 作者名だけ保存
   const saved = localStorage.getItem(KEY);
 
-  // すでにログイン済なら問答無用スキップ
+  // すでにログイン済みならスキップ
   if (saved) return;
 
-  // 作者名
-  const name = prompt("作者名を入力してください（例：ojach）：");
-  if (!name) {
+  // 入力 例： ojach7788
+  const input = prompt("作者名＋4桁PIN を入力してください。\n例：ojach7788");
+
+  if (!input) {
     alert("キャンセルされました");
     location.href = "/OJapp/shop/";
     return;
   }
 
-  // PIN
-  const pin = prompt("4桁のPINを入力してください：");
-  if (!pin) {
-    alert("キャンセルされました");
+  if (input.length < 5) {
+    alert("入力が短すぎます。作者名＋4桁PIN です。");
     location.href = "/OJapp/shop/";
     return;
   }
 
-  // Workers へ照合リクエスト
+  // 末尾4桁を PIN、それ以外を作者名
+  const pin = input.slice(-4);
+  const name = input.slice(0, -4);
+
+  // Workers へ照合
   fetch("https://ojshop-fav.trc-wasps.workers.dev/shop/admin/pin", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -55,14 +58,14 @@ function encodeAuthorName(name) {
     .then(r => r.json())
     .then(json => {
       if (!json.ok) {
-        alert("ログイン失敗！PIN または作者名が違います。");
+        alert("ログイン失敗！作者名 または PIN が違います。");
         location.href = "/OJapp/shop/";
         return;
       }
 
-      // 🎉 成功
+      // 成功
       localStorage.setItem(KEY, name);
-      alert("ログイン成功！ ようこそ " + name + " さん");
+      alert(`ログイン成功！ようこそ ${name} さん`);
       location.reload();
     })
     .catch(err => {
@@ -70,6 +73,7 @@ function encodeAuthorName(name) {
       location.href = "/OJapp/shop/";
     });
 })();
+
 
 
 
