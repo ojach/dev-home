@@ -105,20 +105,21 @@ input[type=file] {
 .btn-delete { background: #ff4b7d; color:#fff; }
 
 .submit-btn {
-  background: linear-gradient(#2bb7ff, #0fa3ff);
+  background: linear-gradient(90deg, #2bb7ff, #0f9cf5);
   color: white;
-  font-weight: bold;
-  padding: 14px 22px;
-  font-size: 17px;
+  padding: 14px 20px;
   border-radius: 14px;
+  font-size: 18px;
+  font-weight: bold;
+  text-align: center;
   display: block;
-  margin: 16px 0;
-  width: 100%;
-  border: none;
-  box-shadow: 0 4px 0 #0b78c2;
+  margin: 16px auto 0;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+  transition: .2s;
 }
-.submit-btn:active {
-  transform: scale(.97);
-  box-shadow: 0 2px 0 #075a8f;
+
+.submit-btn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 14px rgba(0,0,0,0.25);
 }
 
