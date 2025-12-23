@@ -217,7 +217,7 @@ myItemsCache = myItemsCache.filter(i => i.author_key === author_key);
       <img src="${thumb}" class="admin-thumb">
       <div class="admin-info">
         <b>${item.title}</b><br>
-        ${item.price}円 / ${item.category}
+        <b>${item.price}円 / ${item.category}</b><br>
          <span style="
     font-size:12px;
     font-weight:600;
