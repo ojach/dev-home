@@ -193,8 +193,9 @@ async function loadMyItems() {
   const box = document.getElementById("my-items");
   box.innerHTML = "<p>読み込み中...</p>";
 
-  let res = await fetch(`${API_BASE}/shop/api/items`);
-  let all = await res.json();
+  let res = await fetch(`${API_BASE}/shop/admin/items?author_key=${author_key}`);
+myItemsCache = await res.json();
+
 
   // 自分の商品だけフィルタ
   myItemsCache = all.filter(i => i.author_key === author_key);
