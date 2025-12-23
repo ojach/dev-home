@@ -218,6 +218,13 @@ myItemsCache = myItemsCache.filter(i => i.author_key === author_key);
       <div class="admin-info">
         <b>${item.title}</b><br>
         ${item.price}円 / ${item.category}
+         <span style="
+    font-size:12px;
+    font-weight:600;
+    color:${item.visible ? "#0a84ff" : "#777"};
+  ">
+    ${item.visible ? "公開中" : "非公開"}
+  </span>
       </div>
 
       <div class="admin-buttons">
