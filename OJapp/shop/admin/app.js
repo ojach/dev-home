@@ -148,11 +148,8 @@ document.getElementById("submit").addEventListener("click", async () => {
 // ============================================
 // ローカル保持用
 // ============================================
-let allItems = [];
+let myItemsCache = []; // ← 必須
 
-// ============================================
-// ⑤ マイ商品一覧（編集UI付き）
-// ============================================
 async function loadMyItems() {
   const designer = localStorage.getItem("ojshop-admin-designer");
   const author_key = encodeAuthorName(designer);
@@ -160,10 +157,10 @@ async function loadMyItems() {
   const box = document.getElementById("my-items");
   box.innerHTML = "<p>読み込み中...</p>";
 
-  const res = await fetch(`${API_BASE}/shop/api/items`);
-  const all = await res.json();
+  let res = await fetch(`${API_BASE}/shop/api/items`);
+  let all = await res.json();
 
-  // 自分の商品だけ
+  // 自分の商品だけフィルタ
   myItemsCache = all.filter(i => i.author_key === author_key);
 
   if (myItemsCache.length === 0) {
@@ -214,9 +211,11 @@ function bindAdminButtons() {
     btn.addEventListener("click", async () => {
       const id = btn.dataset.id;
       const newVal = btn.textContent.includes("非公開") ? 0 : 1;
+
       await fetch(`${API_BASE}/shop/admin/visible?id=${id}&value=${newVal}`, {
         method: "POST"
       });
+
       loadMyItems();
     });
   });
@@ -225,14 +224,19 @@ function bindAdminButtons() {
   document.querySelectorAll(".btn-del").forEach(btn => {
     btn.addEventListener("click", async () => {
       const id = btn.dataset.id;
+
       if (!confirm("削除しますか？")) return;
       if (!confirm("最終確認です。本当に？")) return;
-      await fetch(`${API_BASE}/shop/admin/delete?id=${id}`, { method: "POST" });
+
+      await fetch(`${API_BASE}/shop/admin/delete?id=${id}`, {
+        method: "POST"
+      });
+
       loadMyItems();
     });
   });
 
-  // ★ 編集（モーダルを開く）
+  // 編集（モーダル）
   document.querySelectorAll(".btn-edit").forEach(btn => {
     btn.addEventListener("click", () => {
       const id = btn.dataset.id;
