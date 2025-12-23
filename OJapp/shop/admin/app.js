@@ -4,6 +4,11 @@
 // ============================================
 
 const API_BASE = "https://ojshop-fav.trc-wasps.workers.dev";
+// 商品一覧取得API
+async function fetchAllItems() {
+  const res = await fetch(`${API_BASE}/shop/api/items`);
+  return await res.json();
+}
 
 // ===============================
 // Base64URL（作者キー）
