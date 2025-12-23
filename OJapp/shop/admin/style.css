@@ -159,9 +159,9 @@ input[type=file] {
 }
 
 /* モーダル内のサムネ画像を小さく */
-.modal-thumb {
-  width: 70%;
-  max-width: 260px;
+.edit-thumb-preview {
+  width: 50%;
+  max-width: 160px;
   margin: 20px auto;
   display: block;
   border-radius: 12px;
