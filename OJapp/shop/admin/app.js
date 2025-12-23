@@ -151,29 +151,29 @@ document.getElementById("submit").addEventListener("click", async () => {
 let allItems = [];
 
 // ============================================
-// ⑤ マイ商品一覧
+// ⑤ マイ商品一覧（編集UI付き）
 // ============================================
 async function loadMyItems() {
   const designer = localStorage.getItem("ojshop-admin-designer");
   const author_key = encodeAuthorName(designer);
-  const box = document.getElementById("my-items");
 
+  const box = document.getElementById("my-items");
   box.innerHTML = "<p>読み込み中...</p>";
 
   const res = await fetch(`${API_BASE}/shop/api/items`);
-  const items = await res.json();
-  allItems = items;
+  const all = await res.json();
 
-  const mine = items.filter(i => i.author_key === author_key);
+  // 自分の商品だけ
+  myItemsCache = all.filter(i => i.author_key === author_key);
 
-  if (mine.length === 0) {
+  if (myItemsCache.length === 0) {
     box.innerHTML = "<p>まだ商品がありません。</p>";
     return;
   }
 
   box.innerHTML = "";
 
-  mine.forEach(item => {
+  myItemsCache.forEach(item => {
     const thumb = `${API_BASE}/shop/r2/${item.thumbnail}`;
 
     const div = document.createElement("div");
@@ -185,9 +185,15 @@ async function loadMyItems() {
         <b>${item.title}</b><br>
         ${item.price}円 / ${item.category}
       </div>
- <div class="admin-buttons">
-        <button class="btn-mosaic" data-id="${item.product_id}">編集</button>
 
+      <div class="admin-buttons">
+        <button class="btn-vis" data-id="${item.product_id}">
+          ${item.visible ? "非公開にする" : "公開にする"}
+        </button>
+
+        <button class="btn-edit" data-id="${item.product_id}">編集</button>
+
+        <button class="btn-del" data-id="${item.product_id}">削除</button>
       </div>
     `;
 
@@ -197,54 +203,45 @@ async function loadMyItems() {
   bindAdminButtons();
 }
 
-document.addEventListener("DOMContentLoaded", loadMyItems);
 
 // ============================================
-// ⑥ ボタン動作（公開 / 編集 / 削除）
+// ⑥ 管理ボタンのイベント
 // ============================================
 function bindAdminButtons() {
 
-  // --- 公開/非公開 ---
+  // 公開/非公開
   document.querySelectorAll(".btn-vis").forEach(btn => {
     btn.addEventListener("click", async () => {
       const id = btn.dataset.id;
       const newVal = btn.textContent.includes("非公開") ? 0 : 1;
-
       await fetch(`${API_BASE}/shop/admin/visible?id=${id}&value=${newVal}`, {
         method: "POST"
       });
-
       loadMyItems();
     });
   });
 
-  // --- 編集 ---
-  document.querySelectorAll(".btn-edit").forEach(btn => {
-    btn.addEventListener("click", () => {
-      const id = btn.dataset.id;
-      const item = window.allItems.find(i => i.product_id === id);
-      if (!item) return;
-      openEditModal(item);
-    });
-  });
-
-  // --- 削除 ---
+  // 削除
   document.querySelectorAll(".btn-del").forEach(btn => {
     btn.addEventListener("click", async () => {
       const id = btn.dataset.id;
-
-      if (!confirm("本当に削除しますか？")) return;
-      if (!confirm("最終確認です。本当に削除しますか？")) return;
-
-      await fetch(`${API_BASE}/shop/admin/delete?id=${id}`, {
-        method:"POST"
-      });
-
+      if (!confirm("削除しますか？")) return;
+      if (!confirm("最終確認です。本当に？")) return;
+      await fetch(`${API_BASE}/shop/admin/delete?id=${id}`, { method: "POST" });
       loadMyItems();
     });
   });
 
+  // ★ 編集（モーダルを開く）
+  document.querySelectorAll(".btn-edit").forEach(btn => {
+    btn.addEventListener("click", () => {
+      const id = btn.dataset.id;
+      const item = myItemsCache.find(i => i.product_id === id);
+      openEditModal(item);
+    });
+  });
 }
+
 
 
 // ============================================
