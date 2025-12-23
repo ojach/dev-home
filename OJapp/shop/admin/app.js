@@ -362,4 +362,5 @@ document.getElementById("edit-delete").addEventListener("click", async () => {
   location.reload();
 });
 
+document.addEventListener("DOMContentLoaded", loadMyItems);
 
