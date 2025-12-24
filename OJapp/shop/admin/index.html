@@ -95,6 +95,25 @@
       margin: 10px auto;
       box-shadow: 0 0 8px rgba(0, 0, 0, .08);
     }
+    .edit-thumb-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.edit-side-controls {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-width: 110px;
+}
+
+.submit-btn.small {
+  padding: 8px 12px;
+  font-size: 13px;
+}
+
   </style>
 </head>
 
@@ -179,7 +198,22 @@
 
     <h2>商品を編集</h2>
 
-    <img id="edit-thumb-preview" class="modal-thumb">
+   <div class="edit-thumb-row">
+  <img id="edit-thumb-preview" class="modal-thumb">
+
+  <div class="edit-side-controls">
+    <label>公開状態</label>
+    <select id="edit-visible">
+      <option value="1">公開</option>
+      <option value="0">非公開</option>
+    </select>
+
+    <button id="edit-save-top" class="submit-btn small">
+      保存する
+    </button>
+  </div>
+</div>
+
 
     <label>タイトル</label>
     <input type="text" id="edit-title">
@@ -192,15 +226,6 @@
 
     <label>価格（円）</label>
     <input type="text" id="edit-price">
-
-    <!-- 公開 / 非公開 切り替え -->
-    <label>公開状態</label>
-    <select id="edit-visible">
-      <option value="1">公開</option>
-      <option value="0">非公開</option>
-    </select>
-
-    <button id="edit-save" class="submit-btn">保存する</button>
 
     <hr>
 
