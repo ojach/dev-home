@@ -95,44 +95,29 @@
       margin: 10px auto;
       box-shadow: 0 0 8px rgba(0, 0, 0, .08);
     }
-    .edit-thumb-row {
+   .edit-top-row {
   display: flex;
-  align-items: flex-start;
-  gap: 16px;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
   margin-bottom: 20px;
 }
 
+/* 画像を小さく（横並び前提） */
+.modal-thumb {
+  width: 120px;
+  height: auto;
+  border-radius: 12px;
+}
+
+/* 右側の操作ボックス */
 .edit-side-controls {
   display: flex;
   flex-direction: column;
-  gap: 12px;
-  min-width: 110px;
+  gap: 10px;
+  min-width: 150px;
 }
 
-.submit-btn.small {
-  padding: 8px 12px;
-  font-size: 13px;
-}
-@media (max-width: 600px) {
-  .edit-thumb-row {
-    flex-direction: column;
-    align-items: center;
-  }
-
-  .edit-side-controls {
-    width: 100%;
-    flex-direction: row;
-    justify-content: space-between;
-  }
-
-  .edit-side-controls select {
-    flex: 1;
-  }
-
-  .submit-btn.small {
-    flex: 1;
-  }
-}
 
   </style>
 </head>
