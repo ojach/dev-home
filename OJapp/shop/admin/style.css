@@ -351,3 +351,10 @@ input[type=file] {
   cursor: pointer;
   font-size: 16px;
 }
+/* モーダル背景（iOSバグ回避版）*/
+.modal-bg {
+  position: absolute;    /* ← fixed を絶対に使わない！ */
+  inset: 0;
+  background: rgba(0,0,0,0.45);
+  z-index: 5;
+}
