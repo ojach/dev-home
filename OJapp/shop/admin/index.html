@@ -132,6 +132,27 @@
 .edit-control-col {
   flex: 1;
 }
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.modal-header h2 {
+  margin: 0;
+  font-size: 20px;
+}
+
+.modal-close-edit {
+  background: #eee;
+  border: none;
+  width: 32px;
+  height: 32px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 16px;
+}
 
   </style>
 </head>
@@ -212,11 +233,11 @@
 <div id="edit-modal" class="modal hidden">
   <div class="modal-bg"></div>
 
-  <div class="modal-content edit-box">
-    <div class="modal-title-row">
-    <button class="modal-close-edit">×</button>
-    <h2>商品を編集</h2>
+ <div class="modal-header">
+  <h2>商品を編集</h2>
+  <button class="modal-close-edit">×</button>
 </div>
+
     
  <div class="edit-top-row">
   <div class="edit-thumb-col">
