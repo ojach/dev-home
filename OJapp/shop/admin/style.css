@@ -185,3 +185,25 @@ input[type=file] {
   margin: 10px auto 20px;
   display: block;
 }
+/* タイトルと×ボタンを横並びにする */
+.modal-title-row {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+/* タイトル（h2）の余計な上余白を消す */
+.modal-title-row h2 {
+  margin: 0;
+}
+
+/* ×ボタンをタイトル行用に調整 */
+.modal-close-edit {
+  position: static;   /* ← これが重要！絶対配置を解除 */
+  background: none;
+  border: none;
+  font-size: 22px;
+  cursor: pointer;
+}
