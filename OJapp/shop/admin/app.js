@@ -309,9 +309,15 @@ function openEditModal(item) {
 
   modal.classList.remove("hidden");
 }
-document.getElementById("edit-save-top").addEventListener("click", () => {
-  document.getElementById("edit-save").click();
+document.addEventListener("DOMContentLoaded", () => {
+  const topBtn = document.getElementById("edit-save-top");
+  const saveBtn = document.getElementById("edit-save");
+
+  if (topBtn && saveBtn) {
+    topBtn.addEventListener("click", () => saveBtn.click());
+  }
 });
+
 
 
 // ▼ モーダルを閉じる
