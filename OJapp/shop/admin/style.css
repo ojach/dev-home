@@ -165,11 +165,6 @@ input[type=file] {
     max-height: 80vh;
     padding: 16px;
   }
-  .modal-thumb {
-    width: 80%;
-    max-width: 220px;
-    margin-top: 10px;
-  }
   .modal-close-edit {
     top: 10px;
     right: 10px;
@@ -182,8 +177,8 @@ input[type=file] {
 }
 
 .modal-thumb {
-  max-width: 80%;
-  height: auto !important;
+  max-width: 100px;
+  height: auto;
   max-height: 40vh;  /* ← これが一番重要 */
   margin: 10px auto 20px;
   display: block;
