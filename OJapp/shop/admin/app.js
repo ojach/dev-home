@@ -309,16 +309,6 @@ function openEditModal(item) {
 
   modal.classList.remove("hidden");
 }
-document.addEventListener("DOMContentLoaded", () => {
-  const topBtn = document.getElementById("edit-save-top");
-  const saveBtn = document.getElementById("edit-save");
-
-  if (topBtn && saveBtn) {
-    topBtn.addEventListener("click", () => saveBtn.click());
-  }
-});
-
-
 
 // ▼ モーダルを閉じる
 document.querySelector(".modal-close-edit").onclick =
@@ -327,7 +317,7 @@ document.querySelector("#edit-modal .modal-bg").onclick =
 
 
 // ▼ 保存
-document.getElementById("edit-save").addEventListener("click", async () => {
+document.getElementById("edit-save-top").addEventListener("click", async () => {
   const id = document.getElementById("edit-modal").dataset.id;
 
   const body = {
