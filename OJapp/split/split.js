@@ -1,4 +1,4 @@
-// split.js ver.3.0.1（中央クロップ & スマホ幅フィット版）
+// split.js ver.1.1.1 3:4追加
 
 document.getElementById("splitBtn").addEventListener("click", () => {
 
