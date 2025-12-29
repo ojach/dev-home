@@ -113,8 +113,9 @@ document.getElementById("splitBtn").addEventListener("click", () => {
         let srcY = srcBaseY + r * pieceH;
 
         if (mode === "ig_post") {
-        const IG_TRIM_BIAS = -1; // Instagram 微調整
-        const overlap = Math.floor((srcStepH - pieceH) / 2) + IG_TRIM_BIAS;
+       const IG_TRIM_BIAS_Y = Number(
+  document.getElementById("biasY").value
+);
 
           srcY -= overlap;
         }
