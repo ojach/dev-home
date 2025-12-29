@@ -94,7 +94,6 @@ ctx.drawImage(
         imgTag.className = "split-img";
         imgTag.dataset.index = index++;
         imgTag.style.width = cellSize + "px";
-        imgTag.style.height = cellSize + "px";
 
         result.appendChild(imgTag);
       }
