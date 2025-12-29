@@ -78,30 +78,6 @@
 
 
 
-  
-<input type="file" id="imgInput">
-<input type="number" id="rows" value="3">
-<input type="number" id="cols" value="3">
-
-<label><input type="radio" name="mode" value="square" checked> 正方形</label>
-<label><input type="radio" name="mode" value="ig_profile"> IGプロフ完成(3:4)</label>
-<label><input type="radio" name="mode" value="ig_post"> IG投稿(9:16)</label>
-
-<div>
-  Y微調整 <input type="range" id="biasY" min="-3" max="3" value="0">
-  X微調整 <input type="range" id="biasX" min="-3" max="3" value="0">
-</div>
-
-<button id="splitBtn">Split</button>
-
-<div class="main">
-  <div id="result"></div>
-</div>
-
-
-
-  
-
 <!-- 分割数入力 -->
 <div class="split-control">
   <div>行<input type="number" id="rows" value="3" min="1" max="6"></div>
@@ -113,19 +89,6 @@
   GO Split!!! 🎉
 </button>
 
-<div class="bias-control">
-  <label>
-    上下微調整（Y）：
-    <input type="range" id="biasY" min="-3" max="3" step="1" value="-1">
-    <span id="biasYVal">-1</span>px
-  </label>
-
-  <label>
-    左右微調整（X）：
-    <input type="range" id="biasX" min="-3" max="3" step="1" value="0">
-    <span id="biasXVal">0</span>px
-  </label>
-</div>
 
 <!-- 出力表示エリア -->
 <div id="result"></div>
@@ -149,4 +112,3 @@ fetch("/OJapp/footer.html")
 <script src="/OJapp/darkmode.js"></script>
 </body>
 </html>
-
