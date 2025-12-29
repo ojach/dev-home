@@ -1,140 +1,107 @@
-<!doctype html>
+<!-- ver.1.0 最新html -->
+<!DOCTYPE html>
 <html lang="ja">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>OJappSplitter – FINAL</title>
-<style>
-  body { font-family: system-ui, sans-serif; padding: 12px; }
-  .main { max-width: 360px; margin: 0 auto; }
-  #result { display: grid; gap: 6px; margin-top: 12px; }
-  img { display:block; }
-  label { margin-right: 8px; }
-</style>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OJapp splitter | 画像を正方形に分割してアイコン化できる無料ツール</title>
+
+<meta name="description" content="OJapp splitterは、好きな画像を正方形に分割してiPhoneホーム画面のアイコンとして使える無料ツールです。行・列を自由に調整してアイコンを作れます。">
+
+<link rel="canonical" href="https://github.ojach.com/OJapp/split/">
+
+<!-- OGP -->
+<meta property="og:title" content="OJapp splitter | 画像を正方形に分割する無料ツール">
+<meta property="og:description" content="好きな画像をiPhoneアイコン用に分割！OJapp splitter は完全無料のカスタムツールです。">
+<meta property="og:url" content="https://github.ojach.com/OJapp/split/">
+<meta property="og:image" content="https://github.ojach.com/OJapp/ogp.png">
+<meta property="og:type" content="website">
+
+<!-- Twitterカード -->
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="OJapp splitter | 画像を正方形に分割するツール">
+<meta name="twitter:description" content="iPhoneホーム画面を自由にカスタム！好きな画像をピッタリ正方形に切り出せます。">
+  <!-- Favicons -->
+  <link rel="icon" type="image/png" sizes="64x64" href="/OJapp/split/icon/ojappsplit-favi.png">
+  <link rel="icon" type="image/png" sizes="64x64" href="/OJapp/split/icon/ojappsplit-logo.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="/OJapp/split/icon/ojappsplit-logo.png">
+
+  <meta name="theme-color" content="#2bb7ff">
+<link rel="stylesheet" href="split.css">
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "OJapp",
+      "item": "https://github.ojach.com/OJapp/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "OJapp splitter",
+      "item": "https://github.ojach.com/OJapp/split/"
+    }
+  ]
+}
+  </script>
 </head>
+
 <body>
 
-<div class="main">
-  <input type="file" id="imgInput"><br><br>
-
-  行 <input type="number" id="rows" value="3" style="width:60px">
-  列 <input type="number" id="cols" value="3" style="width:60px"><br><br>
-
-  <label><input type="radio" name="mode" value="square" checked> 正方形</label>
-  <label><input type="radio" name="mode" value="ig_profile"> IGプロフ(3:4)</label>
-  <label><input type="radio" name="mode" value="ig_post"> IG投稿(9:16)</label><br><br>
-
-  Y微調整
-  <input type="range" id="biasY" min="-3" max="3" value="0">
-  X微調整
-  <input type="range" id="biasX" min="-3" max="3" value="0"><br><br>
-
-  <button id="splitBtn">Split</button>
-
-  <div id="result"></div>
+<!-- 共通ヘッダー -->
+<div class="header">
+  <a href="/OJapp/" class="logo-link">
+    <img src="/OJapp/split/icon/ojappsplit-logo.png" class="logo-img" alt="OJapp">
+    <span class="logo-text">OJapp splitter</span>
+  </a>
+  <div class="switch" onclick="toggleTheme()">🤩</div>
 </div>
 
+<div class="main">
+  <nav class="breadcrumb">
+  <a href="/OJapp/">OJapp</a> › 
+  <span>Splitter</span>
+  </nav>
+<h2>📸 画像を正方形で分割</h2>
+
+<!-- 画像選択 -->
+<input type="file" id="imgInput" style="margin-top:10px;">
+<!-- 比率の分岐　-->
+<input type="radio" name="mode" value="square" checked> 正方形
+<input type="radio" name="mode" value="instagram"> Instagram
+  
+
+<!-- 分割数入力 -->
+<div class="split-control">
+  <div>行<input type="number" id="rows" value="3" min="1" max="6"></div>
+  <div>列<input type="number" id="cols" value="3" min="1" max="4"></div>
+</div>
+
+<!-- 実行ボタン -->
+<button id="splitBtn" class="btn pulse" style="margin-top:10px;">
+  GO Split!!! 🎉
+</button>
+
+<!-- 出力表示エリア -->
+<div id="result"></div>
+<div class="center" style="margin-top:20px;"><a href="/OJapp/" class="guide-link">OJapp MainTool</a></div>
+</div><!-- /main -->
+
+<!-- 共通フッター -->
+<div id="footer"></div>
 <script>
-console.log("JS LOADED");
-
-let loadedImg = null; // 画像保持（スライダー即再描画用）
-
-function doSplit() {
-  if (!loadedImg) return;
-
-  const rows = Number(document.getElementById("rows").value);
-  const cols = Number(document.getElementById("cols").value);
-  const mode = document.querySelector('input[name="mode"]:checked')?.value || "square";
-  const biasY = Number(document.getElementById("biasY").value || 0);
-  const biasX = Number(document.getElementById("biasX").value || 0);
-
-  const result = document.getElementById("result");
-  result.innerHTML = "";
-
-  const img = loadedImg;
-  const W = img.width, H = img.height;
-
-  const wrapW = document.querySelector(".main").clientWidth || 300;
-  const cell = Math.floor(wrapW / cols);
-  result.style.gridTemplateColumns = `repeat(${cols}, ${cell}px)`;
-
-  let pieceW, pieceH, baseX, baseY, drawH;
-
-  // 正方形
-  if (mode === "square") {
-    const s = Math.min(W/cols, H/rows);
-    pieceW = pieceH = s;
-    baseX = (W - s*cols)/2;
-    baseY = (H - s*rows)/2;
-    drawH = pieceH;
-  }
-
-  // IG系（9:16→3:4基準）
-  if (mode === "ig_profile" || mode === "ig_post") {
-    const postRatio = 9/16;
-    let postW, postH, postX, postY;
-
-    if (W/H > postRatio) { postH = H; postW = H*postRatio; }
-    else { postW = W; postH = W/postRatio; }
-
-    postX = (W-postW)/2; postY = (H-postH)/2;
-
-    const safeH = postH * 0.75;
-    const safeW = safeH * (3/4);
-    baseX = postX + (postW-safeW)/2;
-    baseY = postY + (postH-safeH)/2;
-
-    pieceW = safeW/cols;
-    pieceH = safeH/rows;
-    drawH = (mode==="ig_post") ? (pieceW*16/9) : pieceH;
-  }
-
-  for (let r=0;r<rows;r++){
-    for (let c=0;c<cols;c++){
-      const cv = document.createElement("canvas");
-      const cx = cv.getContext("2d");
-      cv.width = pieceW;
-      cv.height = drawH;
-
-      let sx = Math.round(baseX + c*pieceW) + biasX;
-      let sy = Math.round(baseY + r*pieceH);
-
-      if (mode==="ig_post"){
-        const overlap = (drawH - pieceH)/2;
-        sy = sy - overlap + biasY;
-      }
-
-      cx.drawImage(img, sx, sy, pieceW, drawH, 0, 0, pieceW, drawH);
-
-      const im = document.createElement("img");
-      im.src = cv.toDataURL("image/png");
-      im.style.width = cell+"px";
-      result.appendChild(im);
-    }
-  }
-}
-
-// ボタン
-document.getElementById("splitBtn").addEventListener("click", () => {
-  const file = document.getElementById("imgInput").files[0];
-  if (!file) return alert("画像を選んでね");
-
-  const img = new Image();
-  const r = new FileReader();
-  r.onload = e => img.src = e.target.result;
-  r.readAsDataURL(file);
-
-  img.onload = () => {
-    loadedImg = img; // 保存
-    doSplit();
-  };
-});
-
-// ★★ スライダー動かしたら即再描画 ★★
-document.getElementById("biasY").addEventListener("input", doSplit);
-document.getElementById("biasX").addEventListener("input", doSplit);
+fetch("/OJapp/footer.html")
+  .then(r => r.text())
+  .then(html => footer.innerHTML = html)
 </script>
 
+<script src="split.js"></script>
+<script src="/OJapp/darkmode.js"></script>
 </body>
 </html>
 
