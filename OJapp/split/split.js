@@ -1,5 +1,4 @@
-// split.js ver.5.0.0
-// square / ig_profile(3:4完成) / ig_post(9:16投稿・3:4基準)
+// split.js ver.FINAL
 document.getElementById("splitBtn").addEventListener("click", () => {
 
   const file = document.getElementById("imgInput").files[0];
@@ -7,8 +6,10 @@ document.getElementById("splitBtn").addEventListener("click", () => {
 
   const rows = Number(document.getElementById("rows").value);
   const cols = Number(document.getElementById("cols").value);
-
   const mode = document.querySelector('input[name="mode"]:checked')?.value || "square";
+
+  const biasY = Number(document.getElementById("biasY")?.value || 0);
+  const biasX = Number(document.getElementById("biasX")?.value || 0);
 
   const result = document.getElementById("result");
   result.innerHTML = "";
@@ -23,41 +24,29 @@ document.getElementById("splitBtn").addEventListener("click", () => {
     const W = img.width;
     const H = img.height;
 
-    const wrapWidth = document.querySelector(".main").clientWidth;
+    const wrapWidth = document.querySelector(".main").clientWidth || 300;
     const cellSize = Math.floor(wrapWidth / cols);
 
     result.style.display = "grid";
     result.style.gridTemplateColumns = `repeat(${cols}, ${cellSize}px)`;
     result.style.gap = "6px";
-    result.style.justifyContent = "center";
 
-    /* =====================================================
-       共通：正方形モード用の変数
-    ===================================================== */
     let pieceW, pieceH;
-    let srcBaseX, srcBaseY;
-    let srcStepH;
+    let baseX, baseY;
+    let drawH;
 
-    /* =====================================================
-       ■ 正方形（従来）
-    ===================================================== */
+    /* ---------- 正方形 ---------- */
     if (mode === "square") {
-
       const size = Math.min(W / cols, H / rows);
       pieceW = pieceH = size;
-
-      srcBaseX = (W - size * cols) / 2;
-      srcBaseY = (H - size * rows) / 2;
-
-      srcStepH = pieceH; // 縦もそのまま
+      baseX = (W - size * cols) / 2;
+      baseY = (H - size * rows) / 2;
+      drawH = pieceH;
     }
 
-    /* =====================================================
-       ■ IG プロフ完成（3:4）
-    ===================================================== */
+    /* ---------- IG系共通（9:16正規化→3:4基準） ---------- */
     if (mode === "ig_profile" || mode === "ig_post") {
-
-      // ① 元画像を 9:16 に正規化
+      // 9:16 正規化
       const postRatio = 9 / 16;
       let postW, postH, postX, postY;
 
@@ -68,79 +57,54 @@ document.getElementById("splitBtn").addEventListener("click", () => {
         postW = W;
         postH = W / postRatio;
       }
-
       postX = (W - postW) / 2;
       postY = (H - postH) / 2;
 
-      // ② プロフで見える 3:4 セーフエリア
-      const safeH = postH * 0.75;      // ← 핵심
+      // 3:4 セーフエリア
+      const safeH = postH * 0.75;
       const safeW = safeH * (3 / 4);
 
-      const safeX = postX + (postW - safeW) / 2;
-      const safeY = postY + (postH - safeH) / 2;
+      baseX = postX + (postW - safeW) / 2;
+      baseY = postY + (postH - safeH) / 2;
 
       pieceW = safeW / cols;
       pieceH = safeH / rows;
 
-      srcBaseX = safeX;
-      srcBaseY = safeY;
+      drawH = (mode === "ig_post") ? (pieceW * 16 / 9) : pieceH;
+    }
 
-      // 投稿モードでは「1ピースの切り出し高さ」を 9:16 に拡張
-      if (mode === "ig_post") {
-        srcStepH = pieceW * 16 / 9;
-      } else {
-        srcStepH = pieceH;
+    /* ---------- 分割描画 ---------- */
+    for (let r = 0; r < rows; r++) {
+      for (let c = 0; c < cols; c++) {
+
+        const canvas = document.createElement("canvas");
+        const ctx = canvas.getContext("2d");
+
+        canvas.width  = pieceW;
+        canvas.height = drawH;
+
+        let sx = Math.round(baseX + c * pieceW) + biasX;
+        let sy = Math.round(baseY + r * pieceH);
+
+        if (mode === "ig_post") {
+          const overlap = (drawH - pieceH) / 2;
+          sy = sy - overlap + biasY;
+        }
+
+        ctx.drawImage(
+          img,
+          sx, sy,
+          pieceW, drawH,
+          0, 0,
+          pieceW, drawH
+        );
+
+        const out = document.createElement("img");
+        out.src = canvas.toDataURL("image/png");
+        out.style.width = cellSize + "px";
+        result.appendChild(out);
       }
     }
-
-    /* =====================================================
-       ■ 分割描画
-    ===================================================== */
-    let index = 1;
-
-for (let r = 0; r < rows; r++) {
-  for (let c = 0; c < cols; c++) {
-
-    const canvas = document.createElement("canvas");
-    const ctx = canvas.getContext("2d");
-
-    canvas.width  = pieceW;
-    canvas.height = srcStepH;
-
-    // ★ スライダーの値を読む（ここだけ）
-    const IG_TRIM_BIAS_Y = Number(biasYInput.value);
-    const IG_TRIM_BIAS_X = Number(biasXInput.value);
-
-    // ★ 基本の切り出し位置
-    let srcX = Math.round(srcBaseX + c * pieceW) + IG_TRIM_BIAS_X;
-    let srcY = Math.round(srcBaseY + r * pieceH);
-
-    // ★ 9:16投稿モードだけ上下オーバーラップ
-    if (mode === "ig_post") {
-      srcY -= overlap;
-    }
-
-    // ★ 最終描画
-    ctx.drawImage(
-      img,
-      srcX,
-      srcY,
-      pieceW,
-      srcStepH,
-      0,
-      0,
-      pieceW,
-      srcStepH
-    );
-
-    const imgTag = document.createElement("img");
-    imgTag.src = canvas.toDataURL("image/png");
-    imgTag.style.width = cellSize + "px";
-
-    result.appendChild(imgTag);
-  }
-}
-
   };
 });
 
