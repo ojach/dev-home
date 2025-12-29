@@ -31,8 +31,8 @@ if (mode === "square") {
   pieceW = pieceH = Math.min(W / cols, H / rows);
 } else {
   // Instagram 9:16
-  pieceW = Math.min(W / cols, H / (rows * 16 / 9));
-  pieceH = pieceW * 16 / 9;
+  pieceW = Math.min(W / cols, H / (rows * 4 / 3));
+  pieceH = pieceW * 4 / 3;
 }
 
 
