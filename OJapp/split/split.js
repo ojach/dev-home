@@ -25,14 +25,24 @@ document.getElementById("splitBtn").addEventListener("click", () => {
     const H = img.height;
 
     // ① 正方形1ピースのサイズ（元画像基準）
-    let pieceW, pieceH;
+   let pieceW, pieceH;
 
 if (mode === "square") {
   pieceW = pieceH = Math.min(W / cols, H / rows);
 } else {
   // Instagram 9:16
-  pieceW = Math.min(W / cols, H / (rows * 16 / 9));
-  pieceH = pieceW * 16 / 9;
+  const targetRatio = 9 / 16;
+
+  // 横が余るか、縦が余るかを正しく判定
+  if (W / H > targetRatio * cols / rows) {
+    // 横が余る → 高さ基準
+    pieceH = H / rows;
+    pieceW = pieceH * targetRatio;
+  } else {
+    // 縦が余る → 幅基準
+    pieceW = W / cols;
+    pieceH = pieceW / targetRatio;
+  }
 }
 
 
