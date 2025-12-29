@@ -1,5 +1,12 @@
 // split.js ver.5.0.0
 // square / ig_profile(3:4完成) / ig_post(9:16投稿・3:4基準)
+const biasYInput = document.getElementById("biasY");
+const biasXInput = document.getElementById("biasX");
+const biasYVal = document.getElementById("biasYVal");
+const biasXVal = document.getElementById("biasXVal");
+
+biasYInput.oninput = () => biasYVal.textContent = biasYInput.value;
+biasXInput.oninput = () => biasXVal.textContent = biasXInput.value;
 
 document.getElementById("splitBtn").addEventListener("click", () => {
 
@@ -99,47 +106,49 @@ document.getElementById("splitBtn").addEventListener("click", () => {
     ===================================================== */
     let index = 1;
 
-    for (let r = 0; r < rows; r++) {
-      for (let c = 0; c < cols; c++) {
+for (let r = 0; r < rows; r++) {
+  for (let c = 0; c < cols; c++) {
 
-        const canvas = document.createElement("canvas");
-        const ctx = canvas.getContext("2d");
+    const canvas = document.createElement("canvas");
+    const ctx = canvas.getContext("2d");
 
-        canvas.width  = pieceW;
-        canvas.height = srcStepH;
+    canvas.width  = pieceW;
+    canvas.height = srcStepH;
 
-        // プロフ基準の分割線を「9:16ソース」に逆投影
-        let srcX = srcBaseX + c * pieceW;
-        let srcY = srcBaseY + r * pieceH;
+    // ★ スライダーの値を読む（ここだけ）
+    const IG_TRIM_BIAS_Y = Number(biasYInput.value);
+    const IG_TRIM_BIAS_X = Number(biasXInput.value);
 
-        if (mode === "ig_post") {
-       const IG_TRIM_BIAS_Y = Number(
-  document.getElementById("biasY").value
-);
+    // ★ 基本の切り出し位置
+    let srcX = Math.round(srcBaseX + c * pieceW) + IG_TRIM_BIAS_X;
+    let srcY = Math.round(srcBaseY + r * pieceH);
 
-          srcY -= overlap;
-        }
-
-        ctx.drawImage(
-          img,
-          srcX,
-          srcY,
-          pieceW,
-          srcStepH,
-          0,
-          0,
-          pieceW,
-          srcStepH
-        );
-
-        const imgTag = document.createElement("img");
-        imgTag.src = canvas.toDataURL("image/png");
-        imgTag.style.width = cellSize + "px";
-        imgTag.dataset.index = index++;
-
-        result.appendChild(imgTag);
-      }
+    // ★ 9:16投稿モードだけ上下オーバーラップ
+    if (mode === "ig_post") {
+      srcY -= overlap;
     }
+
+    // ★ 最終描画
+    ctx.drawImage(
+      img,
+      srcX,
+      srcY,
+      pieceW,
+      srcStepH,
+      0,
+      0,
+      pieceW,
+      srcStepH
+    );
+
+    const imgTag = document.createElement("img");
+    imgTag.src = canvas.toDataURL("image/png");
+    imgTag.style.width = cellSize + "px";
+
+    result.appendChild(imgTag);
+  }
+}
+
   };
 });
 
