@@ -239,3 +239,10 @@ input[type=file] {
 .breadcrumb a:hover {
   text-decoration: underline;
 }
+.profile-mask {
+  position:absolute;
+  aspect-ratio:3/4;
+  width:100%;
+  top:12.5%; /* 9:16 → 3:4 の上下カット量 */
+  border:2px dashed rgba(255,255,255,.7);
+}
