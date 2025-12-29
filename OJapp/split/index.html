@@ -34,8 +34,8 @@
 
 <script>
 console.log("JS LOADED");
-
-document.getElementById("splitBtn").addEventListener("click", () => {
+function doSplit() {
+document.getElementById("splitBtn").addEventListener("click", doSplit);
   const file = document.getElementById("imgInput").files[0];
   if (!file) return alert("画像を選んでね");
 
@@ -112,6 +112,7 @@ document.getElementById("splitBtn").addEventListener("click", () => {
         result.appendChild(im);
       }
     }
+    
   };
 });
 </script>
