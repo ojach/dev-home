@@ -1,13 +1,5 @@
 // split.js ver.5.0.0
 // square / ig_profile(3:4完成) / ig_post(9:16投稿・3:4基準)
-const biasYInput = document.getElementById("biasY");
-const biasXInput = document.getElementById("biasX");
-const biasYVal = document.getElementById("biasYVal");
-const biasXVal = document.getElementById("biasXVal");
-
-biasYInput.oninput = () => biasYVal.textContent = biasYInput.value;
-biasXInput.oninput = () => biasXVal.textContent = biasXInput.value;
-
 document.getElementById("splitBtn").addEventListener("click", () => {
 
   const file = document.getElementById("imgInput").files[0];
