@@ -16,17 +16,31 @@ document.getElementById("splitBtn").addEventListener("click", () => {
   reader.onload = e => img.src = e.target.result;
   reader.readAsDataURL(file);
 
+  const mode = document.querySelector('input[name="mode"]:checked').value;
+
+
   img.onload = () => {
 
     const W = img.width;
     const H = img.height;
 
     // ① 正方形1ピースのサイズ（元画像基準）
-    const pieceSize = Math.min(W / cols, H / rows);
+    let pieceW, pieceH;
+
+if (mode === "square") {
+  pieceW = pieceH = Math.min(W / cols, H / rows);
+} else {
+  // Instagram 9:16
+  pieceW = Math.min(W / cols, H / (rows * 16 / 9));
+  pieceH = pieceW * 16 / 9;
+}
+
 
     // ② 切り出す全体サイズ
-    const cropW = pieceSize * cols;
-    const cropH = pieceSize * rows;
+  const cropW = pieceW * cols;
+const cropH = pieceH * rows;
+
+
 
     // ③ 中央基準の開始位置（上下左右どこも整合）
     const startX = (W - cropW) / 2;
@@ -50,18 +64,18 @@ document.getElementById("splitBtn").addEventListener("click", () => {
         const canvas = document.createElement("canvas");
         const ctx = canvas.getContext("2d");
 
-        canvas.width = pieceSize;
-        canvas.height = pieceSize;
+      canvas.width  = pieceW;
+canvas.height = pieceH;
 
-        // ★ 中央基準の正しいトリミング
-        ctx.drawImage(
-          img,
-          startX + c * pieceSize,
-          startY + r * pieceSize,
-          pieceSize, pieceSize,
-          0, 0,
-          pieceSize, pieceSize
-        );
+ctx.drawImage(
+  img,
+  startX + c * pieceW,
+  startY + r * pieceH,
+  pieceW, pieceH,
+  0, 0,
+  pieceW, pieceH
+);
+
 
         const url = canvas.toDataURL("image/png");
 
