@@ -50,13 +50,6 @@ const safeY = postY + (postH - safeH) / 2;
 const pieceW = safeW / cols;
 const pieceH = safeH / rows;
 
-
-
-
-    // ③ 中央基準の開始位置（上下左右どこも整合）
-    const startX = (W - cropW) / 2;
-    const startY = (H - cropH) / 2;
-
     // ④ スマホ表示用の1マス表示サイズ
     const wrapWidth = document.querySelector(".main").clientWidth;
     const cellSize = Math.floor(wrapWidth / cols);
