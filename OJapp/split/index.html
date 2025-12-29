@@ -78,6 +78,30 @@
 
 
 
+  
+<input type="file" id="imgInput">
+<input type="number" id="rows" value="3">
+<input type="number" id="cols" value="3">
+
+<label><input type="radio" name="mode" value="square" checked> 正方形</label>
+<label><input type="radio" name="mode" value="ig_profile"> IGプロフ完成(3:4)</label>
+<label><input type="radio" name="mode" value="ig_post"> IG投稿(9:16)</label>
+
+<div>
+  Y微調整 <input type="range" id="biasY" min="-3" max="3" value="0">
+  X微調整 <input type="range" id="biasX" min="-3" max="3" value="0">
+</div>
+
+<button id="splitBtn">Split</button>
+
+<div class="main">
+  <div id="result"></div>
+</div>
+
+
+
+  
+
 <!-- 分割数入力 -->
 <div class="split-control">
   <div>行<input type="number" id="rows" value="3" min="1" max="6"></div>
