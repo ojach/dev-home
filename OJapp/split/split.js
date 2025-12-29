@@ -24,31 +24,32 @@ document.getElementById("splitBtn").addEventListener("click", () => {
     const W = img.width;
     const H = img.height;
 
-    // ① 正方形1ピースのサイズ（元画像基準）
-   let pieceW, pieceH;
 
-if (mode === "square") {
-  pieceW = pieceH = Math.min(W / cols, H / rows);
+// 1) 9:16 正規化（最大中央クロップ）
+const targetPostRatio = 9 / 16;
+
+let postW, postH;
+if (W / H > targetPostRatio) {
+  postH = H;
+  postW = H * targetPostRatio;
 } else {
-  // Instagram 9:16
-  const targetRatio = 9 / 16;
-
-  // 横が余るか、縦が余るかを正しく判定
-  if (W / H > targetRatio * cols / rows) {
-    // 横が余る → 高さ基準
-    pieceH = H / rows;
-    pieceW = pieceH * targetRatio;
-  } else {
-    // 縦が余る → 幅基準
-    pieceW = W / cols;
-    pieceH = pieceW / targetRatio;
-  }
+  postW = W;
+  postH = W / targetPostRatio;
 }
+const postX = (W - postW) / 2;
+const postY = (H - postH) / 2;
 
+// 2) プロフで見える 3:4 セーフエリア
+const safeRatio = 3 / 4;
+const safeH = postH * 0.75;          // ← ここがキモ
+const safeW = safeH * safeRatio;
+const safeX = postX + (postW - safeW) / 2;
+const safeY = postY + (postH - safeH) / 2;
 
-    // ② 切り出す全体サイズ
-  const cropW = pieceW * cols;
-const cropH = pieceH * rows;
+// 3) 分割は「safeW / safeH」を基準に
+const pieceW = safeW / cols;
+const pieceH = safeH / rows;
+
 
 
 
@@ -79,12 +80,13 @@ canvas.height = pieceH;
 
 ctx.drawImage(
   img,
-  startX + c * pieceW,
-  startY + r * pieceH,
+  safeX + c * pieceW,
+  safeY + r * pieceH,
   pieceW, pieceH,
   0, 0,
-  pieceW, pieceH
+  canvas.width, canvas.height
 );
+
 
 
         const url = canvas.toDataURL("image/png");
