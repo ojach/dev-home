@@ -92,39 +92,75 @@ document.getElementById("splitBtn").addEventListener("click", () => {
     ===================================================== */
     let index = 1;
 
-    for (let r = 0; r < rows; r++) {
-      for (let c = 0; c < cols; c++) {
+   for (let r = 0; r < rows; r++) {
+  for (let c = 0; c < cols; c++) {
 
-        const canvas = document.createElement("canvas");
-        const ctx = canvas.getContext("2d");
+    /* =========================
+       ■ 3:4 プロフ完成プレビュー
+    ========================= */
+    const previewCanvas = document.createElement("canvas");
+    const pctx = previewCanvas.getContext("2d");
 
-        canvas.width  = pieceW;
-        canvas.height = pieceH;
+    previewCanvas.width  = pieceW;
+    previewCanvas.height = pieceH;
 
-        const drawX = baseX + c * pieceW;
-        const drawY = baseY + r * pieceH;
+    pctx.drawImage(
+      img,
+      baseX + c * pieceW,
+      baseY + r * pieceH,
+      pieceW,
+      pieceH,
+      0,
+      0,
+      pieceW,
+      pieceH
+    );
 
-        ctx.drawImage(
-          img,
-          drawX,
-          drawY,
-          pieceW,
-          pieceH,
-          0,
-          0,
-          canvas.width,
-          canvas.height
-        );
+    /* =========================
+       ■ 9:16 実投稿用（重なり込み）
+    ========================= */
+    const postCanvas = document.createElement("canvas");
+    const postCtx = postCanvas.getContext("2d");
 
-        const imgTag = document.createElement("img");
-        imgTag.src = canvas.toDataURL("image/png");
-        imgTag.className = "split-img";
-        imgTag.dataset.index = index++;
-        imgTag.style.width = cellSize + "px";
+    const postH = pieceW * 16 / 9;   // 9:16
+    postCanvas.width  = pieceW;
+    postCanvas.height = postH;
 
-        result.appendChild(imgTag);
-      }
-    }
+    const offsetY = (postH - pieceH) / 2;
+
+    postCtx.drawImage(
+      img,
+      baseX + c * pieceW,
+      baseY + r * pieceH,
+      pieceW,
+      pieceH,
+      0,
+      offsetY,
+      pieceW,
+      pieceH
+    );
+
+    /* =========================
+       ■ 表示（両方）
+    ========================= */
+    const wrap = document.createElement("div");
+    wrap.style.display = "flex";
+    wrap.style.flexDirection = "column";
+    wrap.style.gap = "6px";
+
+    const imgPreview = document.createElement("img");
+    imgPreview.src = previewCanvas.toDataURL("image/png");
+    imgPreview.style.width = cellSize + "px";
+
+    const imgPost = document.createElement("img");
+    imgPost.src = postCanvas.toDataURL("image/png");
+    imgPost.style.width = cellSize + "px";
+
+    wrap.appendChild(imgPreview);
+    wrap.appendChild(imgPost);
+    result.appendChild(wrap);
+  }
+}
 
   };
 });
