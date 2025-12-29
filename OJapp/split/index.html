@@ -3,12 +3,13 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>OJappSplitter – Debug Safe</title>
+<title>OJappSplitter – FINAL</title>
 <style>
   body { font-family: system-ui, sans-serif; padding: 12px; }
   .main { max-width: 360px; margin: 0 auto; }
-  #result { display: grid; gap: 6px; }
+  #result { display: grid; gap: 6px; margin-top: 12px; }
   img { display:block; }
+  label { margin-right: 8px; }
 </style>
 </head>
 <body>
@@ -23,21 +24,23 @@
   <label><input type="radio" name="mode" value="ig_profile"> IGプロフ(3:4)</label>
   <label><input type="radio" name="mode" value="ig_post"> IG投稿(9:16)</label><br><br>
 
-  Y微調整 <input type="range" id="biasY" min="-3" max="3" value="0">
-  X微調整 <input type="range" id="biasX" min="-3" max="3" value="0"><br><br>
+  Y微調整
+  <input type="range" id="biasY" min="-3" max="3" value="0">
+  X微調整
+  <input type="range" id="biasX" min="-3" max="3" value="0"><br><br>
 
   <button id="splitBtn">Split</button>
-  <hr>
 
   <div id="result"></div>
 </div>
 
 <script>
 console.log("JS LOADED");
+
+let loadedImg = null; // 画像保持（スライダー即再描画用）
+
 function doSplit() {
-document.getElementById("splitBtn").addEventListener("click", doSplit);
-  const file = document.getElementById("imgInput").files[0];
-  if (!file) return alert("画像を選んでね");
+  if (!loadedImg) return;
 
   const rows = Number(document.getElementById("rows").value);
   const cols = Number(document.getElementById("cols").value);
@@ -48,77 +51,91 @@ document.getElementById("splitBtn").addEventListener("click", doSplit);
   const result = document.getElementById("result");
   result.innerHTML = "";
 
+  const img = loadedImg;
+  const W = img.width, H = img.height;
+
+  const wrapW = document.querySelector(".main").clientWidth || 300;
+  const cell = Math.floor(wrapW / cols);
+  result.style.gridTemplateColumns = `repeat(${cols}, ${cell}px)`;
+
+  let pieceW, pieceH, baseX, baseY, drawH;
+
+  // 正方形
+  if (mode === "square") {
+    const s = Math.min(W/cols, H/rows);
+    pieceW = pieceH = s;
+    baseX = (W - s*cols)/2;
+    baseY = (H - s*rows)/2;
+    drawH = pieceH;
+  }
+
+  // IG系（9:16→3:4基準）
+  if (mode === "ig_profile" || mode === "ig_post") {
+    const postRatio = 9/16;
+    let postW, postH, postX, postY;
+
+    if (W/H > postRatio) { postH = H; postW = H*postRatio; }
+    else { postW = W; postH = W/postRatio; }
+
+    postX = (W-postW)/2; postY = (H-postH)/2;
+
+    const safeH = postH * 0.75;
+    const safeW = safeH * (3/4);
+    baseX = postX + (postW-safeW)/2;
+    baseY = postY + (postH-safeH)/2;
+
+    pieceW = safeW/cols;
+    pieceH = safeH/rows;
+    drawH = (mode==="ig_post") ? (pieceW*16/9) : pieceH;
+  }
+
+  for (let r=0;r<rows;r++){
+    for (let c=0;c<cols;c++){
+      const cv = document.createElement("canvas");
+      const cx = cv.getContext("2d");
+      cv.width = pieceW;
+      cv.height = drawH;
+
+      let sx = Math.round(baseX + c*pieceW) + biasX;
+      let sy = Math.round(baseY + r*pieceH);
+
+      if (mode==="ig_post"){
+        const overlap = (drawH - pieceH)/2;
+        sy = sy - overlap + biasY;
+      }
+
+      cx.drawImage(img, sx, sy, pieceW, drawH, 0, 0, pieceW, drawH);
+
+      const im = document.createElement("img");
+      im.src = cv.toDataURL("image/png");
+      im.style.width = cell+"px";
+      result.appendChild(im);
+    }
+  }
+}
+
+// ボタン
+document.getElementById("splitBtn").addEventListener("click", () => {
+  const file = document.getElementById("imgInput").files[0];
+  if (!file) return alert("画像を選んでね");
+
   const img = new Image();
   const r = new FileReader();
   r.onload = e => img.src = e.target.result;
   r.readAsDataURL(file);
 
   img.onload = () => {
-    const W = img.width, H = img.height;
-    const wrapW = document.querySelector(".main").clientWidth;
-    const cell = Math.floor(wrapW / cols);
-
-    result.style.gridTemplateColumns = `repeat(${cols}, ${cell}px)`;
-
-    let pieceW, pieceH, baseX, baseY, drawH;
-
-    // 正方形
-    if (mode === "square") {
-      const s = Math.min(W/cols, H/rows);
-      pieceW = pieceH = s;
-      baseX = (W - s*cols)/2;
-      baseY = (H - s*rows)/2;
-      drawH = pieceH;
-    }
-
-    // IG系
-    if (mode === "ig_profile" || mode === "ig_post") {
-      const postRatio = 9/16;
-      let postW, postH, postX, postY;
-      if (W/H > postRatio) { postH = H; postW = H*postRatio; }
-      else { postW = W; postH = W/postRatio; }
-      postX = (W-postW)/2; postY = (H-postH)/2;
-
-      const safeH = postH * 0.75;
-      const safeW = safeH * (3/4);
-      baseX = postX + (postW-safeW)/2;
-      baseY = postY + (postH-safeH)/2;
-
-      pieceW = safeW/cols;
-      pieceH = safeH/rows;
-      drawH = (mode==="ig_post") ? (pieceW*16/9) : pieceH;
-    }
-
-    for (let r=0;r<rows;r++){
-      for (let c=0;c<cols;c++){
-        const cv = document.createElement("canvas");
-        const cx = cv.getContext("2d");
-        cv.width = pieceW;
-        cv.height = drawH;
-
-        let sx = Math.round(baseX + c*pieceW) + biasX;
-        let sy = Math.round(baseY + r*pieceH);
-
-        if (mode==="ig_post"){
-          const overlap = (drawH - pieceH)/2;
-          sy = sy - overlap + biasY;
-        }
-
-        cx.drawImage(img, sx, sy, pieceW, drawH, 0, 0, pieceW, drawH);
-
-        const im = document.createElement("img");
-        im.src = cv.toDataURL("image/png");
-        im.style.width = cell+"px";
-        result.appendChild(im);
-      }
-    }
-  
+    loadedImg = img; // 保存
+    doSplit();
   };
 });
-  document.getElementById("biasY").addEventListener("input", doSplit);
-document.getElementById("biasX").addEventListener("input", doSplit);
 
+// ★★ スライダー動かしたら即再描画 ★★
+document.getElementById("biasY").addEventListener("input", doSplit);
+document.getElementById("biasX").addEventListener("input", doSplit);
 </script>
+
 </body>
 </html>
+
 
