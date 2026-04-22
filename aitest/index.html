@@ -253,11 +253,11 @@ async function sendMessage() {
   });
 
   const data = await response.json();
-
+const  = data.reply.replace(/\n/g, "<br>");
   aiMsg.innerHTML = `
   <div class="ai-row">
     <img src="https://github.ojach.com/icon/ai-icon.png" class="ai-avatar">
-    <div class="bubble">${data.reply}</div>
+    <div class="bubble">${formatted}</div>
   </div>
 `;
 
