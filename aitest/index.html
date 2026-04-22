@@ -245,6 +245,7 @@ async function sendMessage() {
   chatBody.scrollTop = chatBody.scrollHeight;
 
   const response = await fetch("https://aitest.trc-wasps.workers.dev", {
+    console.log("AI RAW:", JSON.stringify(data.reply));
     method: "POST",
     headers: {
       "Content-Type": "application/json"
