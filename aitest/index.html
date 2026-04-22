@@ -137,10 +137,12 @@ body {
 
 <!-- ===== モーダル ===== -->
 <div class="modal">
-  <div class="modal-header">
+   <div class="header-left">
+    <img src="/images/ai-icon.png" class="header-icon">
     石のご相談窓口
-    <span class="close-btn" onclick="closeChat()">×</span>
   </div>
+  <span class="close-btn" onclick="closeChat()">×</span>
+</div>
 
   <div class="chat-body" id="chatBody">
     <div class="message ai">
@@ -183,7 +185,12 @@ async function sendMessage() {
 
   const aiMsg = document.createElement("div");
   aiMsg.className = "message ai";
-  aiMsg.innerText = "少々お待ちください…";
+  aiMsg.innerHTML = `
+  <div class="ai-row">
+    <img src="/images/ai-icon.png" class="ai-avatar">
+    <div class="bubble">少々お待ちください…</div>
+  </div>
+`;
   chatBody.appendChild(aiMsg);
 
   chatBody.scrollTop = chatBody.scrollHeight;
@@ -198,7 +205,12 @@ async function sendMessage() {
 
   const data = await response.json();
 
-  aiMsg.innerText = data.reply;
+  aiMsg.innerHTML = `
+  <div class="ai-row">
+    <img src="/images/ai-icon.png" class="ai-avatar">
+    <div class="bubble">${data.reply}</div>
+  </div>
+`;
 
   chatBody.scrollTop = chatBody.scrollHeight;
 }
