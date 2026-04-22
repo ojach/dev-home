@@ -244,25 +244,36 @@ async function sendMessage() {
 
   chatBody.scrollTop = chatBody.scrollHeight;
 
-  const response = await fetch("https://aitest.trc-wasps.workers.dev", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json"
-    },
-    body: JSON.stringify({ message: userText })
-  });
-console.log("AI RAW:", JSON.stringify(data.reply));
-  const data = await response.json();
-const formatted = data.reply.replace(/\n/g, "<br>");
-  aiMsg.innerHTML = `
+ const response = await fetch("https://aitest.trc-wasps.workers.dev", {
+  method: "POST",
+  headers: {
+    "Content-Type": "application/json"
+  },
+  body: JSON.stringify({ message: userText })
+});
+
+const data = await response.json();
+
+// ★ ここ追加
+console.log("RAW:", JSON.stringify(data.reply));
+
+let text = data.reply;
+
+// 文章整形（強制改行）
+text = text.replace(/。/g, "。\n");
+text = text.replace(/・/g, "\n・");
+text = text.replace(/\n\n+/g, "\n\n");
+
+const formatted = text.replace(/\n/g, "<br>");
+
+aiMsg.innerHTML = `
   <div class="ai-row">
     <img src="https://github.ojach.com/icon/ai-icon.png" class="ai-avatar">
     <div class="bubble">${formatted}</div>
   </div>
 `;
 
-  chatBody.scrollTop = chatBody.scrollHeight;
-}
+chatBody.scrollTop = chatBody.scrollHeight;
 </script>
 
 </body>
