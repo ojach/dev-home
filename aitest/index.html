@@ -207,6 +207,7 @@ body {
 </div>
 
 <script>
+  let chatHistory = [];
 function openChat() {
   document.querySelector(".modal").style.display = "flex";
   document.querySelector(".modal-overlay").style.display = "block";
@@ -225,54 +226,68 @@ async function sendMessage() {
 
   const userText = input.value;
 
+  // 画面にユーザー表示
   const userMsg = document.createElement("div");
   userMsg.className = "message user";
   userMsg.innerText = userText;
   chatBody.appendChild(userMsg);
 
+  // ★ 履歴に追加
+  chatHistory.push({
+    role: "user",
+    content: userText
+  });
+
   input.value = "";
 
+  // 仮のAI表示
   const aiMsg = document.createElement("div");
   aiMsg.className = "message ai";
   aiMsg.innerHTML = `
-  <div class="ai-row">
-    <img src="https://github.ojach.com/icon/ai-icon.png" class="ai-avatar">
-    <div class="bubble">少々お待ちください…</div>
-  </div>
-`;
+    <div class="ai-row">
+      <img src="https://github.ojach.com/icon/ai-icon.png" class="ai-avatar">
+      <div class="bubble">少々お待ちください…</div>
+    </div>
+  `;
   chatBody.appendChild(aiMsg);
 
   chatBody.scrollTop = chatBody.scrollHeight;
 
- const response = await fetch("https://aitest.trc-wasps.workers.dev", {
-  method: "POST",
-  headers: {
-    "Content-Type": "application/json"
-  },
-  body: JSON.stringify({ message: userText })
-});
+  // ★ 履歴ごと送る
+  const response = await fetch("https://aitest.trc-wasps.workers.dev", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+      history: chatHistory
+    })
+  });
 
-const data = await response.json();
+  const data = await response.json();
 
-// ★ ここ追加
-console.log("RAW:", JSON.stringify(data.reply));
+  let text = data.reply;
 
-let text = data.reply;
+  // 軽い整形
+  text = text.replace(/。/g, "。\n");
+  text = text.replace(/\n\n+/g, "\n\n");
 
-// 文章整形（強制改行）
-text = text.replace(/。/g, "。\n");
-text = text.replace(/\n\n+/g, "\n\n");
+  const formatted = text.replace(/\n/g, "<br>");
 
-const formatted = text.replace(/\n/g, "<br>");
+  aiMsg.innerHTML = `
+    <div class="ai-row">
+      <img src="https://github.ojach.com/icon/ai-icon.png" class="ai-avatar">
+      <div class="bubble">${formatted}</div>
+    </div>
+  `;
 
-aiMsg.innerHTML = `
-  <div class="ai-row">
-    <img src="https://github.ojach.com/icon/ai-icon.png" class="ai-avatar">
-    <div class="bubble">${formatted}</div>
-  </div>
-`;
+  // ★ AI返答も履歴に追加
+  chatHistory.push({
+    role: "assistant",
+    content: data.reply
+  });
 
-chatBody.scrollTop = chatBody.scrollHeight;
+  chatBody.scrollTop = chatBody.scrollHeight;
 }
 </script>
 
