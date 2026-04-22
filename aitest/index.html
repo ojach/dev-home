@@ -176,24 +176,35 @@ body {
 
 <!-- ===== モーダル ===== -->
 <div class="modal">
-   <div class="header-left">
-    <img src="https://github.ojach.com/icon/ai-icon.png" class="header-icon">
-    石のご相談窓口
-  </div>
-  <span class="close-btn" onclick="closeChat()">×</span>
-</div>
 
+  <!-- ヘッダー -->
+  <div class="modal-header">
+    <div class="header-left">
+      <img src="https://github.ojach.com/icon/ai-icon.png" class="header-icon">
+      石のご相談窓口
+    </div>
+    <span class="close-btn" onclick="closeChat()">×</span>
+  </div>
+
+  <!-- チャット本体 -->
   <div class="chat-body" id="chatBody">
     <div class="message ai">
-      石に関するご相談をお受けしています。<br>
-      まだ決めていない段階でも大丈夫です。
+      <div class="ai-row">
+        <img src="https://github.ojach.com/icon/ai-icon.png" class="ai-avatar">
+        <div class="bubble">
+          石に関するご相談をお受けしています。<br>
+          まだ決めていない段階でも大丈夫です。
+        </div>
+      </div>
     </div>
   </div>
 
+  <!-- 入力欄 -->
   <div class="chat-input">
     <input type="text" id="userInput" placeholder="メッセージを入力…" />
     <button onclick="sendMessage()">送信</button>
   </div>
+
 </div>
 
 <script>
