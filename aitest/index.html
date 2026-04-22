@@ -261,7 +261,6 @@ let text = data.reply;
 
 // 文章整形（強制改行）
 text = text.replace(/。/g, "。\n");
-text = text.replace(/・/g, "\n・");
 text = text.replace(/\n\n+/g, "\n\n");
 
 const formatted = text.replace(/\n/g, "<br>");
