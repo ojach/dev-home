@@ -178,7 +178,11 @@
         <img src="https://github.ojach.com/icon/ai-icon2.png" class="uyama-ai-avatar">
         <div class="uyama-bubble">
           お墓に関するご相談をお受けしております。<br>
-          なにかお困りのことはございますか？
+          なにかお困りのことはございますか？<br><br>
+           ・新しく建てるか悩んでいる<br>
+           ・今あるお墓のことで悩んでいる<br>
+           ・費用や相場を知りたい<br>
+           ・宇山石材の特徴 など
         </div>
       </div>
     </div>
