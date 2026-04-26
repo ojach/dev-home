@@ -91,35 +91,30 @@ body {
 }
 
 /* ===== 入力欄 ===== */
-  .input-wrapper {
-  position: relative;
-  flex: 1;
-}
-.chat-input {
+ .chat-input {
   display: flex;
   border-top: 1px solid #eee;
   padding: 10px 10px 15px 10px;
   background: #fff;
 }
 
+/* wrapperが横幅を持つ */
+.input-wrapper {
+  position: relative;
+  flex: 1;
+}
+
+/* inputは幅100%だけ */
 .chat-input input {
   width: 100%;
-  padding: 10px 40px 10px 10px; /* 右にマイク分余白 */
+  padding: 10px 40px 10px 10px;
   border-radius: 8px;
   border: 1px solid #ddd;
   font-size: 16px;
+  box-sizing: border-box;
 }
 
-.chat-input button {
-  margin-left: 8px;
-  padding: 10px 16px;
-  border: none;
-  border-radius: 8px;
-  background: #333;
-  color: white;
-  cursor: pointer;
-}
-/* マイクボタン */
+/* マイク */
 .voice-btn {
   position: absolute;
   right: 8px;
@@ -132,8 +127,16 @@ body {
   opacity: 0.6;
   padding: 0;
 }
-  .voice-btn:hover {
-  opacity: 1;
+
+/* 送信ボタン */
+.chat-input > button {
+  margin-left: 8px;
+  padding: 10px 16px;
+  border: none;
+  border-radius: 8px;
+  background: #333;
+  color: white;
+  cursor: pointer;
 }
   .modal-header {
   display: flex;
