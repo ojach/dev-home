@@ -11,7 +11,7 @@
     right: 20px;
     background: #333;
     color: #fff;
-    padding: 14px 18px;
+    padding: 11px 16px;
     border-radius: 30px;
     cursor: pointer;
     font-size: 14px;
