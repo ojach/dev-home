@@ -160,7 +160,7 @@
   // =========================
   const container = document.createElement("div");
   container.innerHTML = `
-  <div class="uyama-chat-button">🗨 AI相談</div>
+  <div class="uyama-chat-button">🗨 AI相談窓口</div>
 
   <div class="uyama-modal-overlay"></div>
 
