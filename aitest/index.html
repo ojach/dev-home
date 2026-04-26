@@ -303,7 +303,6 @@ chatHistory = chatHistory.slice(-8);
   let text = data.reply;
 
   // 軽い整形
-  text = text.replace(/。/g, "。\n");
   text = text.replace(/\n\n+/g, "\n\n");
 
   const formatted = text.replace(/\n/g, "<br>");
