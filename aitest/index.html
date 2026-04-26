@@ -205,7 +205,8 @@ body {
 
   <!-- 入力欄 -->
   <div class="chat-input">
-    <input type="text" id="userInput" placeholder="メッセージを入力…" />
+     <input type="text" id="userInput" placeholder="メッセージを入力…" />
+  <button class="voice-btn" onclick="startVoice()">🎤</button>
     <button onclick="sendMessage()">送信</button>
   </div>
 
@@ -297,6 +298,17 @@ chatHistory = chatHistory.slice(-8);
 
   chatBody.scrollTop = chatBody.scrollHeight;
   turnCount++;
+}
+  const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+recognition.lang = "ja-JP";
+
+recognition.onresult = function(event) {
+  document.getElementById("userInput").value =
+    event.results[0][0].transcript;
+};
+
+function startVoice() {
+  recognition.start();
 }
 </script>
 
