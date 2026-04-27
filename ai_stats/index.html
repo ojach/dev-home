@@ -4,6 +4,8 @@
 <meta charset="UTF-8">
 <title>相談統計</title>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<canvas id="statsChart" height="120"></canvas>
 </head>
 <body>
 <h2>相談傾向グラフ</h2>
@@ -36,6 +38,44 @@ fetch("https://aitest.trc-wasps.workers.dev/stats")
       }
     });
   });
+  async function loadStats() {
+  const res = await fetch("https://あなたのworkerURL.workers.dev/stats");
+  const data = await res.json();
+
+  const dates = Object.keys(data).sort();
+  const priceData = dates.map(date => data[date].price || 0);
+  const graveData = dates.map(date => data[date].grave_closure || 0);
+    const new_grave = dates.map(date => data[date].new_grave || 0);
+    const reform = dates.map(date => data[date].reform || 0);
+    const inscription = dates.map(date => data[date].inscription || 0);
+
+  const ctx = document.getElementById("statsChart").getContext("2d");
+
+  new Chart(ctx, {
+    type: "line",
+    data: {
+      labels: dates,
+      datasets: [
+        { label: "価格", data: priceData, tension: 0.3 },
+        { label: "墓じまい", data: graveData, tension: 0.3 },
+        { label: "新規墓地", data: newGraveData, tension: 0.3 },
+        { label: "リフォーム", data: reformData, tension: 0.3 },
+        { label: "文字彫り", data: inscriptionData, tension: 0.3 }
+      ]
+    },
+    options: {
+      responsive: true,
+      scales: {
+        y: {
+          beginAtZero: true,
+          precision: 0
+        }
+      }
+    }
+  });
+}
+
+loadStats();
 </script>
 </body>
 </html>
