@@ -152,6 +152,16 @@
     color: white;
     cursor: pointer;
   }
+  .chat-note {
+  font-size: 12px;
+  color: #777;
+  margin-top: 6px;
+  line-height: 1.6;
+}
+.chat-note a {
+  color: #333;
+  text-decoration: underline;
+}
   `;
   document.head.appendChild(style);
 
@@ -194,6 +204,14 @@
       </div>
       <button class="uyama-send-btn">送信</button>
     </div>
+
+    <div class="chat-note">
+  このチャットはAIによるご案内です。<br>
+  詳細なご相談やお見積もりは
+  <a href="tel:0120-1482-14">お電話</a> または
+  <a href="https://www.isiya3.com/contact">お問い合わせフォーム</a>
+  をご利用ください。
+</div>
   </div>
   `;
   document.body.appendChild(container);
