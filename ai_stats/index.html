@@ -142,9 +142,69 @@ function categoryLabel(key) {
   };
   return map[key];
 }
+function renderSummary(data) {
 
+  const dates = Object.keys(data).sort();
+  if (dates.length === 0) return;
+
+  const today = dates[dates.length - 1];
+  const yesterday = dates[dates.length - 2];
+
+  const currentMonth = today.slice(0,7);
+
+  const summary = {
+    today: {},
+    yesterday: {},
+    month: {},
+    total: {}
+  };
+
+  for (const date of dates) {
+
+    const month = date.slice(0,7);
+
+    for (const category in data[date]) {
+
+      const value = data[date][category];
+
+      summary.total[category] = (summary.total[category] || 0) + value;
+
+      if (month === currentMonth) {
+        summary.month[category] = (summary.month[category] || 0) + value;
+      }
+
+      if (date === today) {
+        summary.today[category] = value;
+      }
+
+      if (date === yesterday) {
+        summary.yesterday[category] = value;
+      }
+    }
+  }
+
+  const categories = ["price","grave_closure","new_grave","reform","inscription"];
+
+  let html = "<h3>集計</h3><table border='1' cellpadding='6'><tr><th>項目</th><th>今日</th><th>前日</th><th>今月</th><th>累計</th></tr>";
+
+  for (const cat of categories) {
+    html += `
+      <tr>
+        <td>${categoryLabel(cat)}</td>
+        <td>${summary.today[cat] || 0}</td>
+        <td>${summary.yesterday?.[cat] || 0}</td>
+        <td>${summary.month[cat] || 0}</td>
+        <td>${summary.total[cat] || 0}</td>
+      </tr>
+    `;
+  }
+
+  html += "</table>";
+
+  document.getElementById("summary").innerHTML = html;
+}
 loadStats();
-
+renderSummary(rawData);
 </script>
 
 </body>
