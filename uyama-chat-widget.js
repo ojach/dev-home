@@ -11,7 +11,7 @@
     right: 20px;
     background: #333;
     color: #fff;
-    padding: 11px 16px;
+    padding: 10px 15px;
     border-radius: 30px;
     cursor: pointer;
     font-size: 14px;
@@ -80,7 +80,7 @@
     max-width: 75%;
     padding: 10px 12px;
     border-radius: 12px;
-    font-size: 14px;
+    font-size: 13px;
   }
 
   .uyama-user {
@@ -107,7 +107,7 @@
     padding: 10px 14px;
     border-radius: 14px;
     max-width: 85%;
-    font-size: 14px;
+    font-size: 13px;
   }
 
   .uyama-chat-input {
@@ -153,7 +153,7 @@
     cursor: pointer;
   }
   .chat-note {
-  font-size: 12px;
+  font-size: 10px;
   color: #777;
   margin-top: 6px;
   line-height: 1.6;
