@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>相談統計</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+<h2>相談傾向グラフ</h2>
+<canvas id="chart"></canvas>
+
+<script>
+fetch("https://aitest.trc-wasps.workers.dev/stats")
+  .then(res => res.json())
+  .then(data => {
+
+    const labels = [];
+    const values = [];
+
+    Object.entries(data).forEach(([key, val]) => {
+      if (key.includes("price")) {
+        labels.push(key.split(":")[1]);
+        values.push(val);
+      }
+    });
+
+    new Chart(document.getElementById("chart"), {
+      type: "line",
+      data: {
+        labels: labels,
+        datasets: [{
+          label: "価格相談数",
+          data: values,
+          borderColor: "blue"
+        }]
+      }
+    });
+  });
+</script>
+</body>
+</html>
