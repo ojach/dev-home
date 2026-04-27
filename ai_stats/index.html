@@ -4,67 +4,124 @@
 <meta charset="UTF-8">
 <title>相談統計</title>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<style>
+  body { font-family: sans-serif; padding: 20px; }
+  button { margin-right: 8px; padding: 6px 12px; }
+  .controls { margin: 10px 0; }
+  .controls label { margin-right: 12px; }
+</style>
+</head>
+
+<body>
+
+<h2>相談傾向グラフ</h2>
+
+<div>
+  <button onclick="changeMode('daily')">日別</button>
+  <button onclick="changeMode('7days')">直近7日</button>
+  <button onclick="changeMode('monthly')">月別</button>
+</div>
+
+<div class="controls">
+  <label><input type="checkbox" value="price" checked onchange="changeMode(currentMode)"> 価格</label>
+  <label><input type="checkbox" value="grave_closure" checked onchange="changeMode(currentMode)"> 墓じまい</label>
+  <label><input type="checkbox" value="new_grave" checked onchange="changeMode(currentMode)"> 新規墓地</label>
+  <label><input type="checkbox" value="reform" checked onchange="changeMode(currentMode)"> リフォーム</label>
+  <label><input type="checkbox" value="inscription" checked onchange="changeMode(currentMode)"> 文字彫り</label>
+</div>
 
 <canvas id="statsChart" height="120"></canvas>
-</head>
-<body>
-<h2>相談傾向グラフ</h2>
-<canvas id="chart"></canvas>
 
 <script>
-fetch("https://aitest.trc-wasps.workers.dev/stats")
-  .then(res => res.json())
-  .then(data => {
 
-    const labels = [];
-    const values = [];
+let chart;
+let rawData;
+let currentMode = "daily";
 
-    Object.entries(data).forEach(([key, val]) => {
-      if (key.includes("price")) {
-        labels.push(key.split(":")[1]);
-        values.push(val);
-      }
-    });
+const colors = {
+  price: "#e74c3c",          // 赤
+  grave_closure: "#2980b9",  // 青
+  new_grave: "#27ae60",      // 緑
+  reform: "#f39c12",         // オレンジ
+  inscription: "#8e44ad"     // 紫
+};
 
-    new Chart(document.getElementById("chart"), {
-      type: "line",
-      data: {
-        labels: labels,
-        datasets: [{
-          label: "価格相談数",
-          data: values,
-          borderColor: "blue"
-        }]
-      }
-    });
-  });
-  async function loadStats() {
-  const res = await fetch("https://あなたのworkerURL.workers.dev/stats");
-  const data = await res.json();
+async function loadStats() {
+  const res = await fetch("https://aitest.trc-wasps.workers.dev/stats");
+  rawData = await res.json();
+  changeMode("daily");
+}
 
-  const dates = Object.keys(data).sort();
-  const priceData = dates.map(date => data[date].price || 0);
-  const graveData = dates.map(date => data[date].grave_closure || 0);
-    const new_grave = dates.map(date => data[date].new_grave || 0);
-    const reform = dates.map(date => data[date].reform || 0);
-    const inscription = dates.map(date => data[date].inscription || 0);
+function changeMode(mode) {
+  currentMode = mode;
+
+  let labels = [];
+  let datasetSource = {};
+
+  if (mode === "daily") {
+    labels = Object.keys(rawData).sort();
+    datasetSource = rawData;
+  }
+
+  if (mode === "7days") {
+    const sorted = Object.keys(rawData).sort();
+    labels = sorted.slice(-7);
+    datasetSource = rawData;
+  }
+
+  if (mode === "monthly") {
+    datasetSource = aggregateMonthly(rawData);
+    labels = Object.keys(datasetSource).sort();
+  }
+
+  const selected = Array.from(document.querySelectorAll(".controls input:checked"))
+                        .map(el => el.value);
+
+  const datasets = selected.map(category => ({
+    label: categoryLabel(category),
+    data: labels.map(d => datasetSource[d]?.[category] || 0),
+    borderColor: colors[category],
+    backgroundColor: colors[category],
+    tension: 0.3,
+    borderWidth: category === "price" ? 3 : 2
+  }));
+
+  renderChart(labels, datasets);
+}
+
+function aggregateMonthly(data) {
+  const monthly = {};
+
+  for (const date in data) {
+    const month = date.slice(0, 7);
+
+    if (!monthly[month]) {
+      monthly[month] = {};
+    }
+
+    for (const category in data[date]) {
+      monthly[month][category] =
+        (monthly[month][category] || 0) + data[date][category];
+    }
+  }
+
+  return monthly;
+}
+
+function renderChart(labels, datasets) {
+
+  if (chart) chart.destroy();
 
   const ctx = document.getElementById("statsChart").getContext("2d");
 
-  new Chart(ctx, {
+  chart = new Chart(ctx, {
     type: "line",
-    data: {
-      labels: dates,
-      datasets: [
-        { label: "価格", data: priceData, tension: 0.3 },
-        { label: "墓じまい", data: graveData, tension: 0.3 },
-        { label: "新規墓地", data: newGraveData, tension: 0.3 },
-        { label: "リフォーム", data: reformData, tension: 0.3 },
-        { label: "文字彫り", data: inscriptionData, tension: 0.3 }
-      ]
-    },
+    data: { labels, datasets },
     options: {
       responsive: true,
+      plugins: {
+        legend: { position: "top" }
+      },
       scales: {
         y: {
           beginAtZero: true,
@@ -75,7 +132,20 @@ fetch("https://aitest.trc-wasps.workers.dev/stats")
   });
 }
 
+function categoryLabel(key) {
+  const map = {
+    price: "価格",
+    grave_closure: "墓じまい",
+    new_grave: "新規墓地",
+    reform: "リフォーム",
+    inscription: "文字彫り"
+  };
+  return map[key];
+}
+
 loadStats();
+
 </script>
+
 </body>
 </html>
