@@ -153,7 +153,7 @@
     cursor: pointer;
   }
   .chat-note {
-  font-size: 10px;
+  font-size: 8px;
   color: #777;
   line-height: 1.6;
 }
