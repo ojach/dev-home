@@ -50,6 +50,7 @@ async function loadStats() {
   const res = await fetch("https://aitest.trc-wasps.workers.dev/stats");
   rawData = await res.json();
   changeMode("daily");
+  renderSummary(rawData);
 }
 
 function changeMode(mode) {
@@ -204,7 +205,6 @@ function renderSummary(data) {
   document.getElementById("summary").innerHTML = html;
 }
 loadStats();
-renderSummary(rawData);
 </script>
 
 </body>
