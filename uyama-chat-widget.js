@@ -276,5 +276,41 @@
   input.addEventListener("keydown", e => {
     if (e.key === "Enter") sendMessage();
   });
+const voiceBtn = container.querySelector(".uyama-voice-btn");
 
+if ('webkitSpeechRecognition' in window) {
+
+  const recognition = new webkitSpeechRecognition();
+  recognition.lang = "ja-JP";
+  recognition.interimResults = false;
+  recognition.continuous = false;
+
+  voiceBtn.onclick = () => {
+    voiceBtn.textContent = "🎙️";
+    recognition.start();
+  };
+
+  recognition.onresult = (event) => {
+    const transcript = event.results[0][0].transcript;
+    input.value = transcript;
+    recognition.stop();
+
+    voiceBtn.textContent = "🎤";
+
+    // 自動送信
+    sendMessage();
+  };
+
+  recognition.onerror = () => {
+    voiceBtn.textContent = "🎤";
+  };
+
+  recognition.onend = () => {
+    voiceBtn.textContent = "🎤";
+  };
+
+} else {
+  // 非対応ブラウザはボタン非表示
+  voiceBtn.style.display = "none";
+}
 })();
