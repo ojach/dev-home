@@ -113,7 +113,7 @@
   .uyama-chat-input {
     display: flex;
     border-top: 1px solid #eee;
-    padding: 10px 10px 15px 10px;
+    padding: 10px 10px 8px 10px;
     background: #fff;
   }
 
@@ -155,7 +155,6 @@
   .chat-note {
   font-size: 10px;
   color: #777;
-  margin-top: 6px;
   line-height: 1.6;
 }
 .chat-note a {
