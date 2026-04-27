@@ -278,9 +278,12 @@
   });
 const voiceBtn = container.querySelector(".uyama-voice-btn");
 
-if ('webkitSpeechRecognition' in window) {
+const SpeechRecognition =
+  window.SpeechRecognition || window.webkitSpeechRecognition;
 
-  const recognition = new webkitSpeechRecognition();
+if (SpeechRecognition) {
+
+  const recognition = new SpeechRecognition();
   recognition.lang = "ja-JP";
   recognition.interimResults = false;
   recognition.continuous = false;
@@ -293,11 +296,7 @@ if ('webkitSpeechRecognition' in window) {
   recognition.onresult = (event) => {
     const transcript = event.results[0][0].transcript;
     input.value = transcript;
-    recognition.stop();
-
     voiceBtn.textContent = "🎤";
-
-    // 自動送信
     sendMessage();
   };
 
@@ -310,7 +309,6 @@ if ('webkitSpeechRecognition' in window) {
   };
 
 } else {
-  // 非対応ブラウザはボタン非表示
   voiceBtn.style.display = "none";
 }
 })();
