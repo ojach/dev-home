@@ -1,5 +1,5 @@
 (() => {
-  const iconUrl = "https://ojapp.app/icon/icon512pass.png";
+  const iconUrl = "https://ojapp.app/icon/icon180b.png";
 
   const manifestObj = {
     name: document.title || "OJapp Test",
@@ -22,15 +22,22 @@
     "data:application/manifest+json;base64," +
     btoa(unescape(encodeURIComponent(json)));
 
-  document
-    .querySelectorAll('link[rel="manifest"]')
-    .forEach(el => el.remove());
+document
+  .querySelectorAll(
+    'link[rel="manifest"], link[rel~="apple-touch-icon"]'
+  )
+  .forEach((el) => el.remove());
 
-  const manifest = document.createElement("link");
-  manifest.rel = "manifest";
-  manifest.href = dataUrl;
+const appleIcon = document.createElement("link");
+appleIcon.rel = "apple-touch-icon";
+appleIcon.href = "https://ojapp.app/icon/guide_icon.png";
 
-  document.head.prepend(manifest);
+const manifest = document.createElement("link");
+manifest.rel = "manifest";
+manifest.href = base64Manifest;
+
+document.head.prepend(manifest);
+document.head.prepend(appleIcon);
 
   console.log("OJapp dynamic manifest inserted", manifestObj);
 })();
