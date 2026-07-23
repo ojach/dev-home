@@ -9,7 +9,7 @@
     icons: [
       {
         src: iconUrl,
-        sizes: "512x512",
+        sizes: "180x180",
         type: "image/png",
         purpose: "any"
       }
@@ -22,22 +22,22 @@
     "data:application/manifest+json;base64," +
     btoa(unescape(encodeURIComponent(json)));
 
-document
-  .querySelectorAll(
-    'link[rel="manifest"], link[rel~="apple-touch-icon"]'
-  )
-  .forEach((el) => el.remove());
+  document
+    .querySelectorAll(
+      'link[rel="manifest"], link[rel~="apple-touch-icon"]'
+    )
+    .forEach((el) => el.remove());
 
-const appleIcon = document.createElement("link");
-appleIcon.rel = "apple-touch-icon";
-appleIcon.href = "https://ojapp.app/icon/icon180b.png";
+  const appleIcon = document.createElement("link");
+  appleIcon.rel = "apple-touch-icon";
+  appleIcon.href = "https://ojapp.app/icon/guide_icon.png";
 
-const manifest = document.createElement("link");
-manifest.rel = "manifest";
-manifest.href = base64Manifest;
+  const manifest = document.createElement("link");
+  manifest.rel = "manifest";
+  manifest.href = dataUrl;
 
-document.head.prepend(manifest);
-document.head.prepend(appleIcon);
+  document.head.prepend(manifest);
+  document.head.prepend(appleIcon);
 
   console.log("OJapp dynamic manifest inserted", manifestObj);
 })();
