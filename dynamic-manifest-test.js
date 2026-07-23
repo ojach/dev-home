@@ -1,5 +1,5 @@
 (() => {
-  const iconUrl = "https://ojapp.app/icon/icon-512.png";
+  const iconUrl = "https://ojapp.app/icon/icon512pass.png";
 
   const manifestObj = {
     name: document.title || "OJapp Test",
