@@ -30,7 +30,7 @@
 
   const appleIcon = document.createElement("link");
   appleIcon.rel = "apple-touch-icon";
-  appleIcon.href = "https://ojapp.app/icon/icon180b.png";
+  appleIcon.href = "https://ojapp.app/icon/gridter_icon.png";
 
   const manifest = document.createElement("link");
   manifest.rel = "manifest";
